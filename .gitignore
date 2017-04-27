@@ -14,9 +14,9 @@
 
 /.qmake.cache
 /.qmake.stash
-/release
-/debug
-/profile
+release/
+debug/
+profile/
 *.pro.user
 *.pro.user.*
 *.qbs.user
