@@ -1,7 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "serialprotocol.h"
+
 #include <QDebug>
+#include <QTime>
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -10,96 +13,78 @@ MainWindow::MainWindow(QWidget* parent) :
     ui->setupUi(this);
     m_pStatus = new QLabel;
     ui->statusBar->addWidget(m_pStatus);
+    ui->actionDisconnect->setEnabled(false);
 
-    m_pSerial = new QSerialPort(this);
-    m_pSerialSettings = new SerialSettings;
-    m_serialSettingsLoaded = false;
+    m_pSerial = new SerialProtocol;
+    QByteArray data = QByteArray::fromRawData("\0xfb", 1);
+    m_pSerial->writeData(data);
 
-    initActionsConnections();
+    initConnections();
 
-    if (m_Settings.value("autoConnect", false).toBool())
+    m_pSettingsDialog = new SettingsDialog(this);
+    loadSettings();
+
+    if (m_settings.value("autoConnect", false).toBool())
     {
-        ui->actionAuto_connect->setChecked(true);
-        loadSerialConfig();
-        m_serialSettingsLoaded = true;
         openSerialPort();
     }
 }
 
 MainWindow::~MainWindow()
 {
-    delete m_pSerialSettings;
     delete ui;
 }
 
 void MainWindow::openSerialPort()
 {
-    if (!m_serialSettingsLoaded)
-    {
-        SerialSettings::Settings p = m_pSerialSettings->settings();
-        m_pSerial->setPortName(p.name);
-        m_pSerial->setBaudRate(p.baudRate);
-        m_pSerial->setDataBits(p.dataBits);
-        m_pSerial->setParity(p.parity);
-        m_pSerial->setStopBits(p.stopBits);
-        m_pSerial->setFlowControl(p.flowControl);
-        m_serialSettingsLoaded = true;
-    }
-    if (m_pSerial->open(QIODevice::ReadWrite))
+    if (m_pSerial->openSerialPort())
     {
         ui->actionConnect->setEnabled(false);
         ui->actionDisconnect->setEnabled(true);
-        showStatusMessage(tr("Connected to serial: %1")
-                          .arg(m_pSerial->portName()));
+        return;
     }
-    else
-    {
-        QMessageBox::critical(this, tr("Error"), m_pSerial->errorString());
-        showStatusMessage(tr("Error: Can't open serial port"));
-    }
+    ui->actionConnect->setEnabled(true);
+    ui->actionDisconnect->setEnabled(false);
 }
 
 void MainWindow::closeSerialPort()
 {
-
+    m_pSerial->closeSerialPort();
+    ui->actionConnect->setEnabled(true);
+    ui->actionDisconnect->setEnabled(false);
 }
 
 void MainWindow::writeData(const QByteArray& data)
 {
-
+    m_pSerial->writeData(data);
 }
 
-void MainWindow::readData()
+int MainWindow::showConfiguration()
 {
-
+    int execute = m_pSettingsDialog->execute();
+    loadSettings();
+    return execute;
 }
 
-void MainWindow::handleError(QSerialPort::SerialPortError error)
+void MainWindow::loadSettings()
 {
-
+    // Load serial port configuration
+    m_pSerial->loadSettings();
+    ui->actionAuto_connect->setChecked(m_settings.value("serial/autoconnect", false).toBool());
 }
 
-void MainWindow::showConfiguration()
+void MainWindow::toggleAutoconnect()
 {
-
+    m_settings.setValue("serial/autoconnect", ui->actionAuto_connect->isChecked());
 }
 
-void MainWindow::saveSerialConfig()
-{
-    m_pSerialSettings->settings()
-}
-
-void MainWindow::loadSerialConfig()
-{
-
-}
-
-void MainWindow::initActionsConnections()
+void MainWindow::initConnections()
 {
     connect(ui->actionConnect, &QAction::triggered, this, &MainWindow::openSerialPort);
     connect(ui->actionDisconnect, &QAction::triggered, this, &MainWindow::closeSerialPort);
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::showConfiguration);
+    connect(ui->actionAuto_connect, &QAction::triggered, this, &MainWindow::toggleAutoconnect);
 }
 
 void MainWindow::showStatusMessage(const QString& message)

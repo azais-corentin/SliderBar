@@ -6,13 +6,15 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QLabel>
-#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 
-#include "serialsettings.h"
+#include "settingsdialog.h"
 
 namespace Ui {
 class MainWindow;
 }
+
+class SerialProtocol;
 
 class MainWindow : public QMainWindow
 {
@@ -26,26 +28,24 @@ private slots:
     void openSerialPort();
     void closeSerialPort();
     void writeData(const QByteArray& data);
-    void readData();
-    void handleError(QSerialPort::SerialPortError error);
 
-    void showConfiguration();
+    int showConfiguration();
 
 private:
-    void saveSerialConfig();
-    void loadSerialConfig();
+    void loadSettings();
+    void toggleAutoconnect();
 
-    void initActionsConnections();
+    void initConnections();
 
     void showStatusMessage(const QString& message);
 
     Ui::MainWindow* ui;
     QLabel* m_pStatus;
-    QSettings m_Settings;
-    bool m_serialSettingsLoaded;
 
-    SerialSettings* m_pSerialSettings;
-    QSerialPort* m_pSerial;
+    SettingsDialog* m_pSettingsDialog;
+    QSettings m_settings;
+
+    SerialProtocol* m_pSerial;
 };
 
 #endif // MAINWINDOW_H
