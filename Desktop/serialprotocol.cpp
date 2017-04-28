@@ -4,6 +4,8 @@
 #include <QMessageBox>
 #include <QDebug>
 
+#define MAX_PACKET_SIZE 1024
+
 SerialProtocol::SerialProtocol()
 {
     serial = new QSerialPort;
@@ -22,7 +24,7 @@ SerialProtocol::~SerialProtocol()
 
 void SerialProtocol::initConnections()
 {
-    connect(serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
+    connect(serial, &QSerialPort::errorOccurred,
         this, &SerialProtocol::handleError);
 
     connect(serial, &QSerialPort::readyRead, this, &SerialProtocol::readData);
@@ -30,10 +32,10 @@ void SerialProtocol::initConnections()
 
 void SerialProtocol::loadSettings()
 {
-    startflag = m_settings.value("serial/protocol/startflag", 0x12).toInt();
-    endflag = m_settings.value("serial/protocol/endflag", 0x13).toInt();
-    escapeflag = m_settings.value("serial/protocol/escapeflag", 0x7D).toInt();
-    xorflag = m_settings.value("serial/protocol/xorflag", 0x20).toInt();
+    startflag = static_cast<uchar>(m_settings.value("serial/protocol/startflag", 0x12).toInt());
+    endflag = static_cast<uchar>(m_settings.value("serial/protocol/endflag", 0x13).toInt());
+    escapeflag = static_cast<uchar>(m_settings.value("serial/protocol/escapeflag", 0x7D).toInt());
+    xorflag = static_cast<uchar>(m_settings.value("serial/protocol/xorflag", 0x20).toInt());
 
     serial->setPortName(m_settings.value("serial/portname", "COM1").toString());
     serial->setBaudRate(static_cast<QSerialPort::BaudRate>(
@@ -78,6 +80,7 @@ void SerialProtocol::closeSerialPort()
 
 void SerialProtocol::writeData(const QByteArray& data)
 {
+    const uchar* uData = convertByteArray(data);
     /// Packet structure:
     /// http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
     /// [0]         startflag
@@ -85,24 +88,26 @@ void SerialProtocol::writeData(const QByteArray& data)
     /// [3,..,x-1]  data
     /// [x]         endflag
     QByteArray packet;
-    int length = 1 + 2 + data.size() + data.count(startflag) + data.count(endflag) +
-        data.count(escapeflag) + 1;
+    quint16 length = static_cast<quint16>(1 + 2 + data.size() + data.count(static_cast<char>(startflag)) +
+            data.count(static_cast<char>(endflag)) + data.count(static_cast<char>(escapeflag)) + 1);
     packet.resize(length);
     int i = 0, di = 0;
 
     // Add startflag
-    packet[i++] = char(startflag);
+    packet[i++] = static_cast<char>(startflag);
 
     // Add length
-    //packet.replace(i, 2, QByteArray::number(qint16(length), 16));
+    packet[i++] = static_cast<char>(length >> 8);
+    packet[i++] = static_cast<char>(length);
+    //packet.replace(i, 2, QString::number(length, 16).toLatin1());
 
     // Add data
     while (di < data.size())
     {
         if (data.at(di) == startflag || data.at(di) == endflag || data.at(di) == escapeflag)
         {
-            packet[i++] = char(escapeflag);
-            packet[i++] = data.at(di) ^ char(xorflag);
+            packet[i++] = static_cast<char>(escapeflag);
+            packet[i++] = static_cast<char>(uData[di] ^ xorflag);
         }
         else
             packet[i++] = data.at(di);
@@ -110,20 +115,111 @@ void SerialProtocol::writeData(const QByteArray& data)
     }
 
     // Add endflag
-    packet[i] = char(endflag);
+    packet[i] = static_cast<char>(endflag);
     foreach (char ch, packet)
     {
-        qDebug() << QString::number(ch, 16);
+        qDebug() << QString::number(static_cast<uchar>(ch), 16);
     }
+}
+
+void SerialProtocol::writeData(const QVector<uchar>& data)
+{
+    QByteArray convertedData(reinterpret_cast<const char*>(data.data()), data.size());
+    writeData(convertedData);
+}
+
+const uchar* SerialProtocol::convertByteArray(const QByteArray& data)
+{
+    return reinterpret_cast<const uchar*>(data.constData());
 }
 
 void SerialProtocol::readData()
 {
-    QByteArray data = serial->readAll();
+    if (m_buffer.size() > MAX_PACKET_SIZE)
+    {
+        m_buffer.clear();
+        qDebug() << "Buffer is full! Clearing.";
+        failedPackets++;
+    }
+    m_buffer.append(serial->readAll());
+
+    /*if (m_buffer.contains(0x12))
+    {
+        bool finished = true;
+        QList<QByteArray> list;
+        int i = -1;
+        foreach (char ch, m_buffer)
+        {
+            switch (static_cast<uchar>(ch))
+            {
+                case 0x12:
+                    i++;
+                    finished = false;
+                    list.append(QByteArray(1, 0x12));
+                    break;
+                case 0x13:
+                    finished = true;
+                    list[i].append(0x13);
+                    break;
+                default:
+                    if (!finished)
+                        list[i].append(ch);
+                    break;
+            }
+        }
+        qDebug() << list;
+    }*/
+
+    if (!m_buffer.contains(static_cast<char>(startflag)))
+    {
+        failedPackets++;
+        m_buffer.clear();
+        return;
+    }
+    m_buffer = m_buffer.mid(m_buffer.indexOf(static_cast<char>(startflag)));
+
+    if (!m_buffer.contains(0x13))
+        return;
+
+    qDebug() << "Full packet received!";
+    totalPackets++;
+
+    m_buffer = m_buffer.left(m_buffer.indexOf(0x13) + 1);
+
+    quint16 length = static_cast<quint16>(m_buffer.at(1) << 8 | m_buffer.at(2));
+    if (m_buffer.size() != length)
+    {
+        qDebug() << "Size mismatch!";
+        m_buffer.clear();
+        failedPackets++;
+        return;
+    }
+
+    QByteArray data = m_buffer.mid(3, m_buffer.size() - 4);
+
+    qDebug() << "Valid packed received!";
+
+    // Decode packet data
     qDebug() << data;
+    emit packetReady(data);
+    m_buffer.clear();
+    statusMessage(QStringLiteral("Failure percentage: %1")
+        .arg(100. * (double) failedPackets / (double) totalPackets));
 }
 
-void SerialProtocol::handleError(QSerialPort::SerialPortError error)
+void SerialProtocol::handleError()
 {
-    emit statusMessage(QStringLiteral("Serial port: Error %1").arg(serial->errorString()));
+    if (!serial->isOpen())
+        emit disconnected();
+    switch (serial->error())
+    {
+        case QSerialPort::NoError:
+            return;
+        case QSerialPort::ResourceError:
+            emit statusMessage(QStringLiteral("Serial port error: Device was unexpectedly removed."));
+            break;
+        default:
+            emit statusMessage(QStringLiteral("Serial port error: %1").arg(serial->errorString()));
+            break;
+    }
 }

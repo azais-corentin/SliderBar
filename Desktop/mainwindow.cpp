@@ -16,8 +16,6 @@ MainWindow::MainWindow(QWidget* parent) :
     ui->actionDisconnect->setEnabled(false);
 
     m_pSerial = new SerialProtocol;
-    QByteArray data = QByteArray::fromRawData("\0xfb", 1);
-    m_pSerial->writeData(data);
 
     initConnections();
 
@@ -59,6 +57,11 @@ void MainWindow::writeData(const QByteArray& data)
     m_pSerial->writeData(data);
 }
 
+void MainWindow::receiveData(const QByteArray& data)
+{
+
+}
+
 int MainWindow::showConfiguration()
 {
     int execute = m_pSettingsDialog->execute();
@@ -85,6 +88,9 @@ void MainWindow::initConnections()
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::showConfiguration);
     connect(ui->actionAuto_connect, &QAction::triggered, this, &MainWindow::toggleAutoconnect);
+
+    connect(m_pSerial, &SerialProtocol::statusMessage, this, &MainWindow::showStatusMessage);
+    connect(m_pSerial, &SerialProtocol::packetReady, this, &MainWindow::receiveData);
 }
 
 void MainWindow::showStatusMessage(const QString& message)

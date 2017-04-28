@@ -28,6 +28,7 @@ private slots:
     void openSerialPort();
     void closeSerialPort();
     void writeData(const QByteArray& data);
+    void receiveData(const QByteArray& data);
 
     int showConfiguration();
 
