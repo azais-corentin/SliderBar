@@ -35,7 +35,7 @@ signals:
 
 private slots:
     void readData(); //read data and emits packetReady() once a packet is totally received
-    void handleError();
+    void handleError(QSerialPort::SerialPortError error);
 
 private:
     uchar startflag, endflag, escapeflag, xorflag;

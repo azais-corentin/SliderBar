@@ -90,6 +90,7 @@ void MainWindow::initConnections()
     connect(ui->actionAuto_connect, &QAction::triggered, this, &MainWindow::toggleAutoconnect);
 
     connect(m_pSerial, &SerialProtocol::statusMessage, this, &MainWindow::showStatusMessage);
+    connect(m_pSerial, &SerialProtocol::disconnected, this, &MainWindow::closeSerialPort);
     connect(m_pSerial, &SerialProtocol::packetReady, this, &MainWindow::receiveData);
 }
 

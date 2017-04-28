@@ -9,11 +9,9 @@
 SerialProtocol::SerialProtocol()
 {
     serial = new QSerialPort;
-
-    loadSettings();
-
     m_buffer.clear();
 
+    loadSettings();
     initConnections();
 }
 
@@ -53,6 +51,7 @@ void SerialProtocol::loadSettings()
 
 bool SerialProtocol::openSerialPort()
 {
+    qDebug() << "What the actual fuck are you doing here?!";
     loadSettings();
     if (serial->isOpen())
     {
@@ -61,11 +60,13 @@ bool SerialProtocol::openSerialPort()
     }
     if (serial->open(QIODevice::ReadWrite))
     {
+        serial->clear(QSerialPort::AllDirections);
         emit statusMessage(QStringLiteral("Serial port: Connected to %1").arg(serial->portName()));
         return true;
     }
     else
     {
+        qDebug() << "What the actual fuck are you doing here?!";
         emit statusMessage(QStringLiteral("Serial port: Error %1").arg(serial->errorString()));
     }
     return false;
@@ -73,8 +74,9 @@ bool SerialProtocol::openSerialPort()
 
 void SerialProtocol::closeSerialPort()
 {
-    if (serial->isOpen())
-        serial->close();
+    if (!serial->isOpen())
+        return;
+    serial->close();
     emit statusMessage(QStringLiteral("Disconnected!"));
 }
 
@@ -181,7 +183,6 @@ void SerialProtocol::readData()
     if (!m_buffer.contains(0x13))
         return;
 
-    qDebug() << "Full packet received!";
     totalPackets++;
 
     m_buffer = m_buffer.left(m_buffer.indexOf(0x13) + 1);
@@ -196,9 +197,6 @@ void SerialProtocol::readData()
     }
 
     QByteArray data = m_buffer.mid(3, m_buffer.size() - 4);
-
-    qDebug() << "Valid packed received!";
-
     // Decode packet data
     qDebug() << data;
     emit packetReady(data);
@@ -207,14 +205,17 @@ void SerialProtocol::readData()
         .arg(100. * (double) failedPackets / (double) totalPackets));
 }
 
-void SerialProtocol::handleError()
+void SerialProtocol::handleError(QSerialPort::SerialPortError error)
 {
     if (!serial->isOpen())
         emit disconnected();
-    switch (serial->error())
+    qDebug() << "Yo there's an error lol";
+    switch (error)
     {
         case QSerialPort::NoError:
             return;
+        case QSerialPort::WriteError:
+        case QSerialPort::ReadError:
         case QSerialPort::ResourceError:
             emit statusMessage(QStringLiteral("Serial port error: Device was unexpectedly removed."));
             break;

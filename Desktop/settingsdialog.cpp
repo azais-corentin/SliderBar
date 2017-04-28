@@ -158,15 +158,22 @@ void SettingsDialog::saveSettings()
             ui->eFlowcontrol->itemData(ui->eFlowcontrol->currentIndex()).toInt()));
     m_Settings.setValue("serial/autoconnect", ui->eAutoconnect->isChecked());
 
-    qDebug() << "Settings saved!";
+    // Save serial protocol configuration
+    m_Settings.setValue("serial/protocol/startflag",
+        static_cast<uchar>(ui->eStartflag->text().right(2).toInt(nullptr, 16)));
+    m_Settings.setValue("serial/protocol/endflag",
+        static_cast<uchar>(ui->eEndflag->text().right(2).toInt(nullptr, 16)));
+    m_Settings.setValue("serial/protocol/escapeflag",
+        static_cast<uchar>(ui->eEscapeflag->text().right(2).toInt(nullptr, 16)));
+    m_Settings.setValue("serial/protocol/xorflag",
+        static_cast<uchar>(ui->eXORFlag->text().right(2).toInt(nullptr, 16)));
 }
 
 void SettingsDialog::loadSettings()
 {
-    // Load serial port configuration
+    // Loads serial port configuration
     ui->eSerialPortInfoList->setCurrentText(
         m_Settings.value("serial/portname", "COM1").toString());
-
     int iBaudrate = ui->eBaudrate->findData(static_cast<QSerialPort::BaudRate>(
                 m_Settings.value("serial/baudrate", 115200).toInt()));
     if (iBaudrate != -1)
@@ -177,22 +184,29 @@ void SettingsDialog::loadSettings()
         ui->eBaudrate->setCurrentText(QString::number(
                 m_Settings.value("serial/baudrate", 115200).toInt()));
     }
-
     int iDatabits = ui->eDatabits->findData(static_cast<QSerialPort::DataBits>(
                 m_Settings.value("serial/databits", QSerialPort::Data8).toInt()));
     ui->eDatabits->setCurrentIndex(iDatabits);
-
     int iParity = ui->eParity->findData(static_cast<QSerialPort::Parity>(
                 m_Settings.value("serial/parity", QSerialPort::NoParity).toInt()));
     ui->eParity->setCurrentIndex(iParity);
-
     int iStopbits = ui->eStopbits->findData(static_cast<QSerialPort::StopBits>(
                 m_Settings.value("serial/stopbits", QSerialPort::OneStop).toInt()));
     ui->eStopbits->setCurrentIndex(iStopbits);
-
     int iFlowcontrol = ui->eFlowcontrol->findData(static_cast<QSerialPort::FlowControl>(
                 m_Settings.value("serial/flowcontrol", QSerialPort::HardwareControl).toInt()));
     ui->eFlowcontrol->setCurrentIndex(iFlowcontrol);
-
     ui->eAutoconnect->setChecked(m_Settings.value("serial/autoconnect", false).toBool());
+
+    // Loads serial protocol information
+    qDebug() << QString::number(
+            static_cast<uchar>(m_Settings.value("serial/protocol/startflag", 0x12).toInt()), 16);
+    ui->eStartflag->setText(QStringLiteral("0x") + QString::number(
+            static_cast<uchar>(m_Settings.value("serial/protocol/startflag", 0x12).toInt()), 16));
+    ui->eEndflag->setText(QStringLiteral("0x") + QString::number(
+            static_cast<uchar>(m_Settings.value("serial/protocol/endflag", 0x13).toInt()), 16));
+    ui->eEscapeflag->setText(QStringLiteral("0x") + QString::number(
+            static_cast<uchar>(m_Settings.value("serial/protocol/escapeflag", 0x7D).toInt()), 16));
+    ui->eXORFlag->setText(QStringLiteral("0x") + QString::number(
+            static_cast<uchar>(m_Settings.value("serial/protocol/xorflag", 0x20).toInt()), 16));
 }
