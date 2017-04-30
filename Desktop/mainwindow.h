@@ -9,6 +9,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 
 #include "settingsdialog.h"
+#include "serialpacketdefinition.h"
 
 namespace Ui {
 class MainWindow;
@@ -27,8 +28,8 @@ public:
 private slots:
     void openSerialPort();
     void closeSerialPort();
-    void writeData(const QByteArray& data);
-    void receiveData(const QByteArray& data);
+    void writePacket(command& packet);
+    void receivePacket(command& packet);
 
     int showConfiguration();
 

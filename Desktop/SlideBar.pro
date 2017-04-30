@@ -18,7 +18,8 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     settingsdialog.h \
-    serialprotocol.h
+    serialprotocol.h \
+    serialpacketdefinition.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui

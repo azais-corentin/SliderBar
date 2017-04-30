@@ -16,16 +16,12 @@ MainWindow::MainWindow(QWidget* parent) :
     ui->actionDisconnect->setEnabled(false);
 
     m_pSerial = new SerialProtocol;
-
-    initConnections();
-
     m_pSettingsDialog = new SettingsDialog(this);
+    initConnections();
     loadSettings();
 
     if (m_settings.value("autoConnect", false).toBool())
-    {
         openSerialPort();
-    }
 }
 
 MainWindow::~MainWindow()
@@ -52,12 +48,12 @@ void MainWindow::closeSerialPort()
     ui->actionDisconnect->setEnabled(false);
 }
 
-void MainWindow::writeData(const QByteArray& data)
+void MainWindow::writePacket(command& packet)
 {
-    m_pSerial->writeData(data);
+    m_pSerial->writePacket(packet);
 }
 
-void MainWindow::receiveData(const QByteArray& data)
+void MainWindow::receivePacket(command& packet)
 {
 
 }

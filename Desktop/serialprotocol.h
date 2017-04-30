@@ -7,6 +7,8 @@
 #include <QSettings>
 #include <QLinkedList>
 
+#include "serialpacketdefinition.h"
+
 class SerialProtocol : public QObject
 {
     Q_OBJECT
@@ -21,16 +23,13 @@ public:
     bool openSerialPort();
     void closeSerialPort();
 
-    void writeData(const QByteArray& data); //encodes data then sends it
-    void writeData(const QVector<uchar>& data);
-
-    const uchar* convertByteArray(const QByteArray& data);
+    void writePacket(const command& packet);
 
     QSerialPort* serial;
 
 signals:
-    void packetReady(const QByteArray& data);
-    void statusMessage(QString message);
+    void packetReady(const command& packet);
+    void statusMessage(const QString& message);
     void disconnected();
 
 private slots:
@@ -38,9 +37,9 @@ private slots:
     void handleError(QSerialPort::SerialPortError error);
 
 private:
-    uchar startflag, endflag, escapeflag, xorflag;
+    quint16 decodeQuint16(const QByteArray& data, int i);
 
-    uint32_t totalPackets, failedPackets;
+    uchar startflag, endflag, escapeflag, xorflag, datasep;
 
     QSettings m_settings;
     QByteArray m_buffer;
