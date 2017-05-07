@@ -16,23 +16,32 @@ bool SerialBus::begin(unsigned long baud) {
 
 void SerialBus::send_command(command &cmd) const {
   // Send the command over serial
-  const uint8_t length = 6 + cmd.countFlags();
   Buffer buf;
 
   // Append startflag
   buf.append(startflag);
 
-  // Append length
-  appendEscape(buf, length);
+  // Append length (later)
+  buf.skip(1);
+  // WHAT IF LENGTH NEEDS TO BE ESCAPED???
+  // I need to make a method to insert something while pushing everything else
+  // down below in the queue but not what's before
 
   // Append command
   appendEscape(buf, static_cast<uint8_t>(cmd.type));
   appendEscape(buf, cmd.value);
 
+  // Append crc (computed on data only)
+  appendEscape(buf, CRC::compute(buf.mid(), buf.size()));
+
   // Append endflag
   buf.append(endflag);
 
-  m_serial.write(buf.data(), length);
+  // Append length
+  buf.write(buf.size(), 1);
+
+  // Write to serial output
+  m_serial.write(buf.data(), buf.size());
 }
 
 void SerialBus::receive() {
@@ -42,7 +51,13 @@ void SerialBus::receive() {
   uint8_t rcByte;
   while (m_serial.available() > 0) {
     rcByte = m_serial.read();
+    m_buffer.append(rcByte);
     // m_buffer[m_iBuffer++] = rcByte;
+  }
+
+  if (!m_buffer.contains(startflag)) {
+    m_buffer.clear();
+    return;
   }
 }
 

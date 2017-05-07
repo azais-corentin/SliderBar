@@ -167,12 +167,22 @@ void SerialProtocol::readData()
         return;
     }
 
+    // Check for CRC
+    i = m_buffer.size() - 2;
+    uint8_t crc_received = decode(m_buffer, i);
+    uint8_t crc_computed = CRC::compute(m_buffer, static_cast<uint8_t>(m_buffer.size() - 1));
+
+    qDebug() << crc_received;
+    qDebug() << crc_computed;
+
+
     // Decode packet data
     //qDebug() << "First i:" << i;
     QByteArray data = m_buffer.mid(i, 3);
     foreach (char ch, data)
     {
-        qDebug() << QString::number(static_cast<uint8_t>(ch), 16);
+        qDebug()
+                << QString::number(static_cast<uint8_t>(ch), 16);
     }
     qDebug() << data;
     command received;
@@ -202,4 +212,27 @@ void SerialProtocol::handleError(QSerialPort::SerialPortError error)
             emit statusMessage(QStringLiteral("Serial port error: %1").arg(serial->errorString()));
             break;
     }
+}
+
+uint8_t SerialProtocol::decode8(const QByteArray& packet, int& i)
+{
+    if (isFlag(static_cast<uint8_t>(packet.at(i++))))
+        return static_cast<uint8_t>(packet.at(i++)) ^ xorflag;
+    return static_cast<uint8_t>(packet.at(i - 1));
+}
+
+uint16_t SerialProtocol::decode16(const QByteArray& packet, int& i)
+{
+    uint8_t b1, b2;
+    if (isFlag(static_cast<uint8_t>(packet.at(i++))))
+        b1 = static_cast<uint8_t>(packet.at(i++)) ^ xorflag;
+    else
+        b1 = static_cast<uint8_t>(packet.at(i - 1));
+
+    if (isFlag(static_cast<uint8_t>(packet.at(i++))))
+        b2 = static_cast<uint8_t>(packet.at(i++)) ^ xorflag;
+    else
+        b2 = static_cast<uint8_t>(packet.at(i - 1));
+
+    return static_cast<uint16_t>((b1 << 8) | (b2 & 0xff));
 }

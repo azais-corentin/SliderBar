@@ -40,6 +40,11 @@ private:
 
     QSettings m_settings;
     QByteArray m_buffer;
+
+    bool isFlag(uint8_t ch) { return ch == startflag | ch == endflag | ch == escapeflag; }
+
+    uint8_t decode8(const QByteArray& packet, int& i);
+    uint16_t decode16(const QByteArray& packet, int& i);
 };
 
 #endif // SERIALPROTOCOL_H

@@ -1,6 +1,7 @@
 #include "Buffer.h"
 
 Buffer::Buffer() {
+  m_iBuffer = 0;
   for (int i = 0; i < BUFFER_SIZE; i++)
     m_buffer[i] = 0;
 }
