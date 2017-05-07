@@ -29,7 +29,7 @@ private slots:
     void openSerialPort();
     void closeSerialPort();
     void writePacket(command& packet);
-    void receivePacket(command& packet);
+    void receivePacket(const command& packet);
 
     int showConfiguration();
 

@@ -3,12 +3,14 @@
 #include <SerialBus.h>
 #include <Slider.h>
 
-SerialBus bus(Serial, 115200);
+#include <math.h>
+
+SerialBus bus(Serial);
 
 void receive_data(command cmd);
 
 void setup() {
-  // bus.begin();
+  bus.begin(115200);
   bus.set_receiver(receive_data);
 }
 
@@ -24,13 +26,17 @@ void receive_data(command cmd) {
   }
 }
 
+uint64_t ilol = 0;
+
 void loop() {
   // bus.receive();
   // bus.receive(1000);
   // slider.update()
 
   command cmd;
-  cmd.type = command::FORS_POSITION;
-  cmd.value = (uint16_t)50. / 655.36;
+  cmd.type = command::FORC_POSITION;
+  cmd.value = (uint16_t)(fmod(ilol / 10., 100) * 655.36 + 1);
   bus.send_command(cmd);
+  delay(50);
+  ilol++;
 }

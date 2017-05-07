@@ -18,7 +18,7 @@ uint16_t Buffer::at16(int i) {
   if ((i + 1) >= BUFFER_SIZE || i < 0)
     return 0;
 
-  return m_buffer[i] << 8 | m_buffer[i + 1];
+  return static_cast<uint16_t>(m_buffer[i] << 8 | m_buffer[i + 1]);
 }
 
 void Buffer::clear() {
@@ -32,6 +32,7 @@ bool Buffer::append(uint8_t ch) {
     return false; // buffer is full
 
   m_buffer[m_iBuffer++] = ch;
+  return true;
 }
 
 bool Buffer::append16(uint16_t ch) {
@@ -40,6 +41,7 @@ bool Buffer::append16(uint16_t ch) {
 
   m_buffer[m_iBuffer++] = static_cast<uint8_t>(ch >> 8);
   m_buffer[m_iBuffer++] = static_cast<uint8_t>(ch);
+  return true;
 }
 
 bool Buffer::write(uint8_t ch, int i) {

@@ -5,43 +5,29 @@ uint8_t endflag = 0x13;
 uint8_t escapeflag = 0x7D;
 uint8_t xorflag = 0x20;
 
-SerialBus::SerialBus(HardwareSerial &serial, unsigned long baud)
-    : m_serial(serial) {
-  m_serial.begin(baud);
-}
+SerialBus::SerialBus(HardwareSerial &serial) : m_serial(serial) {}
 
 SerialBus::~SerialBus() {}
 
+bool SerialBus::begin(unsigned long baud) {
+  m_serial.begin(baud);
+  return true;
+}
+
 void SerialBus::send_command(command &cmd) const {
   // Send the command over serial
-  const uint8_t length = 5 + cmd.countFlags();
+  const uint8_t length = 6 + cmd.countFlags();
   Buffer buf;
 
   // Append startflag
   buf.append(startflag);
 
-  // Append type
-  if (command::isFlag(cmd.type)) {
-    buf.append(escapeflag);
-    buf.append(cmd.type ^ xorflag);
-  } else
-    buf.append(cmd.type);
-  uint8_t byte1 = static_cast<uint8_t>(cmd.value >> 8);
-  uint8_t byte2 = static_cast<uint8_t>(cmd.value);
+  // Append length
+  appendEscape(buf, length);
 
-  // Append byte1
-  if (command::isFlag(byte1)) {
-    buf.append(escapeflag);
-    buf.append(byte1 ^ xorflag);
-  } else
-    buf.append(byte1);
-
-  // Append byte2
-  if (command::isFlag(byte2)) {
-    buf.append(escapeflag);
-    buf.append(byte2 ^ xorflag);
-  } else
-    buf.append(byte2);
+  // Append command
+  appendEscape(buf, static_cast<uint8_t>(cmd.type));
+  appendEscape(buf, cmd.value);
 
   // Append endflag
   buf.append(endflag);
@@ -58,4 +44,28 @@ void SerialBus::receive() {
     rcByte = m_serial.read();
     // m_buffer[m_iBuffer++] = rcByte;
   }
+}
+
+void SerialBus::appendEscape(Buffer &buf, uint8_t data) const {
+  if (command::isFlag(data)) {
+    buf.append(escapeflag);
+    buf.append(data ^ xorflag);
+  } else
+    buf.append(data);
+}
+
+void SerialBus::appendEscape(Buffer &buf, uint16_t data) const {
+  // Append first byte
+  if (command::isFlag(static_cast<uint8_t>(data >> 8))) {
+    buf.append(escapeflag);
+    buf.append(static_cast<uint8_t>(data >> 8) ^ xorflag);
+  } else
+    buf.append(static_cast<uint8_t>(data >> 8));
+
+  // Append second byte
+  if (command::isFlag(static_cast<uint8_t>(data))) {
+    buf.append(escapeflag);
+    buf.append(static_cast<uint8_t>(data) ^ xorflag);
+  } else
+    buf.append(static_cast<uint8_t>(data));
 }

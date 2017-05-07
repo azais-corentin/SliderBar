@@ -5,7 +5,6 @@
 #include <QByteArray>
 #include <QSerialPort>
 #include <QSettings>
-#include <QLinkedList>
 
 #include "serialpacketdefinition.h"
 
@@ -37,8 +36,6 @@ private slots:
     void handleError(QSerialPort::SerialPortError error);
 
 private:
-    quint16 decodeQuint16(const QByteArray& data, int i);
-
     uchar startflag, endflag, escapeflag, xorflag;
 
     QSettings m_settings;

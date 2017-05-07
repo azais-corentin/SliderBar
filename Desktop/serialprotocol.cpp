@@ -92,7 +92,7 @@ void SerialProtocol::writePacket(const command& packet)
     packetBytes.append(static_cast<uint8_t>(packet.type));
 
     QByteArray packetData;
-    quint16 length = static_cast<quint16>(1 + 2 + packetBytes.size()
+    uint8_t length = static_cast<uint8_t>(1 + 2 + packetBytes.size()
             + packetBytes.count(static_cast<char>(startflag))
             + packetBytes.count(static_cast<char>(endflag))
             + packetBytes.count(static_cast<char>(escapeflag)) + 1);
@@ -104,7 +104,7 @@ void SerialProtocol::writePacket(const command& packet)
     packetData[i++] = static_cast<char>(startflag);
 
     // Add length
-    packetData[i++] = static_cast<char>(length >> 8);
+    //packetData[i++] = static_cast<char>(length >> 8);
     packetData[i++] = static_cast<char>(length);
     //packet.replace(i, 2, QString::number(length, 16).toLatin1());
 
@@ -114,7 +114,7 @@ void SerialProtocol::writePacket(const command& packet)
         if (packetBytes.at(di) == startflag || packetBytes.at(di) == endflag || packetBytes.at(di) == escapeflag)
         {
             packetData[i++] = static_cast<char>(escapeflag);
-            packetData[i++] = static_cast<char>(uData[di] ^ xorflag);
+            packetData[i++] = static_cast<char>(packetBytes.at(di) ^ xorflag);
         }
         else
             packetData[i++] = packetBytes.at(di);
@@ -146,15 +146,20 @@ void SerialProtocol::readData()
         m_buffer.clear();
         return;
     }
-    m_buffer = m_buffer.mid(m_buffer.indexOf(static_cast<char>(startflag)));
+
+    m_buffer = m_buffer.mid(m_buffer.lastIndexOf(static_cast<char>(startflag)));
 
     if (!m_buffer.contains(static_cast<char>(endflag)))
+    {
         return;
+    }
 
     m_buffer = m_buffer.left(m_buffer.indexOf(static_cast<char>(endflag)) + 1);
     int i = 1;
-    quint16 length = decode(m_buffer, i);
+    uint8_t length = decode(m_buffer, i);
     //quint16 length2 = static_cast<quint16>(m_buffer.at(1) << 8 | m_buffer.at(2));
+    //qDebug() << m_buffer.size();
+    //qDebug() << length;
     if (m_buffer.size() != length)
     {
         qDebug() << "Size mismatch!";
@@ -163,11 +168,16 @@ void SerialProtocol::readData()
     }
 
     // Decode packet data
-    QByteArray data = m_buffer.mid(3, m_buffer.size() - 4);
+    //qDebug() << "First i:" << i;
+    QByteArray data = m_buffer.mid(i, 3);
+    foreach (char ch, data)
+    {
+        qDebug() << QString::number(static_cast<uint8_t>(ch), 16);
+    }
+    qDebug() << data;
     command received;
 
     i = 0;
-    decode(data, i);
     received.type = static_cast<command::command_type>(static_cast<uint8_t>(decode(data, i)));
     received.value = decode(data, i);
 

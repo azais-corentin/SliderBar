@@ -53,9 +53,18 @@ void MainWindow::writePacket(command& packet)
     m_pSerial->writePacket(packet);
 }
 
-void MainWindow::receivePacket(command& packet)
+void MainWindow::receivePacket(const command& packet)
 {
-
+    switch (packet.type)
+    {
+        case command::FORC_POSITION:
+            ui->progressBar->setValue(packet.value / 655.36);
+            qDebug() << "Slider position:" << packet.value / 655.36;
+            break;
+        default:
+            qDebug() << "Error: Packet not meant for computer!";
+            break;
+    }
 }
 
 int MainWindow::showConfiguration()
@@ -87,7 +96,7 @@ void MainWindow::initConnections()
 
     connect(m_pSerial, &SerialProtocol::statusMessage, this, &MainWindow::showStatusMessage);
     connect(m_pSerial, &SerialProtocol::disconnected, this, &MainWindow::closeSerialPort);
-    connect(m_pSerial, &SerialProtocol::packetReady, this, &MainWindow::receiveData);
+    connect(m_pSerial, &SerialProtocol::packetReady, this, &MainWindow::receivePacket);
 }
 
 void MainWindow::showStatusMessage(const QString& message)
