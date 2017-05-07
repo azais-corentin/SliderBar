@@ -7,14 +7,16 @@ typedef struct
 {
     enum command_type : uint8_t
     {
+        /// FOR SLIDER
         // From Computer to Slider
-        FORS_POSITION = 0x01,
-        FORS_SPEED = 0x02,
+        FORS_POSITION = 0x01, // uint16_t position, 655536/100m
+        FORS_SPEED = 0x02,    // uint16_t speed, m/s
         FORS_VIBRATE = 0x03,
 
         FORS_RESIST_AT = 0x04,
         FORS_RESIST_CLEAR = 0x05,
 
+        /// FOR COMPUTER
         // From Slider to Computer
         FORC_POSITION = 0x80
     };

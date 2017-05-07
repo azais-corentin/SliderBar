@@ -39,7 +39,7 @@ private slots:
 private:
     quint16 decodeQuint16(const QByteArray& data, int i);
 
-    uchar startflag, endflag, escapeflag, xorflag, datasep;
+    uchar startflag, endflag, escapeflag, xorflag;
 
     QSettings m_settings;
     QByteArray m_buffer;

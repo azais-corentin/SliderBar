@@ -36,7 +36,6 @@ void SerialProtocol::loadSettings()
     endflag = static_cast<uchar>(m_settings.value("serial/protocol/endflag", 0x13).toInt());
     escapeflag = static_cast<uchar>(m_settings.value("serial/protocol/escapeflag", 0x7D).toInt());
     xorflag = static_cast<uchar>(m_settings.value("serial/protocol/xorflag", 0x20).toInt());
-    datasep = static_cast<uchar>(m_settings.value("serial/protocol/datasep", 0x1D).toInt());
 
     serial->setPortName(m_settings.value("serial/portname", "COM1").toString());
     serial->setBaudRate(static_cast<QSerialPort::BaudRate>(
