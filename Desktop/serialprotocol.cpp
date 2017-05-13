@@ -6,7 +6,7 @@
 
 #include "serialpacketdefinition.h"
 
-#define MAX_PACKET_SIZE 1024
+#define MAX_PACKET_SIZE 10
 
 SerialProtocol::SerialProtocol()
 {
@@ -32,10 +32,10 @@ void SerialProtocol::initConnections()
 
 void SerialProtocol::loadSettings()
 {
-    startflag = static_cast<uchar>(m_settings.value("serial/protocol/startflag", 0x12).toInt());
-    endflag = static_cast<uchar>(m_settings.value("serial/protocol/endflag", 0x13).toInt());
-    escapeflag = static_cast<uchar>(m_settings.value("serial/protocol/escapeflag", 0x7D).toInt());
-    xorflag = static_cast<uchar>(m_settings.value("serial/protocol/xorflag", 0x20).toInt());
+    startflag = static_cast<uint8_t>(m_settings.value("serial/protocol/startflag", 0x12).toInt());
+    endflag = static_cast<uint8_t>(m_settings.value("serial/protocol/endflag", 0x13).toInt());
+    escapeflag = static_cast<uint8_t>(m_settings.value("serial/protocol/escapeflag", 0x7D).toInt());
+    xorflag = static_cast<uint8_t>(m_settings.value("serial/protocol/xorflag", 0x20).toInt());
 
     serial->setPortName(m_settings.value("serial/portname", "COM1").toString());
     serial->setBaudRate(static_cast<QSerialPort::BaudRate>(
@@ -82,50 +82,39 @@ void SerialProtocol::closeSerialPort()
 
 void SerialProtocol::writePacket(const command& packet)
 {
-    /// Packet structure:
     /// http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
-    /// [0]         startflag
-    /// [1,2]       x (length)
-    /// [3,..,x-1]  data
-    /// [x]         endflag
+    /// Packet structure / protocol framing:
+    /// name:       byte(s)     escaped
+    /// -------------------------------
+    /// startflag:  1           false
+    /// data:       3 to 6      true
+    /// CRC:        1 to 2      true
+    /// endflag:    1           false
+
+    // Compute CRC on unescaped packet bytes
     QByteArray packetBytes;
-    packetBytes.append(static_cast<uint8_t>(packet.type));
+    packetBytes.append(static_cast<char>(static_cast<uint8_t>(packet.type)));
+    packetBytes.append(static_cast<char>(static_cast<uint8_t>(packet.value >> 8)));
+    packetBytes.append(static_cast<char>(static_cast<uint8_t>(packet.value)));
+    uint8_t crc = CRC::compute(packetBytes, 3);
 
     QByteArray packetData;
-    uint8_t length = static_cast<uint8_t>(1 + 2 + packetBytes.size()
-            + packetBytes.count(static_cast<char>(startflag))
-            + packetBytes.count(static_cast<char>(endflag))
-            + packetBytes.count(static_cast<char>(escapeflag)) + 1);
-    packetData.resize(length);
-    int i = 0, di = 0;
+    int i = 0;
 
     // Add startflag
-    //encode(packet, i, data);
-    packetData[i++] = static_cast<char>(startflag);
-
-    // Add length
-    //packetData[i++] = static_cast<char>(length >> 8);
-    packetData[i++] = static_cast<char>(length);
-    //packet.replace(i, 2, QString::number(length, 16).toLatin1());
-
+    encode8(packetData, i, startflag, false);
     // Add data
-    while (di < packetBytes.size())
-    {
-        if (packetBytes.at(di) == startflag || packetBytes.at(di) == endflag || packetBytes.at(di) == escapeflag)
-        {
-            packetData[i++] = static_cast<char>(escapeflag);
-            packetData[i++] = static_cast<char>(packetBytes.at(di) ^ xorflag);
-        }
-        else
-            packetData[i++] = packetBytes.at(di);
-        di++;
-    }
-
+    encode8(packetData, i, static_cast<uint8_t>(packet.type));
+    encode16(packetData, i, packet.value);
+    // Add CRC
+    encode8(packetData, i, crc);
     // Add endflag
-    packetData[i] = static_cast<char>(endflag);
+    encode8(packetData, i, endflag, false);
 
     // Send data
     serial->write(packetData);
+
+    // Debug output
     foreach (char ch, packetData)
     {
         qDebug() << QString::number(static_cast<uchar>(ch), 16);
@@ -134,7 +123,7 @@ void SerialProtocol::writePacket(const command& packet)
 
 void SerialProtocol::readData()
 {
-    if (m_buffer.size() > MAX_PACKET_SIZE)
+    if (m_buffer.size() >= MAX_PACKET_SIZE)
     {
         m_buffer.clear();
         qDebug() << "Buffer is full! Clearing.";
@@ -147,49 +136,48 @@ void SerialProtocol::readData()
         return;
     }
 
+    // Makes sure buffer starts with the startflag
     m_buffer = m_buffer.mid(m_buffer.lastIndexOf(static_cast<char>(startflag)));
 
+    // Wait for the endflag
     if (!m_buffer.contains(static_cast<char>(endflag)))
-    {
         return;
-    }
 
+    // Makes sure buffer ends with the first endflag
     m_buffer = m_buffer.left(m_buffer.indexOf(static_cast<char>(endflag)) + 1);
-    int i = 1;
-    uint8_t length = decode(m_buffer, i);
-    //quint16 length2 = static_cast<quint16>(m_buffer.at(1) << 8 | m_buffer.at(2));
-    //qDebug() << m_buffer.size();
-    //qDebug() << length;
-    if (m_buffer.size() != length)
-    {
-        qDebug() << "Size mismatch!";
-        m_buffer.clear();
-        return;
-    }
 
-    // Check for CRC
-    i = m_buffer.size() - 2;
-    uint8_t crc_received = decode(m_buffer, i);
-    uint8_t crc_computed = CRC::compute(m_buffer, static_cast<uint8_t>(m_buffer.size() - 1));
+    // Packets is complete. Extracts data and CRC
+    QByteArray data = m_buffer.mid(1);
+    data.chop(1);
+    int i = 0;
+    QByteArray receivedBytes;
+
+    // Extracts data & CRC
+    uint8_t type = decode8(data, i);
+    uint16_t value = decode16(data, i);
+    uint8_t crc_received = decode8(data, i);
+
+    // Verify CRC
+    i = 0;
+    encode8(receivedBytes, i, type, false);
+    encode16(receivedBytes, i, value, false);
+    uint8_t crc_computed = CRC::compute(receivedBytes, 3);
 
     qDebug() << crc_received;
     qDebug() << crc_computed;
 
-
-    // Decode packet data
-    //qDebug() << "First i:" << i;
-    QByteArray data = m_buffer.mid(i, 3);
-    foreach (char ch, data)
+    if (crc_computed != crc_received)
     {
-        qDebug()
-                << QString::number(static_cast<uint8_t>(ch), 16);
+        qDebug() << "CRC Mismatch !";
+        m_buffer.clear();
+        return;
     }
-    qDebug() << data;
-    command received;
 
-    i = 0;
-    received.type = static_cast<command::command_type>(static_cast<uint8_t>(decode(data, i)));
-    received.value = decode(data, i);
+
+    // Emit received data
+    command received;
+    received.type = static_cast<command::command_type>(type);
+    received.value = value;
 
     emit packetReady(received);
     m_buffer.clear();
@@ -224,15 +212,25 @@ uint8_t SerialProtocol::decode8(const QByteArray& packet, int& i)
 uint16_t SerialProtocol::decode16(const QByteArray& packet, int& i)
 {
     uint8_t b1, b2;
-    if (isFlag(static_cast<uint8_t>(packet.at(i++))))
-        b1 = static_cast<uint8_t>(packet.at(i++)) ^ xorflag;
-    else
-        b1 = static_cast<uint8_t>(packet.at(i - 1));
-
-    if (isFlag(static_cast<uint8_t>(packet.at(i++))))
-        b2 = static_cast<uint8_t>(packet.at(i++)) ^ xorflag;
-    else
-        b2 = static_cast<uint8_t>(packet.at(i - 1));
+    b1 = decode8(packet, i);
+    b2 = decode8(packet, i);
 
     return static_cast<uint16_t>((b1 << 8) | (b2 & 0xff));
+}
+
+void SerialProtocol::encode8(QByteArray& packet, int& i, const uint8_t& ch, bool escape)
+{
+    if (escape && isFlag(ch))
+    {
+        packet[i++] = static_cast<char>(escapeflag);
+        packet[i++] = static_cast<char>(ch ^ xorflag);
+        return;
+    }
+    packet[i++] = static_cast<char>(ch);
+}
+
+void SerialProtocol::encode16(QByteArray& packet, int& i, const uint16_t& ch, bool escape)
+{
+    encode8(packet, i, static_cast<uint8_t>(ch >> 8), escape);
+    encode8(packet, i, static_cast<uint8_t>(ch), escape);
 }

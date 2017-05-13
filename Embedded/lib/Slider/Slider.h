@@ -2,14 +2,14 @@
 #define SLIDER_H
 
 class Slider {
-private:
-  /* data */
+  private:
+    /* data */
 
-public:
-  Slider();
-  virtual ~Slider ();
+  public:
+    Slider();
+    virtual ~Slider();
 
-  void update();
+    void update();
 };
 
 #endif // SLIDER_H

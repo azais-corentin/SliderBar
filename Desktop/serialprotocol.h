@@ -36,7 +36,7 @@ private slots:
     void handleError(QSerialPort::SerialPortError error);
 
 private:
-    uchar startflag, endflag, escapeflag, xorflag;
+    uint8_t startflag, endflag, escapeflag, xorflag;
 
     QSettings m_settings;
     QByteArray m_buffer;
@@ -45,6 +45,9 @@ private:
 
     uint8_t decode8(const QByteArray& packet, int& i);
     uint16_t decode16(const QByteArray& packet, int& i);
+
+    void encode8(QByteArray& packet, int& i, const uint8_t& ch, bool escape = true);
+    void encode16(QByteArray& packet, int& i, const uint16_t& ch, bool escape = true);
 };
 
 #endif // SERIALPROTOCOL_H

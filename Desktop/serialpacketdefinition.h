@@ -47,18 +47,4 @@ typedef struct
     uint16_t value;
 } command;
 
-struct encode
-{
-    union
-    {
-        uint8_t u8;
-        uint16_t u16;
-    };
-    QByteArray m_packet;
-    int& m_i;
-    encode(const QByteArray& packet, int& i) : m_packet(packet), m_i(i) {}
-    operator uint8_t() { return 8; }
-    operator uint16_t() { return 16; }
-};
-
 #endif // SERIALPACKETDEFINITION_H

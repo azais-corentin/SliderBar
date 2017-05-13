@@ -160,13 +160,13 @@ void SettingsDialog::saveSettings()
 
     // Save serial protocol configuration
     m_Settings.setValue("serial/protocol/startflag",
-        static_cast<uchar>(ui->eStartflag->text().right(2).toInt(nullptr, 16)));
+        static_cast<uint8_t>(ui->eStartflag->text().right(2).toInt(nullptr, 16)));
     m_Settings.setValue("serial/protocol/endflag",
-        static_cast<uchar>(ui->eEndflag->text().right(2).toInt(nullptr, 16)));
+        static_cast<uint8_t>(ui->eEndflag->text().right(2).toInt(nullptr, 16)));
     m_Settings.setValue("serial/protocol/escapeflag",
-        static_cast<uchar>(ui->eEscapeflag->text().right(2).toInt(nullptr, 16)));
+        static_cast<uint8_t>(ui->eEscapeflag->text().right(2).toInt(nullptr, 16)));
     m_Settings.setValue("serial/protocol/xorflag",
-        static_cast<uchar>(ui->eXORFlag->text().right(2).toInt(nullptr, 16)));
+        static_cast<uint8_t>(ui->eXORFlag->text().right(2).toInt(nullptr, 16)));
 }
 
 void SettingsDialog::loadSettings()
@@ -199,14 +199,12 @@ void SettingsDialog::loadSettings()
     ui->eAutoconnect->setChecked(m_Settings.value("serial/autoconnect", false).toBool());
 
     // Loads serial protocol information
-    qDebug() << QString::number(
-            static_cast<uchar>(m_Settings.value("serial/protocol/startflag", 0x12).toInt()), 16);
     ui->eStartflag->setText(QStringLiteral("0x") + QString::number(
-            static_cast<uchar>(m_Settings.value("serial/protocol/startflag", 0x12).toInt()), 16));
+            static_cast<uint8_t>(m_Settings.value("serial/protocol/startflag", 0x12).toInt()), 16));
     ui->eEndflag->setText(QStringLiteral("0x") + QString::number(
-            static_cast<uchar>(m_Settings.value("serial/protocol/endflag", 0x13).toInt()), 16));
+            static_cast<uint8_t>(m_Settings.value("serial/protocol/endflag", 0x13).toInt()), 16));
     ui->eEscapeflag->setText(QStringLiteral("0x") + QString::number(
-            static_cast<uchar>(m_Settings.value("serial/protocol/escapeflag", 0x7D).toInt()), 16));
+            static_cast<uint8_t>(m_Settings.value("serial/protocol/escapeflag", 0x7D).toInt()), 16));
     ui->eXORFlag->setText(QStringLiteral("0x") + QString::number(
-            static_cast<uchar>(m_Settings.value("serial/protocol/xorflag", 0x20).toInt()), 16));
+            static_cast<uint8_t>(m_Settings.value("serial/protocol/xorflag", 0x20).toInt()), 16));
 }

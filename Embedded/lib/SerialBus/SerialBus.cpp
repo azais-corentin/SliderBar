@@ -10,77 +10,98 @@ SerialBus::SerialBus(HardwareSerial &serial) : m_serial(serial) {}
 SerialBus::~SerialBus() {}
 
 bool SerialBus::begin(unsigned long baud) {
-  m_serial.begin(baud);
-  return true;
+    m_serial.begin(baud);
+    return true;
 }
 
 void SerialBus::send_command(command &cmd) const {
-  // Send the command over serial
-  Buffer buf;
+    /// http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
+    /// Packet structure / protocol framing:
+    /// name:       byte(s)     escaped
+    /// -------------------------------
+    /// startflag:  1           false
+    /// data:       3 to 6      true
+    /// CRC:        1 to 2      true
+    /// endflag:    1           false
 
-  // Append startflag
-  buf.append(startflag);
+    // Compute CRC on unescaped packet bytes
+    Buffer packetBytes;
+    encode8(packetBytes, static_cast<uint8_t>(cmd.type), false);
+    encode16(packetBytes, cmd.value, false);
+    uint8_t crc = CRC::compute(packetBytes.data(), 3);
 
-  // Append length (later)
-  buf.skip(1);
-  // WHAT IF LENGTH NEEDS TO BE ESCAPED???
-  // I need to make a method to insert something while pushing everything else
-  // down below in the queue but not what's before
+    Buffer packet;
+    // Add startflag
+    encode8(packet, startflag, false);
+    // Add data
+    encode8(packet, static_cast<uint8_t>(cmd.type));
+    encode16(packet, cmd.value);
+    // Add crc
+    encode8(packet, crc);
+    // Add endflag
+    encode8(packet, endflag, false);
 
-  // Append command
-  appendEscape(buf, static_cast<uint8_t>(cmd.type));
-  appendEscape(buf, cmd.value);
-
-  // Append crc (computed on data only)
-  appendEscape(buf, CRC::compute(buf.mid(), buf.size()));
-
-  // Append endflag
-  buf.append(endflag);
-
-  // Append length
-  buf.write(buf.size(), 1);
-
-  // Write to serial output
-  m_serial.write(buf.data(), buf.size());
+    // Send data
+    m_serial.write(packet.data(), packet.size());
 }
 
 void SerialBus::receive() {
-  if (!m_serial.available() > 0)
-    return;
+    if (!m_serial.available() > 0)
+        return;
 
-  uint8_t rcByte;
-  while (m_serial.available() > 0) {
-    rcByte = m_serial.read();
-    m_buffer.append(rcByte);
-    // m_buffer[m_iBuffer++] = rcByte;
-  }
+    if (m_buffer.size() >= MAX_BUFFER_SIZE)
+        m_buffer.clear();
 
-  if (!m_buffer.contains(startflag)) {
-    m_buffer.clear();
-    return;
-  }
+    // Read available data
+    while (m_serial.available() > 0)
+        m_buffer.append(m_serial.read());
+
+    // Makes sure buffer contains the startflag
+    if (!m_buffer.contains(startflag)) {
+        m_buffer.clear();
+        return;
+    }
+
+    // Makes sure buffer starts with the startflag
+    m_buffer = m_buffer.mid(m_buffer.lastIndexOf(startflag));
+
+    // Wait for the endflag
+    if (!m_buffer.contains(endflag))
+        return;
+
+    // Makes sure buffer ends with the first endflag
+    m_buffer = m_buffer.left(m_buffer.indexOf(endflag) + 1);
+
+    Buffer data = m_buffer.mid(1);
+    data.chop(1);
+
+    command received;
+    received.type = static_cast<command::command_type>(data.at8(0));
+    // received.value = data.at8(1);
 }
 
-void SerialBus::appendEscape(Buffer &buf, uint8_t data) const {
-  if (command::isFlag(data)) {
-    buf.append(escapeflag);
-    buf.append(data ^ xorflag);
-  } else
-    buf.append(data);
+void SerialBus::encode8(Buffer &packet, uint8_t data, bool escape) {
+    if (escape && command::isFlag(data)) {
+        packet.append(escapeflag);
+        packet.append(data ^ xorflag);
+    } else
+        packet.append(data);
 }
 
-void SerialBus::appendEscape(Buffer &buf, uint16_t data) const {
-  // Append first byte
-  if (command::isFlag(static_cast<uint8_t>(data >> 8))) {
-    buf.append(escapeflag);
-    buf.append(static_cast<uint8_t>(data >> 8) ^ xorflag);
-  } else
-    buf.append(static_cast<uint8_t>(data >> 8));
+void SerialBus::encode16(Buffer &packet, uint16_t data, bool escape) {
+    encode8(packet, static_cast<uint8_t>(data >> 8), escape);
+    encode8(packet, static_cast<uint8_t>(data), escape);
+}
 
-  // Append second byte
-  if (command::isFlag(static_cast<uint8_t>(data))) {
-    buf.append(escapeflag);
-    buf.append(static_cast<uint8_t>(data) ^ xorflag);
-  } else
-    buf.append(static_cast<uint8_t>(data));
+uint8_t SerialBus::decode8(const Buffer &packet, int &i) {
+    if (command::isFlag(packet.at8(i++)))
+        return packet.at8(i++) ^ xorflag;
+    return packet.at8(i - 1);
+}
+uint16_t SerialBus::decode16(const Buffer &packet, int &i) {
+    uint8_t b1, b2;
+    b1 = decode8(packet, i);
+    b2 = decode8(packet, i);
+
+    return static_cast<uint16_t>((b1 << 8) | (b2 & 0xff));
 }
