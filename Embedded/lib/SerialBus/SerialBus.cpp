@@ -56,10 +56,6 @@ void SerialBus::receivePacket() {
     while (m_serial.available() > 0)
         m_buffer.append8(m_serial.read());
 
-    // m_serial.write(m_buffer.data(), m_buffer.size());
-    m_serial.print("Buffer size: ");
-    m_serial.println(m_buffer.size());
-
     // Makes sure buffer contains the startflag
     if (!m_buffer.contains(startflag)) {
         m_buffer.clear();
@@ -94,10 +90,6 @@ void SerialBus::receivePacket() {
         CRC::compute(receivedBytes.data(), receivedBytes.size());
 
     if (crc_computed != crc_received) {
-        m_serial.println("CRC: computed vs received");
-        m_serial.print(crc_computed);
-        m_serial.print("    ");
-        m_serial.print(crc_received);
         m_buffer.clear();
         return;
     }

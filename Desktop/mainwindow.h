@@ -7,6 +7,8 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QtSerialPort/QSerialPortInfo>
+#include <QElapsedTimer>
+#include <QQueue>
 
 #include "settingsdialog.h"
 #include "serialpacketdefinition.h"
@@ -47,6 +49,11 @@ private:
 
     Ui::MainWindow* ui;
     QLabel* m_pStatus;
+
+    int ipacket;
+
+    QElapsedTimer m_timerLatency;
+    float averageTime;
 
     SettingsDialog* m_pSettingsDialog;
     QSettings m_settings;

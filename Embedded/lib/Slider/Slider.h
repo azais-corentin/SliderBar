@@ -8,6 +8,8 @@ class Slider {
 
     void update();
 
+    void setPosition(float val);
+
   private:
 };
 

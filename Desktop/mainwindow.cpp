@@ -23,6 +23,9 @@ MainWindow::MainWindow(QWidget* parent) :
 
     if (m_settings.value("autoConnect", false).toBool())
         openSerialPort();
+
+    ipacket = 0;
+    averageTime = 0;
 }
 
 MainWindow::~MainWindow()
@@ -59,11 +62,27 @@ void MainWindow::writePacket(command& packet)
 
 void MainWindow::receivePacket(const command& packet)
 {
+    ipacket++;
+    if (ipacket > 50)
+    {
+        averageTime = 0.2f * float(m_timerLatency.nsecsElapsed()) / 1000000.f + 0.8f * averageTime;
+        qDebug() << averageTime / (2.f * 50.f);
+        ipacket = 0;
+        on_bSendPacket_clicked();
+    }
+    else
+    {
+        command packet;
+        packet.type = command::FORS_POSITION;
+        packet.value = static_cast<uint16_t>(25 * 655.36);
+        m_pSerial->writePacket(packet);
+    }
+
     switch (packet.type)
     {
         case command::FORC_POSITION:
             ui->progressBar->setValue(packet.value);
-            qDebug() << "Slider position:" << packet.value / 655.36;
+            //qDebug() << "Slider position:" << packet.value / 655.36;
             break;
         default:
             qDebug() << "Error: Packet not meant for computer!";
@@ -111,6 +130,7 @@ void MainWindow::showStatusMessage(const QString& message)
 
 void MainWindow::on_bSendPacket_clicked()
 {
+    m_timerLatency.start();
     command packet;
     packet.type = command::FORS_POSITION;
     packet.value = static_cast<uint16_t>(25 * 655.36);

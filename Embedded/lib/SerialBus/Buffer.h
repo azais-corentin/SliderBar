@@ -24,7 +24,7 @@ class Buffer {
 
     uint8_t size() { return m_iBuffer; };
     uint8_t count(uint8_t ch);
-    bool contains(uint8_t ch) { return count(ch) > 0; }
+    bool contains(uint8_t ch);
 
     int indexOf(uint8_t ch);
     int lastIndexOf(uint8_t ch);

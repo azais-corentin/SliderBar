@@ -34,14 +34,4 @@ void receive_data(command cmd) {
 void loop() {
     bus.receivePacket();
     slider.update();
-    // bus.receive(1000);
-    // slider.update()
-
-    /*command cmd;
-    cmd.type = command::FORC_POSITION;
-    cmd.value = (uint16_t)(fmod(ilol / 10., 100) * 655.36 + 1);
-    bus.sendPacket(cmd);
-    delay(50);
-    ilol++;
-    */
 }

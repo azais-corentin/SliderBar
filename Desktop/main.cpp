@@ -1,10 +1,9 @@
 #include "mainwindow.h"
 #include <QApplication>
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char *argv[]) {
     QCoreApplication::setOrganizationName("Nelsoft");
-    QCoreApplication::setApplicationName("SlideBar");
+    QCoreApplication::setApplicationName("SliderBar");
 
     QApplication a(argc, argv);
 

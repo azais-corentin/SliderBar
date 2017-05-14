@@ -79,6 +79,13 @@ uint8_t Buffer::count(uint8_t ch) {
     return cnt;
 }
 
+bool Buffer::contains(uint8_t ch) {
+    for (uint8_t i = 0; i < MAX_BUFFER_SIZE; i++)
+        if (m_buffer[i] == ch)
+            return true;
+    return false;
+}
+
 int Buffer::indexOf(uint8_t ch) {
     for (uint8_t i = 0; i < MAX_BUFFER_SIZE; i++)
         if (m_buffer[i] == ch)
