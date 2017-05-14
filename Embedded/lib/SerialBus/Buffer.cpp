@@ -35,7 +35,7 @@ void Buffer::clear() {
     m_iBuffer = 0;
 }
 
-bool Buffer::append(uint8_t ch) {
+bool Buffer::append8(uint8_t ch) {
     if (m_iBuffer >= MAX_BUFFER_SIZE)
         return false; // buffer is full
 
@@ -52,7 +52,7 @@ bool Buffer::append16(uint16_t ch) {
     return true;
 }
 
-bool Buffer::write(uint8_t ch, int i) {
+bool Buffer::write8(uint8_t ch, int i) {
     if (i >= MAX_BUFFER_SIZE || i < 0)
         return false;
     m_buffer[i++] = ch;

@@ -24,24 +24,25 @@ public:
 
     void writePacket(const command& packet);
 
-    QSerialPort* serial;
-
 signals:
     void packetReady(const command& packet);
     void statusMessage(const QString& message);
-    void disconnected();
+    void serialDisconnected();
+    void serialConnected();
 
 private slots:
     void readData(); //read data and emits packetReady() once a packet is totally received
     void handleError(QSerialPort::SerialPortError error);
 
 private:
+    QSerialPort* m_serial;
+
     uint8_t startflag, endflag, escapeflag, xorflag;
 
     QSettings m_settings;
     QByteArray m_buffer;
 
-    bool isFlag(uint8_t ch) { return ch == startflag | ch == endflag | ch == escapeflag; }
+    bool isFlag(uint8_t ch) { return (ch == startflag) | (ch == endflag) | (ch == escapeflag); }
 
     uint8_t decode8(const QByteArray& packet, int& i);
     uint16_t decode16(const QByteArray& packet, int& i);

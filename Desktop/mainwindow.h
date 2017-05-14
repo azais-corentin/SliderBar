@@ -28,10 +28,14 @@ public:
 private slots:
     void openSerialPort();
     void closeSerialPort();
+    void disableConnect();
+    void enableConnect();
     void writePacket(command& packet);
     void receivePacket(const command& packet);
 
     int showConfiguration();
+
+    void on_bSendPacket_clicked();
 
 private:
     void loadSettings();

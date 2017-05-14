@@ -10,7 +10,7 @@
 
 SerialProtocol::SerialProtocol()
 {
-    serial = new QSerialPort;
+    m_serial = new QSerialPort;
     m_buffer.clear();
 
     loadSettings();
@@ -19,15 +19,15 @@ SerialProtocol::SerialProtocol()
 
 SerialProtocol::~SerialProtocol()
 {
-    delete serial;
+    delete m_serial;
 }
 
 void SerialProtocol::initConnections()
 {
-    connect(serial, &QSerialPort::errorOccurred,
+    connect(m_serial, &QSerialPort::errorOccurred,
         this, &SerialProtocol::handleError);
 
-    connect(serial, &QSerialPort::readyRead, this, &SerialProtocol::readData);
+    connect(m_serial, &QSerialPort::readyRead, this, &SerialProtocol::readData);
 }
 
 void SerialProtocol::loadSettings()
@@ -37,47 +37,51 @@ void SerialProtocol::loadSettings()
     escapeflag = static_cast<uint8_t>(m_settings.value("serial/protocol/escapeflag", 0x7D).toInt());
     xorflag = static_cast<uint8_t>(m_settings.value("serial/protocol/xorflag", 0x20).toInt());
 
-    serial->setPortName(m_settings.value("serial/portname", "COM1").toString());
-    serial->setBaudRate(static_cast<QSerialPort::BaudRate>(
+    m_serial->setPortName(m_settings.value("serial/portname", "COM1").toString());
+    m_serial->setBaudRate(static_cast<QSerialPort::BaudRate>(
             m_settings.value("serial/baudrate", QSerialPort::Baud115200).toInt()),
         QSerialPort::AllDirections);
-    serial->setDataBits(static_cast<QSerialPort::DataBits>(
+    m_serial->setDataBits(static_cast<QSerialPort::DataBits>(
             m_settings.value("serial/databits", QSerialPort::Data8).toInt()));
-    serial->setParity(static_cast<QSerialPort::Parity>(
+    m_serial->setParity(static_cast<QSerialPort::Parity>(
             m_settings.value("serial/parity", QSerialPort::NoParity).toInt()));
-    serial->setStopBits(static_cast<QSerialPort::StopBits>(
+    m_serial->setStopBits(static_cast<QSerialPort::StopBits>(
             m_settings.value("serial/stopbits", QSerialPort::OneStop).toInt()));
-    serial->setFlowControl(static_cast<QSerialPort::FlowControl>(
+    m_serial->setFlowControl(static_cast<QSerialPort::FlowControl>(
             m_settings.value("serial/flowcontrol", QSerialPort::HardwareControl).toInt()));
 }
 
 bool SerialProtocol::openSerialPort()
 {
     loadSettings();
-    if (serial->isOpen())
+    if (m_serial->isOpen())
     {
         emit statusMessage(QStringLiteral("Serial port: Already connected!"));
+        emit serialConnected();
         return true;
     }
-    if (serial->open(QIODevice::ReadWrite))
+    if (m_serial->open(QIODevice::ReadWrite))
     {
-        serial->clear(QSerialPort::AllDirections);
-        emit statusMessage(QStringLiteral("Serial port: Connected to %1").arg(serial->portName()));
+        m_serial->clear(QSerialPort::AllDirections);
+        emit statusMessage(QStringLiteral("Serial port: Connected to %1").arg(m_serial->portName()));
+        emit serialConnected();
         return true;
     }
     else
     {
-        emit statusMessage(QStringLiteral("Serial port error: %1").arg(serial->errorString()));
+        emit statusMessage(QStringLiteral("Serial port error: %1").arg(m_serial->errorString()));
     }
+    emit serialDisconnected();
     return false;
 }
 
 void SerialProtocol::closeSerialPort()
 {
-    if (!serial->isOpen())
+    if (!m_serial->isOpen())
         return;
-    serial->close();
-    emit statusMessage(QStringLiteral("Disconnected!"));
+    m_serial->close();
+    emit serialDisconnected();
+    emit statusMessage(QStringLiteral("Serial port: Disconnected!"));
 }
 
 void SerialProtocol::writePacket(const command& packet)
@@ -90,6 +94,9 @@ void SerialProtocol::writePacket(const command& packet)
     /// data:       3 to 6      true
     /// CRC:        1 to 2      true
     /// endflag:    1           false
+
+    if (!m_serial->isOpen())
+        openSerialPort();
 
     // Compute CRC on unescaped packet bytes
     QByteArray packetBytes;
@@ -112,13 +119,13 @@ void SerialProtocol::writePacket(const command& packet)
     encode8(packetData, i, endflag, false);
 
     // Send data
-    serial->write(packetData);
+    m_serial->write(packetData);
 
     // Debug output
-    foreach (char ch, packetData)
+    /*foreach (char ch, packetData)
     {
         qDebug() << QString::number(static_cast<uchar>(ch), 16);
-    }
+    }*/
 }
 
 void SerialProtocol::readData()
@@ -128,7 +135,7 @@ void SerialProtocol::readData()
         m_buffer.clear();
         qDebug() << "Buffer is full! Clearing.";
     }
-    m_buffer.append(serial->readAll());
+    m_buffer.append(m_serial->readAll());
 
     if (!m_buffer.contains(static_cast<char>(startflag)))
     {
@@ -136,7 +143,7 @@ void SerialProtocol::readData()
         return;
     }
 
-    // Makes sure buffer starts with the startflag
+    // Makes sure buffer starts with the last startflag
     m_buffer = m_buffer.mid(m_buffer.lastIndexOf(static_cast<char>(startflag)));
 
     // Wait for the endflag
@@ -146,7 +153,7 @@ void SerialProtocol::readData()
     // Makes sure buffer ends with the first endflag
     m_buffer = m_buffer.left(m_buffer.indexOf(static_cast<char>(endflag)) + 1);
 
-    // Packets is complete. Extracts data and CRC
+    // Packets is complete
     QByteArray data = m_buffer.mid(1);
     data.chop(1);
     int i = 0;
@@ -157,15 +164,13 @@ void SerialProtocol::readData()
     uint16_t value = decode16(data, i);
     uint8_t crc_received = decode8(data, i);
 
-    // Verify CRC
+    // Computes CRC
     i = 0;
     encode8(receivedBytes, i, type, false);
     encode16(receivedBytes, i, value, false);
     uint8_t crc_computed = CRC::compute(receivedBytes, 3);
 
-    qDebug() << crc_received;
-    qDebug() << crc_computed;
-
+    // Verify CRC
     if (crc_computed != crc_received)
     {
         qDebug() << "CRC Mismatch !";
@@ -185,8 +190,8 @@ void SerialProtocol::readData()
 
 void SerialProtocol::handleError(QSerialPort::SerialPortError error)
 {
-    if (!serial->isOpen())
-        emit disconnected();
+    if (!m_serial->isOpen())
+        emit serialDisconnected();
     switch (error)
     {
         case QSerialPort::NoError:
@@ -197,7 +202,7 @@ void SerialProtocol::handleError(QSerialPort::SerialPortError error)
             emit statusMessage(QStringLiteral("Serial port error: Device was unexpectedly removed."));
             break;
         default:
-            emit statusMessage(QStringLiteral("Serial port error: %1").arg(serial->errorString()));
+            emit statusMessage(QStringLiteral("Serial port error: %1").arg(m_serial->errorString()));
             break;
     }
 }

@@ -14,7 +14,7 @@ bool SerialBus::begin(unsigned long baud) {
     return true;
 }
 
-void SerialBus::send_command(command &cmd) const {
+void SerialBus::sendPacket(const command &cmd) const {
     /// http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
     /// Packet structure / protocol framing:
     /// name:       byte(s)     escaped
@@ -45,7 +45,7 @@ void SerialBus::send_command(command &cmd) const {
     m_serial.write(packet.data(), packet.size());
 }
 
-void SerialBus::receive() {
+void SerialBus::receivePacket() {
     if (!m_serial.available() > 0)
         return;
 
@@ -54,7 +54,11 @@ void SerialBus::receive() {
 
     // Read available data
     while (m_serial.available() > 0)
-        m_buffer.append(m_serial.read());
+        m_buffer.append8(m_serial.read());
+
+    // m_serial.write(m_buffer.data(), m_buffer.size());
+    m_serial.print("Buffer size: ");
+    m_serial.println(m_buffer.size());
 
     // Makes sure buffer contains the startflag
     if (!m_buffer.contains(startflag)) {
@@ -62,7 +66,7 @@ void SerialBus::receive() {
         return;
     }
 
-    // Makes sure buffer starts with the startflag
+    // Makes sure buffer starts with the last startflag
     m_buffer = m_buffer.mid(m_buffer.lastIndexOf(startflag));
 
     // Wait for the endflag
@@ -72,23 +76,50 @@ void SerialBus::receive() {
     // Makes sure buffer ends with the first endflag
     m_buffer = m_buffer.left(m_buffer.indexOf(endflag) + 1);
 
+    // Packet is complete
     Buffer data = m_buffer.mid(1);
     data.chop(1);
+    int i = 0;
+
+    // Extract data and CRC
+    uint8_t type = decode8(data, i);
+    uint16_t value = decode16(data, i);
+    uint8_t crc_received = decode8(data, i);
+
+    // Computes CRC
+    Buffer receivedBytes;
+    encode8(receivedBytes, type, false);
+    encode16(receivedBytes, value, false);
+    uint8_t crc_computed =
+        CRC::compute(receivedBytes.data(), receivedBytes.size());
+
+    if (crc_computed != crc_received) {
+        m_serial.println("CRC: computed vs received");
+        m_serial.print(crc_computed);
+        m_serial.print("    ");
+        m_serial.print(crc_received);
+        m_buffer.clear();
+        return;
+    }
 
     command received;
-    received.type = static_cast<command::command_type>(data.at8(0));
-    // received.value = data.at8(1);
+    received.type = static_cast<command::command_type>(type);
+    received.value = value;
+
+    m_receiver(received);
+    m_buffer.clear();
 }
 
-void SerialBus::encode8(Buffer &packet, uint8_t data, bool escape) {
+void SerialBus::encode8(Buffer &packet, const uint8_t data, bool escape) const {
     if (escape && command::isFlag(data)) {
-        packet.append(escapeflag);
-        packet.append(data ^ xorflag);
+        packet.append8(escapeflag);
+        packet.append8(data ^ xorflag);
     } else
-        packet.append(data);
+        packet.append8(data);
 }
 
-void SerialBus::encode16(Buffer &packet, uint16_t data, bool escape) {
+void SerialBus::encode16(Buffer &packet, const uint16_t data,
+                         bool escape) const {
     encode8(packet, static_cast<uint8_t>(data >> 8), escape);
     encode8(packet, static_cast<uint8_t>(data), escape);
 }

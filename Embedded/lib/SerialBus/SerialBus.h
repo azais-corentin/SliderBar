@@ -15,12 +15,13 @@ class SerialBus {
 
     void set_receiver(bus_receiver r) { m_receiver = r; };
 
-    void receive();
-    void send_command(command &cmd) const;
+    void receivePacket();
+    void sendPacket(const command &cmd) const;
 
   private:
-    void encode8(Buffer &packet, uint8_t data, bool escape = true);
-    void encode16(Buffer &packet, uint16_t data, bool escape = true);
+    void encode8(Buffer &packet, const uint8_t data, bool escape = true) const;
+    void encode16(Buffer &packet, const uint16_t data,
+                  bool escape = true) const;
 
     uint8_t decode8(const Buffer &packet, int &i);
     uint16_t decode16(const Buffer &packet, int &i);

@@ -17,9 +17,9 @@ class Buffer {
     uint8_t at8(int i) const;
     uint16_t at16(int i) const;
     void clear();
-    bool append(uint8_t ch);
+    bool append8(uint8_t ch);
     bool append16(uint16_t ch);
-    bool write(uint8_t ch, int i);
+    bool write8(uint8_t ch, int i);
     bool write16(uint16_t ch, int i);
 
     uint8_t size() { return m_iBuffer; };

@@ -13,7 +13,8 @@ MainWindow::MainWindow(QWidget* parent) :
     ui->setupUi(this);
     m_pStatus = new QLabel;
     ui->statusBar->addWidget(m_pStatus);
-    ui->actionDisconnect->setEnabled(false);
+    ui->progressBar->setRange(0, 65536);
+    enableConnect();
 
     m_pSerial = new SerialProtocol;
     m_pSettingsDialog = new SettingsDialog(this);
@@ -31,19 +32,22 @@ MainWindow::~MainWindow()
 
 void MainWindow::openSerialPort()
 {
-    if (m_pSerial->openSerialPort())
-    {
-        ui->actionConnect->setEnabled(false);
-        ui->actionDisconnect->setEnabled(true);
-        return;
-    }
-    ui->actionConnect->setEnabled(true);
-    ui->actionDisconnect->setEnabled(false);
+    m_pSerial->openSerialPort();
 }
 
 void MainWindow::closeSerialPort()
 {
     m_pSerial->closeSerialPort();
+}
+
+void MainWindow::disableConnect()
+{
+    ui->actionConnect->setEnabled(false);
+    ui->actionDisconnect->setEnabled(true);
+}
+
+void MainWindow::enableConnect()
+{
     ui->actionConnect->setEnabled(true);
     ui->actionDisconnect->setEnabled(false);
 }
@@ -58,7 +62,7 @@ void MainWindow::receivePacket(const command& packet)
     switch (packet.type)
     {
         case command::FORC_POSITION:
-            ui->progressBar->setValue(packet.value / 655.36);
+            ui->progressBar->setValue(packet.value);
             qDebug() << "Slider position:" << packet.value / 655.36;
             break;
         default:
@@ -94,12 +98,21 @@ void MainWindow::initConnections()
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::showConfiguration);
     connect(ui->actionAuto_connect, &QAction::triggered, this, &MainWindow::toggleAutoconnect);
 
+    connect(m_pSerial, &SerialProtocol::serialConnected, this, &MainWindow::disableConnect);
+    connect(m_pSerial, &SerialProtocol::serialDisconnected, this, &MainWindow::enableConnect);
     connect(m_pSerial, &SerialProtocol::statusMessage, this, &MainWindow::showStatusMessage);
-    connect(m_pSerial, &SerialProtocol::disconnected, this, &MainWindow::closeSerialPort);
     connect(m_pSerial, &SerialProtocol::packetReady, this, &MainWindow::receivePacket);
 }
 
 void MainWindow::showStatusMessage(const QString& message)
 {
     m_pStatus->setText(message);
+}
+
+void MainWindow::on_bSendPacket_clicked()
+{
+    command packet;
+    packet.type = command::FORS_POSITION;
+    packet.value = static_cast<uint16_t>(25 * 655.36);
+    m_pSerial->writePacket(packet);
 }

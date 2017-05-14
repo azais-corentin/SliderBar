@@ -6,6 +6,7 @@
 #include <math.h>
 
 SerialBus bus(Serial);
+Slider slider;
 
 void receive_data(command cmd);
 
@@ -15,10 +16,14 @@ void setup() {
 }
 
 void receive_data(command cmd) {
+    command feedback;
+    feedback.type = static_cast<command::command_type>(cmd.type + 0x7F);
+    feedback.value = cmd.value;
+    bus.sendPacket(feedback);
+
     switch (cmd.type) {
     case command::FORS_POSITION:
-        Serial.println("FORS_POSITON");
-        // slider.setPosition(payload[1])
+        // slider.setPosition(cmd.value / 655.36)
         break;
     default:
         Serial.println("UNDEFINED");
@@ -26,17 +31,17 @@ void receive_data(command cmd) {
     }
 }
 
-uint64_t ilol = 0;
-
 void loop() {
-    // bus.receive();
+    bus.receivePacket();
+    slider.update();
     // bus.receive(1000);
     // slider.update()
 
-    command cmd;
+    /*command cmd;
     cmd.type = command::FORC_POSITION;
     cmd.value = (uint16_t)(fmod(ilol / 10., 100) * 655.36 + 1);
-    bus.send_command(cmd);
+    bus.sendPacket(cmd);
     delay(50);
     ilol++;
+    */
 }
