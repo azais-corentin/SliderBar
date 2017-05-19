@@ -5,11 +5,15 @@
 
 #include <QDebug>
 #include <QLabel>
+#include <QKeySequence>
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    m_pSystemKeyboardHook = SystemKeyboardHook::instance();
+    m_pSystemKeyboardHook->setConnected(true);
+
     ui->setupUi(this);
     m_pStatus = new QLabel;
     ui->statusBar->addWidget(m_pStatus);
@@ -101,6 +105,9 @@ void MainWindow::initConnections()
     connect(m_pSerial, &SerialProtocol::serialDisconnected, this, &MainWindow::enableConnect);
     connect(m_pSerial, &SerialProtocol::statusMessage, this, &MainWindow::showStatusMessage);
     connect(m_pSerial, &SerialProtocol::packetReady, this, &MainWindow::receivePacket);
+
+    //connect(m_pSystemKeyboardHook, &SystemKeyboardHook::keyPressed, this, &MainWindow::handleKeyPressed);
+    connect(m_pSystemKeyboardHook, SIGNAL(keyPressed(DWORD)), this, SLOT(handleKeyPressed(DWORD)));
 }
 
 void MainWindow::showStatusMessage(const QString& message)
@@ -114,4 +121,10 @@ void MainWindow::on_eProgress_valueChanged(int value)
     cmd.type = command::FORS_POSITION;
     cmd.value = static_cast<uint16_t>(value);
     m_pSerial->writePacket(cmd);
+}
+
+void MainWindow::handleKeyPressed(DWORD key)
+{
+    QKeySequence seq(key);
+    showStatusMessage("Key pressed: " + seq.toString() + ", " + QString::number(key));
 }

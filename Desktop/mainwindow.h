@@ -10,7 +10,7 @@
 #include "settingsdialog.h"
 #include "serialpacketdefinition.h"
 
-#include "windows.h"
+#include "systemkeyboardhook.h"
 
 namespace Ui {
 class MainWindow;
@@ -38,6 +38,7 @@ private slots:
     int showConfiguration();
 
     void on_eProgress_valueChanged(int value);
+    void handleKeyPressed(DWORD key);
 
 private:
     void loadSettings();
@@ -49,6 +50,8 @@ private:
 
     Ui::MainWindow* ui;
     QLabel* m_pStatus;
+
+    SystemKeyboardHook* m_pSystemKeyboardHook;
 
     SettingsDialog* m_pSettingsDialog;
     QSettings m_settings;

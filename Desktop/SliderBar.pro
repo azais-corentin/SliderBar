@@ -14,13 +14,15 @@ DEFINES     += QT_DEPRECATED_WARNINGS
 SOURCES     += main.cpp\
             mainwindow.cpp \
             settingsdialog.cpp \
-            serialprotocol.cpp
+            serialprotocol.cpp \
+    systemkeyboardhook.cpp
 
 HEADERS     += mainwindow.h \
             settingsdialog.h \
             serialprotocol.h \
             serialpacketdefinition.h \
-            sliderinterface.h
+            sliderinterface.h \
+    systemkeyboardhook.h
 
 FORMS       += mainwindow.ui \
             settingsdialog.ui
