@@ -13,19 +13,20 @@ MainWindow::MainWindow(QWidget* parent) :
     ui->setupUi(this);
     m_pStatus = new QLabel;
     ui->statusBar->addWidget(m_pStatus);
-    ui->progressBar->setRange(0, 65536);
     enableConnect();
+
+    m_pTimer_fps = new QTimer(this);
+    m_frames = 0;
+    connect(m_pTimer_fps, SIGNAL(timeout()), this, SLOT(updateFPS()));
+    m_pTimer_fps->start(1000);
 
     m_pSerial = new SerialProtocol;
     m_pSettingsDialog = new SettingsDialog(this);
     initConnections();
     loadSettings();
 
-    if (m_settings.value("autoConnect", false).toBool())
+    if (m_settings.value("serial/autoconnect", false).toBool())
         openSerialPort();
-
-    ipacket = 0;
-    averageTime = 0;
 }
 
 MainWindow::~MainWindow()
@@ -62,27 +63,12 @@ void MainWindow::writePacket(command& packet)
 
 void MainWindow::receivePacket(const command& packet)
 {
-    ipacket++;
-    if (ipacket > 50)
-    {
-        averageTime = 0.2f * float(m_timerLatency.nsecsElapsed()) / 1000000.f + 0.8f * averageTime;
-        qDebug() << averageTime / (2.f * 50.f);
-        ipacket = 0;
-        on_bSendPacket_clicked();
-    }
-    else
-    {
-        command packet;
-        packet.type = command::FORS_POSITION;
-        packet.value = static_cast<uint16_t>(25 * 655.36);
-        m_pSerial->writePacket(packet);
-    }
-
+    m_frames++;
     switch (packet.type)
     {
         case command::FORC_POSITION:
-            ui->progressBar->setValue(packet.value);
-            //qDebug() << "Slider position:" << packet.value / 655.36;
+            m_sliderPos = packet.value;
+            ui->progressBar->setValue(int(0.0975879f * float(packet.value) + 0.42659893f));
             break;
         default:
             qDebug() << "Error: Packet not meant for computer!";
@@ -95,6 +81,12 @@ int MainWindow::showConfiguration()
     int execute = m_pSettingsDialog->execute();
     loadSettings();
     return execute;
+}
+
+void MainWindow::updateFPS()
+{
+    showStatusMessage("Fps: " + QString::number(m_frames));
+    m_frames = 0;
 }
 
 void MainWindow::loadSettings()
@@ -128,11 +120,26 @@ void MainWindow::showStatusMessage(const QString& message)
     m_pStatus->setText(message);
 }
 
-void MainWindow::on_bSendPacket_clicked()
+void MainWindow::on_bLeft_clicked()
 {
-    m_timerLatency.start();
-    command packet;
-    packet.type = command::FORS_POSITION;
-    packet.value = static_cast<uint16_t>(25 * 655.36);
-    m_pSerial->writePacket(packet);
+    command leftcmd;
+    leftcmd.type = command::FORS_POSITION;
+    leftcmd.value = static_cast<uint16_t>(m_sliderPos - 100 <= 0 ? 0 : m_sliderPos - 100);
+    m_pSerial->writePacket(leftcmd);
+}
+
+void MainWindow::on_bStop_clicked()
+{
+    command stopcmd;
+    stopcmd.type = command::FORS_SPEED;
+    stopcmd.value = 32768;
+    m_pSerial->writePacket(stopcmd);
+}
+
+void MainWindow::on_bRight_clicked()
+{
+    command rightcmd;
+    rightcmd.type = command::FORS_POSITION;
+    rightcmd.value = static_cast<uint16_t>(m_sliderPos - 100 >= 1022 ? 1022 : m_sliderPos + 100);
+    m_pSerial->writePacket(rightcmd);
 }

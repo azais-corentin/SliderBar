@@ -7,12 +7,14 @@ class SliderInterface
 {
 public:
     virtual ~SliderInterface() {}
+
+protected:
+    bool m_active;
 };
 
 QT_BEGIN_NAMESPACE
 
-#define SliderInterface_iid "org.Nelieru.SliderBar.SliderInterface/0.1"
-Q_DECLARE_INTERFACE(SliderInterface, SliderInterface_iid)
+Q_DECLARE_INTERFACE(SliderInterface, "org.Nelieru.SliderBar.SliderInterface/0.1")
 
 QT_END_NAMESPACE
 

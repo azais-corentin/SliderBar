@@ -1,29 +1,37 @@
 #include <Arduino.h>
 
+#include <TaskScheduler.h>
+
 #include <SerialBus.h>
+#include <SerialBusDefines.h>
 #include <Slider.h>
 
-#include <math.h>
+void receive_data(command cmd);
+void sendPosition();
+
+command position = {command::FORC_POSITION, 0};
 
 SerialBus bus(Serial);
 Slider slider;
-
-void receive_data(command cmd);
+Scheduler runner;
+Task tSendPosition(10, -1, &sendPosition, &runner, true);
+// Task tComputePID(10, -1, &slider.update &runner, true);
 
 void setup() {
     bus.begin(115200);
     bus.set_receiver(receive_data);
+
+    runner.startNow();
 }
 
 void receive_data(command cmd) {
-    command feedback;
-    feedback.type = static_cast<command::command_type>(cmd.type + 0x7F);
-    feedback.value = cmd.value;
-    bus.sendPacket(feedback);
-
+    int speed;
     switch (cmd.type) {
     case command::FORS_POSITION:
-        // slider.setPosition(cmd.value / 655.36)
+        slider.setPosition(cmd.value);
+        break;
+    case command::FORS_SPEED:
+        slider.setSpeed(0);
         break;
     default:
         Serial.println("UNDEFINED");
@@ -31,7 +39,14 @@ void receive_data(command cmd) {
     }
 }
 
+void serialEvent() { bus.receivePacket(); }
+
 void loop() {
-    bus.receivePacket();
+    runner.execute();
     slider.update();
+}
+
+void sendPosition() {
+    position.value = slider.getPosition();
+    bus.sendPacket(position);
 }

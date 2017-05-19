@@ -8,7 +8,7 @@
 #include <QLabel>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QElapsedTimer>
-#include <QQueue>
+#include <QTimer>
 
 #include "settingsdialog.h"
 #include "serialpacketdefinition.h"
@@ -37,7 +37,11 @@ private slots:
 
     int showConfiguration();
 
-    void on_bSendPacket_clicked();
+    void updateFPS();
+
+    void on_bLeft_clicked();
+    void on_bStop_clicked();
+    void on_bRight_clicked();
 
 private:
     void loadSettings();
@@ -50,10 +54,9 @@ private:
     Ui::MainWindow* ui;
     QLabel* m_pStatus;
 
-    int ipacket;
-
-    QElapsedTimer m_timerLatency;
-    float averageTime;
+    QTimer* m_pTimer_fps;
+    int m_frames;
+    uint16_t m_sliderPos;
 
     SettingsDialog* m_pSettingsDialog;
     QSettings m_settings;

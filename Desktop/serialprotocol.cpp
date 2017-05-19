@@ -10,7 +10,7 @@
 
 SerialProtocol::SerialProtocol()
 {
-    m_serial = new QSerialPort;
+    m_serial = new QSerialPort(this);
     m_buffer.clear();
 
     loadSettings();
@@ -24,7 +24,7 @@ SerialProtocol::~SerialProtocol()
 
 void SerialProtocol::initConnections()
 {
-    connect(m_serial, &QSerialPort::errorOccurred,
+    connect(m_serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
         this, &SerialProtocol::handleError);
 
     connect(m_serial, &QSerialPort::readyRead, this, &SerialProtocol::readData);
@@ -79,6 +79,7 @@ void SerialProtocol::closeSerialPort()
 {
     if (!m_serial->isOpen())
         return;
+    m_serial->flush();
     m_serial->close();
     emit serialDisconnected();
     emit statusMessage(QStringLiteral("Serial port: Disconnected!"));
@@ -120,12 +121,6 @@ void SerialProtocol::writePacket(const command& packet)
 
     // Send data
     m_serial->write(packetData);
-
-    // Debug output
-    /*foreach (char ch, packetData)
-    {
-        qDebug() << QString::number(static_cast<uchar>(ch), 16);
-    }*/
 }
 
 void SerialProtocol::readData()
@@ -136,6 +131,8 @@ void SerialProtocol::readData()
         qDebug() << "Buffer is full! Clearing.";
     }
     m_buffer.append(m_serial->readAll());
+
+    qDebug() << m_buffer;
 
     if (!m_buffer.contains(static_cast<char>(startflag)))
     {

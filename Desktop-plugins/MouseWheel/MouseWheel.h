@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QtPlugin>
 
-#include "../../Desktop/sliderinterface.h"
+#include "sliderinterface.h"
 
 class MouseWheelPlugin : public QObject, public SliderInterface
 {
@@ -21,6 +21,7 @@ public slots:
 signals:
 
 private:
+    void mouseWheel(int n);
 };
 
 #endif // MOUSEWHEEL_H

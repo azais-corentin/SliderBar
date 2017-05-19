@@ -11,6 +11,7 @@ SerialBus::~SerialBus() {}
 
 bool SerialBus::begin(unsigned long baud) {
     m_serial.begin(baud);
+    m_buffer.clear();
     return true;
 }
 
@@ -46,14 +47,14 @@ void SerialBus::sendPacket(const command &cmd) const {
 }
 
 void SerialBus::receivePacket() {
-    if (!m_serial.available() > 0)
+    if (!(m_serial.available() > 0))
         return;
 
     if (m_buffer.size() >= MAX_BUFFER_SIZE)
         m_buffer.clear();
 
     // Read available data
-    while (m_serial.available() > 0)
+    while (m_serial.available())
         m_buffer.append8(m_serial.read());
 
     // Makes sure buffer contains the startflag

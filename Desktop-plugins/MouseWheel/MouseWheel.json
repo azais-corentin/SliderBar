@@ -1,5 +1,5 @@
 {
     "name": "MouseWheel",
     "version": "0.1",
-    "description": ""
+    "description": "Simulates a scrolling mouse for your SliderBar."
 }

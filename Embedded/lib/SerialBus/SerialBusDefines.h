@@ -32,7 +32,7 @@ typedef struct {
         /// FOR SLIDER
         // From Computer to Slider
         FORS_POSITION = 0x01, // uint16_t position, v/655.36 mm
-        FORS_SPEED,           // uint16_t speed, m/s
+        FORS_SPEED,           // uint16_t speed, (+-v/vmax)*32768 + 32768 m/s
         FORS_VIBRATE,
 
         FORS_RESIST_AT,
