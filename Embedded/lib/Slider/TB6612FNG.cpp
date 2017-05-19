@@ -42,6 +42,7 @@ void Motor::drive(int speed) {
     else
         rev(-speed);
 }
+
 void Motor::drive(int speed, int duration) {
     drive(speed);
     delay(duration);
@@ -71,6 +72,7 @@ void forward(Motor motor1, Motor motor2, int speed) {
     motor1.drive(speed);
     motor2.drive(speed);
 }
+
 void forward(Motor motor1, Motor motor2) {
     motor1.drive(DEFAULTSPEED);
     motor2.drive(DEFAULTSPEED);
@@ -81,10 +83,12 @@ void back(Motor motor1, Motor motor2, int speed) {
     motor1.drive(-temp);
     motor2.drive(-temp);
 }
+
 void back(Motor motor1, Motor motor2) {
     motor1.drive(-DEFAULTSPEED);
     motor2.drive(-DEFAULTSPEED);
 }
+
 void left(Motor left, Motor right, int speed) {
     int temp = abs(speed) / 2;
     left.drive(-temp);
@@ -96,6 +100,7 @@ void right(Motor left, Motor right, int speed) {
     left.drive(temp);
     right.drive(-temp);
 }
+
 void brake(Motor motor1, Motor motor2) {
     motor1.brake();
     motor2.brake();

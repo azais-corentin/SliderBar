@@ -4,20 +4,20 @@
 #include <QMainWindow>
 
 #include <QSettings>
-#include <QMessageBox>
-#include <QLabel>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QElapsedTimer>
-#include <QTimer>
 
 #include "settingsdialog.h"
 #include "serialpacketdefinition.h"
+
+#include "windows.h"
 
 namespace Ui {
 class MainWindow;
 }
 
 class SerialProtocol;
+class QLabel;
 
 class MainWindow : public QMainWindow
 {
@@ -37,11 +37,7 @@ private slots:
 
     int showConfiguration();
 
-    void updateFPS();
-
-    void on_bLeft_clicked();
-    void on_bStop_clicked();
-    void on_bRight_clicked();
+    void on_eProgress_valueChanged(int value);
 
 private:
     void loadSettings();
@@ -54,14 +50,11 @@ private:
     Ui::MainWindow* ui;
     QLabel* m_pStatus;
 
-    QTimer* m_pTimer_fps;
-    int m_frames;
-    uint16_t m_sliderPos;
-
     SettingsDialog* m_pSettingsDialog;
     QSettings m_settings;
 
     SerialProtocol* m_pSerial;
+    uint16_t m_sliderPos;
 };
 
 #endif // MAINWINDOW_H

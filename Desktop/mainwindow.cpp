@@ -4,7 +4,7 @@
 #include "serialprotocol.h"
 
 #include <QDebug>
-#include <QTime>
+#include <QLabel>
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
@@ -14,11 +14,6 @@ MainWindow::MainWindow(QWidget* parent) :
     m_pStatus = new QLabel;
     ui->statusBar->addWidget(m_pStatus);
     enableConnect();
-
-    m_pTimer_fps = new QTimer(this);
-    m_frames = 0;
-    connect(m_pTimer_fps, SIGNAL(timeout()), this, SLOT(updateFPS()));
-    m_pTimer_fps->start(1000);
 
     m_pSerial = new SerialProtocol;
     m_pSettingsDialog = new SettingsDialog(this);
@@ -63,7 +58,6 @@ void MainWindow::writePacket(command& packet)
 
 void MainWindow::receivePacket(const command& packet)
 {
-    m_frames++;
     switch (packet.type)
     {
         case command::FORC_POSITION:
@@ -81,12 +75,6 @@ int MainWindow::showConfiguration()
     int execute = m_pSettingsDialog->execute();
     loadSettings();
     return execute;
-}
-
-void MainWindow::updateFPS()
-{
-    showStatusMessage("Fps: " + QString::number(m_frames));
-    m_frames = 0;
 }
 
 void MainWindow::loadSettings()
@@ -120,26 +108,10 @@ void MainWindow::showStatusMessage(const QString& message)
     m_pStatus->setText(message);
 }
 
-void MainWindow::on_bLeft_clicked()
+void MainWindow::on_eProgress_valueChanged(int value)
 {
-    command leftcmd;
-    leftcmd.type = command::FORS_POSITION;
-    leftcmd.value = static_cast<uint16_t>(m_sliderPos - 100 <= 0 ? 0 : m_sliderPos - 100);
-    m_pSerial->writePacket(leftcmd);
-}
-
-void MainWindow::on_bStop_clicked()
-{
-    command stopcmd;
-    stopcmd.type = command::FORS_SPEED;
-    stopcmd.value = 32768;
-    m_pSerial->writePacket(stopcmd);
-}
-
-void MainWindow::on_bRight_clicked()
-{
-    command rightcmd;
-    rightcmd.type = command::FORS_POSITION;
-    rightcmd.value = static_cast<uint16_t>(m_sliderPos - 100 >= 1022 ? 1022 : m_sliderPos + 100);
-    m_pSerial->writePacket(rightcmd);
+    command cmd;
+    cmd.type = command::FORS_POSITION;
+    cmd.value = static_cast<uint16_t>(value);
+    m_pSerial->writePacket(cmd);
 }

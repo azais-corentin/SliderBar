@@ -132,8 +132,6 @@ void SerialProtocol::readData()
     }
     m_buffer.append(m_serial->readAll());
 
-    qDebug() << m_buffer;
-
     if (!m_buffer.contains(static_cast<char>(startflag)))
     {
         m_buffer.clear();
@@ -174,7 +172,6 @@ void SerialProtocol::readData()
         m_buffer.clear();
         return;
     }
-
 
     // Emit received data
     command received;
