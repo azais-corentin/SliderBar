@@ -18,6 +18,8 @@ class Slider {
     void setSpeed(uint16_t val);
     int getSpeed() { return m_tSpeed; }
 
+    void setMode(int mode) { m_pPID->SetMode(mode); }
+
   private:
     float polynomial[2] = {0.0968879, 0.42659893};
     Motor *m_pMotor;

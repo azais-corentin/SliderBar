@@ -43,7 +43,7 @@ private:
     void loadSettings();
 
     Ui::SettingsDialog* ui;
-    QSettings m_Settings;
+    QSettings m_settings;
     QIntValidator* m_pIntValidator;
 };
 

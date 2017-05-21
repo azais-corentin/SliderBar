@@ -30,11 +30,17 @@ typedef struct
 {
     enum command_type : uint8_t
     {
+        /// FOR EVERYONE
+        ACK = 0xFB,
+        NACK = 0xFC,
+
         /// FOR SLIDER
         // From Computer to Slider
-        FORS_POSITION = 0x01, // uint16_t position, v/655.36 mm
-        FORS_SPEED,           // uint16_t speed, (+-v/vmax)*32768 + 32768 m/s
+        FORS_POSITION = 0x01, // uint16_t position, u2(mm): v/655.36 mm
+        FORS_SPEED,           // uint16_t speed, (mm/s)2u: (+-v/vmax)*32768 + 32768 m/s
         FORS_VIBRATE,
+        FORS_START_PID,
+        FORS_STOP_PID,
 
         FORS_RESIST_AT,
         FORS_RESIST_CLEAR,
@@ -44,7 +50,7 @@ typedef struct
         FORC_POSITION = 0x80 // uint16_t position, v/655.36 mm
     };
     command_type type;
-    uint16_t value;
+    uint16_t value = 0;
 } command;
 
 #endif // SERIALPACKETDEFINITION_H

@@ -5,7 +5,6 @@
 
 #include <QSettings>
 #include <QtSerialPort/QSerialPortInfo>
-#include <QElapsedTimer>
 
 #include "settingsdialog.h"
 #include "serialpacketdefinition.h"
@@ -57,7 +56,7 @@ private:
     QSettings m_settings;
 
     SerialProtocol* m_pSerial;
-    uint16_t m_sliderPos;
+    uint16_t m_sliderPos = 0;
 };
 
 #endif // MAINWINDOW_H

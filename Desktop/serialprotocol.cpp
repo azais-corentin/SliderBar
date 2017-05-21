@@ -1,8 +1,9 @@
 #include "serialprotocol.h"
 
-#include <QString>
-#include <QMessageBox>
 #include <QDebug>
+
+#include <QString>
+#include <QTimer>
 
 #include "serialpacketdefinition.h"
 
@@ -12,6 +13,9 @@ SerialProtocol::SerialProtocol()
 {
     m_serial = new QSerialPort(this);
     m_buffer.clear();
+
+    m_pTimerAck = new QTimer(this);
+    m_pTimerAck->setSingleShot(true);
 
     loadSettings();
     initConnections();
@@ -26,8 +30,9 @@ void SerialProtocol::initConnections()
 {
     connect(m_serial, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
         this, &SerialProtocol::handleError);
-
     connect(m_serial, &QSerialPort::readyRead, this, &SerialProtocol::readData);
+
+    connect(m_pTimerAck, &QTimer::timeout, this, &SerialProtocol::handleAckTimeout);
 }
 
 void SerialProtocol::loadSettings()
@@ -36,6 +41,7 @@ void SerialProtocol::loadSettings()
     endflag = static_cast<uint8_t>(m_settings.value("serial/protocol/endflag", 0x13).toInt());
     escapeflag = static_cast<uint8_t>(m_settings.value("serial/protocol/escapeflag", 0x7D).toInt());
     xorflag = static_cast<uint8_t>(m_settings.value("serial/protocol/xorflag", 0x20).toInt());
+    ackflag = static_cast<uint8_t>(m_settings.value("serial/protocol/ackflag", 0xFB).toInt());
 
     m_serial->setPortName(m_settings.value("serial/portname", "COM1").toString());
     m_serial->setBaudRate(static_cast<QSerialPort::BaudRate>(
@@ -49,6 +55,7 @@ void SerialProtocol::loadSettings()
             m_settings.value("serial/stopbits", QSerialPort::OneStop).toInt()));
     m_serial->setFlowControl(static_cast<QSerialPort::FlowControl>(
             m_settings.value("serial/flowcontrol", QSerialPort::HardwareControl).toInt()));
+    m_pTimerAck->setInterval(m_settings.value("serial/protocol/acktimeout", 15).toInt());
 }
 
 bool SerialProtocol::openSerialPort()
@@ -121,6 +128,15 @@ void SerialProtocol::writePacket(const command& packet)
 
     // Send data
     m_serial->write(packetData);
+
+    // If we need an Ack
+    if (packet.type < command::FORC_POSITION &&
+        packet.type != command::FORS_POSITION)
+    {
+        m_remainingAck.enqueue(packet);
+        if (!m_pTimerAck->isActive())
+            m_pTimerAck->start();
+    }
 }
 
 void SerialProtocol::readData()
@@ -152,6 +168,24 @@ void SerialProtocol::readData()
     QByteArray data = m_buffer.mid(1);
     data.chop(1);
     int i = 0;
+
+    // Check if packet is ACK
+    if (data.size() == 1)
+    {
+        uint8_t value = decode8(data, i);
+        if (value == ackflag)
+        {
+            m_remainingAck.dequeue();
+            if (m_remainingAck.isEmpty())
+                m_pTimerAck->stop();
+            else
+                m_pTimerAck->start();
+
+            m_buffer.clear();
+            return;
+        }
+    }
+
     QByteArray receivedBytes;
 
     // Extracts data & CRC
@@ -173,7 +207,7 @@ void SerialProtocol::readData()
         return;
     }
 
-    // Emit received data
+    // Process received data
     command received;
     received.type = static_cast<command::command_type>(type);
     received.value = value;
@@ -199,6 +233,12 @@ void SerialProtocol::handleError(QSerialPort::SerialPortError error)
             emit statusMessage(QStringLiteral("Serial port error: %1").arg(m_serial->errorString()));
             break;
     }
+}
+
+void SerialProtocol::handleAckTimeout()
+{
+    statusMessage("Serial error: Ack missing!");
+    writePacket(m_remainingAck.head());
 }
 
 uint8_t SerialProtocol::decode8(const QByteArray& packet, int& i)

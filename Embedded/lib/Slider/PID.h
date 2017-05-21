@@ -13,6 +13,8 @@ class PID {
     PID(double *Input, double *Output, double *Setpoint, double Kp, double Ki,
         double Kd, int ControllerDirection);
 
+    void setIenabled(bool enabled);
+
     void SetMode(int Mode);
     bool Compute();
     void SetOutputLimits(double, double);
@@ -49,5 +51,6 @@ class PID {
     unsigned long SampleTime;
     double outMin, outMax;
     bool inAuto;
+    bool iEnabled = true;
 };
 #endif // PID_H

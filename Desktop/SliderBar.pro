@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT          += widgets serialport
+QT          += widgets serialport printsupport
 
 TARGET      = SliderBar
 TEMPLATE    = app
@@ -15,14 +15,16 @@ SOURCES     += main.cpp\
             mainwindow.cpp \
             settingsdialog.cpp \
             serialprotocol.cpp \
-    systemkeyboardhook.cpp
+    systemkeyboardhook.cpp \
+    qcustomplot.cpp
 
 HEADERS     += mainwindow.h \
             settingsdialog.h \
             serialprotocol.h \
             serialpacketdefinition.h \
             sliderinterface.h \
-    systemkeyboardhook.h
+    systemkeyboardhook.h \
+    qcustomplot.h
 
 FORMS       += mainwindow.ui \
             settingsdialog.ui

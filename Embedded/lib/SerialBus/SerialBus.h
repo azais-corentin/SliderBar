@@ -17,6 +17,7 @@ class SerialBus {
 
     void receivePacket();
     void sendPacket(const command &cmd) const;
+    void sendAck() const;
 
   private:
     void encode8(Buffer &packet, const uint8_t data, bool escape = true) const;

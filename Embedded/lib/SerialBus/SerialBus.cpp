@@ -4,6 +4,7 @@ uint8_t startflag = 0x12;
 uint8_t endflag = 0x13;
 uint8_t escapeflag = 0x7D;
 uint8_t xorflag = 0x20;
+uint8_t ackflag = 0xFB;
 
 SerialBus::SerialBus(HardwareSerial &serial) : m_serial(serial) {}
 
@@ -13,37 +14,6 @@ bool SerialBus::begin(unsigned long baud) {
     m_serial.begin(baud);
     m_buffer.clear();
     return true;
-}
-
-void SerialBus::sendPacket(const command &cmd) const {
-    /// http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
-    /// Packet structure / protocol framing:
-    /// name:       byte(s)     escaped
-    /// -------------------------------
-    /// startflag:  1           false
-    /// data:       3 to 6      true
-    /// CRC:        1 to 2      true
-    /// endflag:    1           false
-
-    // Compute CRC on unescaped packet bytes
-    Buffer packetBytes;
-    encode8(packetBytes, static_cast<uint8_t>(cmd.type), false);
-    encode16(packetBytes, cmd.value, false);
-    uint8_t crc = CRC::compute(packetBytes.data(), 3);
-
-    Buffer packet;
-    // Add startflag
-    encode8(packet, startflag, false);
-    // Add data
-    encode8(packet, static_cast<uint8_t>(cmd.type));
-    encode16(packet, cmd.value);
-    // Add crc
-    encode8(packet, crc);
-    // Add endflag
-    encode8(packet, endflag, false);
-
-    // Send data
-    m_serial.write(packet.data(), packet.size());
 }
 
 void SerialBus::receivePacket() {
@@ -100,7 +70,51 @@ void SerialBus::receivePacket() {
     received.value = value;
 
     m_receiver(received);
+
+    if (received.type < command::FORC_POSITION &&
+        received.type != command::FORS_POSITION)
+        sendAck();
+
     m_buffer.clear();
+}
+
+void SerialBus::sendPacket(const command &cmd) const {
+    /// http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
+    /// Packet structure / protocol framing:
+    /// name:       byte(s)     escaped
+    /// -------------------------------
+    /// startflag:  1           false
+    /// data:       3 to 6      true
+    /// CRC:        1 to 2      true
+    /// endflag:    1           false
+
+    // Compute CRC on unescaped packet bytes
+    Buffer packetBytes;
+    encode8(packetBytes, static_cast<uint8_t>(cmd.type), false);
+    encode16(packetBytes, cmd.value, false);
+    uint8_t crc = CRC::compute(packetBytes.data(), 3);
+
+    Buffer packet;
+    // Add startflag
+    encode8(packet, startflag, false);
+    // Add data
+    encode8(packet, static_cast<uint8_t>(cmd.type));
+    encode16(packet, cmd.value);
+    // Add crc
+    encode8(packet, crc);
+    // Add endflag
+    encode8(packet, endflag, false);
+
+    // Send data
+    m_serial.write(packet.data(), packet.size());
+}
+
+void SerialBus::sendAck() const {
+    Buffer ack;
+    ack.append8(startflag);
+    ack.append8(ackflag);
+    ack.append8(endflag);
+    m_serial.write(ack.data(), ack.size());
 }
 
 void SerialBus::encode8(Buffer &packet, const uint8_t data, bool escape) const {

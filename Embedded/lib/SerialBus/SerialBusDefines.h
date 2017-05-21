@@ -7,6 +7,7 @@ extern uint8_t startflag;
 extern uint8_t endflag;
 extern uint8_t escapeflag;
 extern uint8_t xorflag;
+extern uint8_t ackflag;
 
 struct CRC {
     static inline uint8_t roll(uint8_t input_byte, uint8_t crc) {
@@ -31,9 +32,11 @@ typedef struct {
     enum command_type : uint8_t {
         /// FOR SLIDER
         // From Computer to Slider
-        FORS_POSITION = 0x01, // uint16_t position, v/655.36 mm
-        FORS_SPEED,           // uint16_t speed, (+-v/vmax)*32768 + 32768 m/s
+        FORS_POSITION = 0x01, // uint16_t position, u2(mm): v/655.36 mm
+        FORS_SPEED, // uint16_t speed, (mm/s)2u: (+-v/vmax)*32768 + 32768 m/s
         FORS_VIBRATE,
+        FORS_START_PID,
+        FORS_STOP_PID,
 
         FORS_RESIST_AT,
         FORS_RESIST_CLEAR,
@@ -55,7 +58,7 @@ typedef struct {
     }
 
     command_type type;
-    uint16_t value;
+    uint16_t value = 0;
 
     static bool isFlag(const uint8_t ch) {
         return ch == startflag || ch == endflag || ch == escapeflag;

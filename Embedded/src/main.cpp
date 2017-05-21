@@ -9,30 +9,37 @@
 void receive_data(command cmd);
 void sendPosition();
 
-command position = {command::FORC_POSITION, 0};
+command position;
 
 SerialBus bus(Serial);
 Slider slider;
 Scheduler runner;
 Task tSendPosition(10, -1, &sendPosition, &runner, true);
-// Task tComputePID(10, -1, &slider.update &runner, true);
 
 void setup() {
+    position.type = command::FORC_POSITION;
+    position.value = 0;
+
     bus.begin(115200);
     bus.set_receiver(receive_data);
 
     runner.startNow();
 }
 
-void receive_data(command cmd) {
+void receive_data(command packet) {
     int speed;
-    switch (cmd.type) {
+    switch (packet.type) {
     case command::FORS_POSITION:
-        slider.setPosition(cmd.value);
+        slider.setPosition(packet.value);
         break;
     case command::FORS_SPEED:
         slider.setSpeed(0);
         break;
+    case command::FORS_START_PID:
+        slider.setMode(AUTOMATIC);
+        break;
+    case command::FORS_STOP_PID:
+        slider.setMode(MANUAL);
     default:
         Serial.println("UNDEFINED");
         break;

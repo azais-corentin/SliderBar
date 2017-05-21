@@ -141,70 +141,76 @@ void SettingsDialog::fillPortsInfo()
 void SettingsDialog::saveSettings()
 {
     // Save serial port configuration
-    m_Settings.setValue("serial/portname", ui->eSerialPortInfoList->currentText());
+    m_settings.setValue("serial/portname", ui->eSerialPortInfoList->currentText());
     if (ui->eBaudrate->currentIndex() == 4)
-        m_Settings.setValue("serial/baudrate", static_cast<QSerialPort::BaudRate>(
+        m_settings.setValue("serial/baudrate", static_cast<QSerialPort::BaudRate>(
                 ui->eBaudrate->currentText().toInt()));
     else
-        m_Settings.setValue("serial/baudrate", static_cast<QSerialPort::BaudRate>(
+        m_settings.setValue("serial/baudrate", static_cast<QSerialPort::BaudRate>(
                 ui->eBaudrate->itemData(ui->eBaudrate->currentIndex()).toInt()));
-    m_Settings.setValue("serial/databits", static_cast<QSerialPort::DataBits>(
+    m_settings.setValue("serial/databits", static_cast<QSerialPort::DataBits>(
             ui->eDatabits->itemData(ui->eDatabits->currentIndex()).toInt()));
-    m_Settings.setValue("serial/parity", static_cast<QSerialPort::Parity>(
+    m_settings.setValue("serial/parity", static_cast<QSerialPort::Parity>(
             ui->eParity->itemData(ui->eParity->currentIndex()).toInt()));
-    m_Settings.setValue("serial/stopbits", static_cast<QSerialPort::StopBits>(
+    m_settings.setValue("serial/stopbits", static_cast<QSerialPort::StopBits>(
             ui->eStopbits->itemData(ui->eStopbits->currentIndex()).toInt()));
-    m_Settings.setValue("serial/flowcontrol", static_cast<QSerialPort::FlowControl>(
+    m_settings.setValue("serial/flowcontrol", static_cast<QSerialPort::FlowControl>(
             ui->eFlowcontrol->itemData(ui->eFlowcontrol->currentIndex()).toInt()));
-    m_Settings.setValue("serial/autoconnect", ui->eAutoconnect->isChecked());
+    m_settings.setValue("serial/autoconnect", ui->eAutoconnect->isChecked());
 
     // Save serial protocol configuration
-    m_Settings.setValue("serial/protocol/startflag",
-        static_cast<uint8_t>(ui->eStartflag->text().right(2).toInt(nullptr, 16)));
-    m_Settings.setValue("serial/protocol/endflag",
-        static_cast<uint8_t>(ui->eEndflag->text().right(2).toInt(nullptr, 16)));
-    m_Settings.setValue("serial/protocol/escapeflag",
-        static_cast<uint8_t>(ui->eEscapeflag->text().right(2).toInt(nullptr, 16)));
-    m_Settings.setValue("serial/protocol/xorflag",
-        static_cast<uint8_t>(ui->eXORFlag->text().right(2).toInt(nullptr, 16)));
+    m_settings.setValue("serial/protocol/startflag",
+        static_cast<uint8_t>(ui->eStartFlag->text().mid(2).toInt(nullptr, 16)));
+    m_settings.setValue("serial/protocol/endflag",
+        static_cast<uint8_t>(ui->eEndFlag->text().mid(2).toInt(nullptr, 16)));
+    m_settings.setValue("serial/protocol/escapeflag",
+        static_cast<uint8_t>(ui->eEscapeFlag->text().mid(2).toInt(nullptr, 16)));
+    m_settings.setValue("serial/protocol/xorflag",
+        static_cast<uint8_t>(ui->eXORFlag->text().mid(2).toInt(nullptr, 16)));
+    QString ackTimeout_str = ui->eAckTimeOut->text();
+    ackTimeout_str.chop(3);
+    m_settings.setValue("serial/protocol/acktimeout",
+        static_cast<uint8_t>(ackTimeout_str.toInt(nullptr, 10)));
 }
 
 void SettingsDialog::loadSettings()
 {
     // Loads serial port configuration
     ui->eSerialPortInfoList->setCurrentText(
-        m_Settings.value("serial/portname", "COM1").toString());
+        m_settings.value("serial/portname", "COM1").toString());
     int iBaudrate = ui->eBaudrate->findData(static_cast<QSerialPort::BaudRate>(
-                m_Settings.value("serial/baudrate", 115200).toInt()));
+                m_settings.value("serial/baudrate", 115200).toInt()));
     if (iBaudrate != -1)
         ui->eBaudrate->setCurrentIndex(iBaudrate);
     else
     {
         ui->eBaudrate->setCurrentIndex(4);
         ui->eBaudrate->setCurrentText(QString::number(
-                m_Settings.value("serial/baudrate", 115200).toInt()));
+                m_settings.value("serial/baudrate", 115200).toInt()));
     }
     int iDatabits = ui->eDatabits->findData(static_cast<QSerialPort::DataBits>(
-                m_Settings.value("serial/databits", QSerialPort::Data8).toInt()));
+                m_settings.value("serial/databits", QSerialPort::Data8).toInt()));
     ui->eDatabits->setCurrentIndex(iDatabits);
     int iParity = ui->eParity->findData(static_cast<QSerialPort::Parity>(
-                m_Settings.value("serial/parity", QSerialPort::NoParity).toInt()));
+                m_settings.value("serial/parity", QSerialPort::NoParity).toInt()));
     ui->eParity->setCurrentIndex(iParity);
     int iStopbits = ui->eStopbits->findData(static_cast<QSerialPort::StopBits>(
-                m_Settings.value("serial/stopbits", QSerialPort::OneStop).toInt()));
+                m_settings.value("serial/stopbits", QSerialPort::OneStop).toInt()));
     ui->eStopbits->setCurrentIndex(iStopbits);
     int iFlowcontrol = ui->eFlowcontrol->findData(static_cast<QSerialPort::FlowControl>(
-                m_Settings.value("serial/flowcontrol", QSerialPort::HardwareControl).toInt()));
+                m_settings.value("serial/flowcontrol", QSerialPort::HardwareControl).toInt()));
     ui->eFlowcontrol->setCurrentIndex(iFlowcontrol);
-    ui->eAutoconnect->setChecked(m_Settings.value("serial/autoconnect", false).toBool());
+    ui->eAutoconnect->setChecked(m_settings.value("serial/autoconnect", false).toBool());
 
     // Loads serial protocol information
-    ui->eStartflag->setText(QStringLiteral("0x") + QString::number(
-            static_cast<uint8_t>(m_Settings.value("serial/protocol/startflag", 0x12).toInt()), 16));
-    ui->eEndflag->setText(QStringLiteral("0x") + QString::number(
-            static_cast<uint8_t>(m_Settings.value("serial/protocol/endflag", 0x13).toInt()), 16));
-    ui->eEscapeflag->setText(QStringLiteral("0x") + QString::number(
-            static_cast<uint8_t>(m_Settings.value("serial/protocol/escapeflag", 0x7D).toInt()), 16));
-    ui->eXORFlag->setText(QStringLiteral("0x") + QString::number(
-            static_cast<uint8_t>(m_Settings.value("serial/protocol/xorflag", 0x20).toInt()), 16));
+    ui->eStartFlag->setValue(static_cast<uint8_t>(
+            m_settings.value("serial/protocol/startflag", 0x12).toInt()));
+    ui->eEndFlag->setValue(static_cast<uint8_t>(
+            m_settings.value("serial/protocol/endflag", 0x13).toInt()));
+    ui->eEscapeFlag->setValue(static_cast<uint8_t>(
+            m_settings.value("serial/protocol/escapeflag", 0x7D).toInt()));
+    ui->eXORFlag->setValue(static_cast<uint8_t>(
+            m_settings.value("serial/protocol/xorflag", 0x20).toInt()));
+    ui->eAckTimeOut->setValue(static_cast<uint8_t>(
+            m_settings.value("serial/protocol/acktimeout", 15).toInt()));
 }

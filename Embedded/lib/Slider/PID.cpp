@@ -20,6 +20,8 @@ PID::PID(double *Input, double *Output, double *Setpoint, double Kp, double Ki,
     lastTime = millis() - SampleTime;
 }
 
+void PID::setIenabled(bool enabled) { iEnabled = enabled; }
+
 bool PID::Compute() {
     if (!inAuto)
         return false;
@@ -28,14 +30,20 @@ bool PID::Compute() {
     if (timeChange >= SampleTime) {
         double input = *myInput;
         double error = *mySetpoint - input;
-        ITerm += (ki * error);
-        if (ITerm > outMax)
-            ITerm = outMax;
-        else if (ITerm < outMin)
-            ITerm = outMin;
+        if (iEnabled) {
+            ITerm += (ki * error);
+            if (ITerm > outMax)
+                ITerm = outMax;
+            else if (ITerm < outMin)
+                ITerm = outMin;
+        }
         double dInput = (input - lastInput);
 
-        double output = kp * error + ITerm - kd * dInput;
+        double output;
+        if (iEnabled)
+            output = kp * error + ITerm - kd * dInput;
+        else
+            output = kp * error - kd * dInput;
 
         if (output > outMax)
             output = outMax;
