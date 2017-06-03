@@ -31,7 +31,6 @@ typedef struct
     enum command_type : uint8_t
     {
         /// FOR EVERYONE
-        ACK = 0xFB,
         NACK = 0xFC,
 
         /// FOR SLIDER

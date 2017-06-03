@@ -80,7 +80,6 @@ void MainWindow::receivePacket(const command& packet)
 {
     switch (packet.type)
     {
-        case command::ACK:
         case command::FORC_POSITION:
         {
             static QTime time(QTime::currentTime());
@@ -131,8 +130,7 @@ void MainWindow::initConnections()
     connect(m_pSerial, &SerialProtocol::statusMessage, this, &MainWindow::showStatusMessage);
     connect(m_pSerial, &SerialProtocol::packetReady, this, &MainWindow::receivePacket);
 
-    //connect(m_pSystemKeyboardHook, &SystemKeyboardHook::keyPressed, this, &MainWindow::handleKeyPressed);
-    connect(m_pSystemKeyboardHook, SIGNAL(keyPressed(DWORD)), this, SLOT(handleKeyPressed(DWORD)));
+    connect(m_pSystemKeyboardHook, &SystemKeyboardHook::keyPressed, this, &MainWindow::handleKeyPressed);
 }
 
 void MainWindow::showStatusMessage(const QString& message)
@@ -152,4 +150,33 @@ void MainWindow::handleKeyPressed(DWORD key)
 {
     QKeySequence seq(key);
     showStatusMessage("Key pressed: " + seq.toString() + ", " + QString::number(key));
+}
+
+void MainWindow::on_bAddResist_clicked()
+{
+    command cmd;
+    cmd.type = command::FORS_RESIST_AT;
+    cmd.value = static_cast<uint16_t>(ui->eResistAt->value());
+    m_pSerial->writePacket(cmd);
+}
+
+void MainWindow::on_bClearResists_clicked()
+{
+    command cmd;
+    cmd.type = command::FORS_RESIST_CLEAR;
+    m_pSerial->writePacket(cmd);
+}
+
+void MainWindow::on_bDisablePID_clicked()
+{
+    command cmd;
+    cmd.type = command::FORS_STOP_PID;
+    m_pSerial->writePacket(cmd);
+}
+
+void MainWindow::on_bEnablePID_clicked()
+{
+    command cmd;
+    cmd.type = command::FORS_START_PID;
+    m_pSerial->writePacket(cmd);
 }

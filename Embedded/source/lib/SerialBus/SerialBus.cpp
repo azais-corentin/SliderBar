@@ -69,11 +69,11 @@ void SerialBus::receivePacket() {
     received.type = static_cast<command::command_type>(type);
     received.value = value;
 
-    m_receiver(received);
-
     if (received.type < command::FORC_POSITION &&
         received.type != command::FORS_POSITION)
         sendAck();
+
+    m_receiver(received);
 
     m_buffer.clear();
 }
@@ -136,6 +136,7 @@ uint8_t SerialBus::decode8(const Buffer &packet, int &i) {
         return packet.at8(i++) ^ xorflag;
     return packet.at8(i - 1);
 }
+
 uint16_t SerialBus::decode16(const Buffer &packet, int &i) {
     uint8_t b1, b2;
     b1 = decode8(packet, i);

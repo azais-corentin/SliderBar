@@ -30,6 +30,9 @@ struct CRC {
 
 typedef struct {
     enum command_type : uint8_t {
+        /// FOR EVERYONE
+        NACK = 0xFC,
+
         /// FOR SLIDER
         // From Computer to Slider
         FORS_POSITION = 0x01, // uint16_t position, u2(mm): v/655.36 mm

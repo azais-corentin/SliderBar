@@ -39,6 +39,14 @@ private slots:
     void on_eProgress_valueChanged(int value);
     void handleKeyPressed(DWORD key);
 
+    void on_bAddResist_clicked();
+
+    void on_bClearResists_clicked();
+
+    void on_bDisablePID_clicked();
+
+    void on_bEnablePID_clicked();
+
 private:
     void loadSettings();
     void toggleAutoconnect();

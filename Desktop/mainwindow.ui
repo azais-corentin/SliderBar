@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,1">
     <item row="0" column="0">
      <widget class="QProgressBar" name="progressBar">
       <property name="maximum">
@@ -44,8 +44,47 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
+    <item row="3" column="0">
      <widget class="QCustomPlot" name="dataPlot" native="true"/>
+    </item>
+    <item row="2" column="0">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="1" rowspan="2">
+       <widget class="QPushButton" name="bClearResists">
+        <property name="text">
+         <string>Clear resists</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="bAddResist">
+        <property name="text">
+         <string>Add resist</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QSpinBox" name="eResistAt">
+        <property name="maximum">
+         <number>1022</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="bDisablePID">
+        <property name="text">
+         <string>Disable PID</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="bEnablePID">
+        <property name="text">
+         <string>Enable PID</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>

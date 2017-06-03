@@ -27,21 +27,24 @@ void setup() {
 }
 
 void receive_data(command packet) {
-    int speed;
     switch (packet.type) {
     case command::FORS_POSITION:
         slider.setPosition(packet.value);
         break;
     case command::FORS_SPEED:
-        slider.setSpeed(0);
+        slider.setSpeed(packet.value);
         break;
     case command::FORS_START_PID:
         slider.setMode(AUTOMATIC);
         break;
     case command::FORS_STOP_PID:
         slider.setMode(MANUAL);
-    default:
-        Serial.println("UNDEFINED");
+        break;
+    case command::FORS_RESIST_AT:
+        slider.appendResist(packet.value);
+        break;
+    case command::FORS_RESIST_CLEAR:
+        slider.clearResists();
         break;
     }
 }

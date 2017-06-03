@@ -92,7 +92,7 @@ void SerialProtocol::closeSerialPort()
     emit statusMessage(QStringLiteral("Serial port: Disconnected!"));
 }
 
-void SerialProtocol::writePacket(const command& packet)
+void SerialProtocol::writePacket(const command& packet, bool noAck)
 {
     /// http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
     /// Packet structure / protocol framing:
@@ -130,13 +130,14 @@ void SerialProtocol::writePacket(const command& packet)
     m_serial->write(packetData);
 
     // If we need an Ack
-    if (packet.type < command::FORC_POSITION &&
-        packet.type != command::FORS_POSITION)
-    {
-        m_remainingAck.enqueue(packet);
-        if (!m_pTimerAck->isActive())
-            m_pTimerAck->start();
-    }
+    if (!noAck)
+        if (packet.type < command::FORC_POSITION &&
+            packet.type != command::FORS_POSITION)
+        {
+            m_remainingAck.enqueue(packet);
+            if (!m_pTimerAck->isActive())
+                m_pTimerAck->start();
+        }
 }
 
 void SerialProtocol::readData()
@@ -172,7 +173,7 @@ void SerialProtocol::readData()
     // Check if packet is ACK
     if (data.size() == 1)
     {
-        uint8_t value = decode8(data, i);
+        uint8_t value = decode8(data, i, false);
         if (value == ackflag)
         {
             m_remainingAck.dequeue();
@@ -238,21 +239,25 @@ void SerialProtocol::handleError(QSerialPort::SerialPortError error)
 void SerialProtocol::handleAckTimeout()
 {
     statusMessage("Serial error: Ack missing!");
-    writePacket(m_remainingAck.head());
+    writePacket(m_remainingAck.head(), true);
 }
 
-uint8_t SerialProtocol::decode8(const QByteArray& packet, int& i)
+uint8_t SerialProtocol::decode8(const QByteArray& packet, int& i, bool escape)
 {
-    if (isFlag(static_cast<uint8_t>(packet.at(i++))))
-        return static_cast<uint8_t>(packet.at(i++)) ^ xorflag;
-    return static_cast<uint8_t>(packet.at(i - 1));
+    if (escape)
+    {
+        if (isFlag(static_cast<uint8_t>(packet.at(i++))))
+            return static_cast<uint8_t>(packet.at(i++)) ^ xorflag;
+        return static_cast<uint8_t>(packet.at(i - 1));
+    }
+    return static_cast<uint8_t>(packet.at(i++));
 }
 
-uint16_t SerialProtocol::decode16(const QByteArray& packet, int& i)
+uint16_t SerialProtocol::decode16(const QByteArray& packet, int& i, bool escape)
 {
     uint8_t b1, b2;
-    b1 = decode8(packet, i);
-    b2 = decode8(packet, i);
+    b1 = decode8(packet, i, escape);
+    b2 = decode8(packet, i, escape);
 
     return static_cast<uint16_t>((b1 << 8) | (b2 & 0xff));
 }

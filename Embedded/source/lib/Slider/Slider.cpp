@@ -9,6 +9,9 @@ Slider::Slider() {
     m_pPID->SetSampleTime(10);
     m_pPID->SetMode(AUTOMATIC);
 
+    for (uint8_t i = 0; i < MAX_RESIST; i++)
+        m_pResist_at[i] = -1;
+
     m_tPosition = 512; // middle
     m_cPosition = analogRead(A4);
 }
@@ -18,13 +21,32 @@ Slider::~Slider() {}
 void Slider::update() {
     m_cPosition = analogRead(A4);
 
+    // Continue if PID is active
+    if (m_pPID->GetMode() == MANUAL) {
+        // Brake if we're close to a resist_at point
+        if (m_resistIndex > 0)
+            if (approxBinarySearch(m_pResist_at, m_resistIndex, m_cPosition,
+                                   20) >= 0) {
+                m_pMotor->drive(50);
+                delay(10);
+                m_pMotor->drive(-50);
+                delay(10);
+                m_pMotor->brake();
+            }
+
+        return;
+    }
+
+    // Prevent I overshoot if far from position
     if (abs(m_tPosition - m_cPosition) < 40)
         m_pPID->setIenabled(true);
     else
         m_pPID->setIenabled(false);
 
+    // Compute PID values
     m_pPID->Compute();
 
+    // Prevent slow speeds (beeping of the motor)
     if (abs(m_tSpeed) < 45) {
         m_pMotor->brake();
         m_pPID->setIenabled(false);
@@ -34,7 +56,49 @@ void Slider::update() {
 
 void Slider::setPosition(uint16_t val) { m_tPosition = val; }
 
-void Slider::setSpeed(uint16_t val) {
-    m_tSpeed =
-        255. * static_cast<double>(static_cast<int>(val) - 32768) / 32768.;
+void Slider::setSpeed(uint16_t val) { m_tSpeed = val - 255; }
+
+void Slider::appendResist(uint16_t resist_at) {
+    if (m_resistIndex >= MAX_RESIST)
+        return;
+
+    m_pResist_at[m_resistIndex++] = resist_at;
+}
+
+int Slider::approxBinarySearch(uint16_t *arr, uint8_t r, uint16_t x,
+                               uint8_t prec) {
+    if (r == 0)
+        return -1;
+    if (uint16_t(x - prec) > x) {
+        if (arr[0] <= x)
+            return 0;
+        else
+            return -1;
+    }
+
+    uint8_t l = 0;
+    while (l <= r) {
+        uint8_t m = l + (r - l) / 2;
+
+        // Check if x is present at mid
+        if (arr[m] <= x + prec && arr[m] >= x - prec)
+            return m;
+
+        // If x greater, ignore left half
+        if (arr[m] < x)
+            l = m + 1;
+
+        // If x is smaller, ignore right half
+        else
+            r = m - 1;
+    }
+
+    // if we reach here, then element was not present
+    return -1;
+}
+
+void Slider::clearResists() {
+    m_resistIndex = 0;
+    for (uint8_t i = 0; i < MAX_RESIST; i++)
+        m_pResist_at[i] = -1;
 }

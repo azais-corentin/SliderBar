@@ -6,6 +6,8 @@
 #include "PID.h"
 #include "TB6612FNG.h"
 
+#define MAX_RESIST 10
+
 class Slider {
   public:
     Slider();
@@ -20,8 +22,14 @@ class Slider {
 
     void setMode(int mode) { m_pPID->SetMode(mode); }
 
+    void appendResist(uint16_t resist_at);
+    void clearResists();
+
   private:
-    float polynomial[2] = {0.0968879, 0.42659893};
+    int approxBinarySearch(uint16_t arr[], uint8_t r, uint16_t x, uint8_t prec);
+
+    uint16_t m_pResist_at[MAX_RESIST] = {0};
+    uint8_t m_resistIndex = 0;
     Motor *m_pMotor;
     PID *m_pPID;
     double m_cPosition = 0, m_tPosition = 0;
