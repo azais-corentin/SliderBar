@@ -167,6 +167,8 @@ void SettingsDialog::saveSettings()
         static_cast<uint8_t>(ui->eEscapeFlag->text().mid(2).toInt(nullptr, 16)));
     m_settings.setValue("serial/protocol/xorflag",
         static_cast<uint8_t>(ui->eXORFlag->text().mid(2).toInt(nullptr, 16)));
+    m_settings.setValue("serial/protocol/ackflag",
+        static_cast<uint8_t>(ui->eACKFlag->text().mid(2).toInt(nullptr, 16)));
     QString ackTimeout_str = ui->eAckTimeOut->text();
     ackTimeout_str.chop(3);
     m_settings.setValue("serial/protocol/acktimeout",
@@ -211,6 +213,8 @@ void SettingsDialog::loadSettings()
             m_settings.value("serial/protocol/escapeflag", 0x7D).toInt()));
     ui->eXORFlag->setValue(static_cast<uint8_t>(
             m_settings.value("serial/protocol/xorflag", 0x20).toInt()));
+    ui->eACKFlag->setValue(static_cast<uint8_t>(
+            m_settings.value("serial/protocol/ackflag", 0xfb).toInt()));
     ui->eAckTimeOut->setValue(static_cast<uint8_t>(
-            m_settings.value("serial/protocol/acktimeout", 15).toInt()));
+            m_settings.value("serial/protocol/acktimeout", 50).toInt()));
 }

@@ -92,7 +92,7 @@ void SerialProtocol::closeSerialPort()
     emit statusMessage(QStringLiteral("Serial port: Disconnected!"));
 }
 
-void SerialProtocol::writePacket(const command& packet, bool noAck)
+void SerialProtocol::writePacket(const command& packet)
 {
     /// http://eli.thegreenplace.net/2009/08/12/framing-in-serial-communications/
     /// Packet structure / protocol framing:
@@ -130,14 +130,13 @@ void SerialProtocol::writePacket(const command& packet, bool noAck)
     m_serial->write(packetData);
 
     // If we need an Ack
-    if (!noAck)
-        if (packet.type < command::FORC_POSITION &&
-            packet.type != command::FORS_POSITION)
-        {
-            m_remainingAck.enqueue(packet);
-            if (!m_pTimerAck->isActive())
-                m_pTimerAck->start();
-        }
+    if (packet.type < command::FORC_POSITION &&
+        packet.type != command::FORS_POSITION)
+    {
+        m_remainingAck.enqueue(packet);
+        if (!m_pTimerAck->isActive())
+            m_pTimerAck->start();
+    }
 }
 
 void SerialProtocol::readData()
@@ -155,65 +154,72 @@ void SerialProtocol::readData()
         return;
     }
 
-    // Makes sure buffer starts with the last startflag
-    m_buffer = m_buffer.mid(m_buffer.lastIndexOf(static_cast<char>(startflag)));
+    // Makes sure buffer starts with the first startflag
+    m_buffer = m_buffer.mid(m_buffer.indexOf(static_cast<char>(startflag)));
 
     // Wait for the endflag
     if (!m_buffer.contains(static_cast<char>(endflag)))
         return;
 
-    // Makes sure buffer ends with the first endflag
-    m_buffer = m_buffer.left(m_buffer.indexOf(static_cast<char>(endflag)) + 1);
+    // Makes sure buffer ends with the last endflag
+    m_buffer = m_buffer.left(m_buffer.lastIndexOf(static_cast<char>(endflag)) + 1);
 
-    // Packets is complete
-    QByteArray data = m_buffer.mid(1);
-    data.chop(1);
-    int i = 0;
+    // Process packet(s)
+    m_buffer.chop(1);
+    auto m_bufferpackets = m_buffer.split(static_cast<char>(endflag));
 
-    // Check if packet is ACK
-    if (data.size() == 1)
+    for (auto data : m_bufferpackets)
     {
-        uint8_t value = decode8(data, i, false);
-        if (value == ackflag)
-        {
-            m_remainingAck.dequeue();
-            if (m_remainingAck.isEmpty())
-                m_pTimerAck->stop();
-            else
-                m_pTimerAck->start();
+        data = data.mid(1);
+        int i = 0;
 
+        // Check if packet is ACK
+        if (data.size() == 1)
+        {
+            uint8_t value = decode8(data, i, false);
+            if (value == ackflag)
+            {
+                m_remainingAck.dequeue();
+                if (m_remainingAck.isEmpty())
+                    m_pTimerAck->stop();
+                else
+                    m_pTimerAck->start();
+
+                m_buffer.clear();
+            }
+            continue;
+        }
+
+        QByteArray receivedBytes;
+
+        // Extracts data & CRC
+        uint8_t type = decode8(data, i);
+        uint16_t value = decode16(data, i);
+        uint8_t crc_received = decode8(data, i);
+
+        // Computes CRC
+        i = 0;
+        encode8(receivedBytes, i, type, false);
+        encode16(receivedBytes, i, value, false);
+        uint8_t crc_computed = CRC::compute(receivedBytes, 3);
+
+        // Verify CRC
+        if (crc_computed != crc_received)
+        {
+            qDebug() << "CRC Mismatch !";
             m_buffer.clear();
             return;
         }
+
+        // Process received data
+        command received;
+        received.type = static_cast<command::command_type>(type);
+        received.value = value;
+
+        emit packetReady(received);
+
     }
 
-    QByteArray receivedBytes;
-
-    // Extracts data & CRC
-    uint8_t type = decode8(data, i);
-    uint16_t value = decode16(data, i);
-    uint8_t crc_received = decode8(data, i);
-
-    // Computes CRC
-    i = 0;
-    encode8(receivedBytes, i, type, false);
-    encode16(receivedBytes, i, value, false);
-    uint8_t crc_computed = CRC::compute(receivedBytes, 3);
-
-    // Verify CRC
-    if (crc_computed != crc_received)
-    {
-        qDebug() << "CRC Mismatch !";
-        m_buffer.clear();
-        return;
-    }
-
-    // Process received data
-    command received;
-    received.type = static_cast<command::command_type>(type);
-    received.value = value;
-
-    emit packetReady(received);
     m_buffer.clear();
 }
 
@@ -239,7 +245,8 @@ void SerialProtocol::handleError(QSerialPort::SerialPortError error)
 void SerialProtocol::handleAckTimeout()
 {
     statusMessage("Serial error: Ack missing!");
-    writePacket(m_remainingAck.head(), true);
+    writePacket(m_remainingAck.head());
+    m_remainingAck.dequeue();
 }
 
 uint8_t SerialProtocol::decode8(const QByteArray& packet, int& i, bool escape)

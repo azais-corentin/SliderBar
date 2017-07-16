@@ -46,6 +46,17 @@ void receive_data(command packet) {
     case command::FORS_RESIST_CLEAR:
         slider.clearResists();
         break;
+    case command::FORS_PID_P:
+        slider.setP(static_cast<double>(packet.value) / 327.68);
+        break;
+    case command::FORS_PID_I:
+        slider.setI(static_cast<double>(packet.value) / 327.68);
+        break;
+    case command::FORS_PID_D:
+        slider.setD(static_cast<double>(packet.value) / 327.68);
+        break;
+    default:
+        break;
     }
 }
 
@@ -59,4 +70,15 @@ void loop() {
 void sendPosition() {
     position.value = slider.getPosition();
     bus.sendPacket(position);
+
+    command est_pos;
+    command est_vel;
+
+    est_pos.type = command::FORC_EST_POS;
+    est_pos.value = static_cast<uint16_t>(slider.getEstPosition());
+    est_vel.type = command::FORC_EST_VEL;
+    est_vel.value = static_cast<uint16_t>(slider.getEstVelocity() + 500);
+
+    bus.sendPacket(est_pos);
+    bus.sendPacket(est_vel);
 }

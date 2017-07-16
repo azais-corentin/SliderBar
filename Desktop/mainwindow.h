@@ -17,6 +17,7 @@ class MainWindow;
 
 class SerialProtocol;
 class QLabel;
+class QTimer;
 
 class MainWindow : public QMainWindow
 {
@@ -31,8 +32,8 @@ private slots:
     void closeSerialPort();
     void disableConnect();
     void enableConnect();
-    void writePacket(command& packet);
     void receivePacket(const command& packet);
+    void clearStatusMessage();
 
     int showConfiguration();
 
@@ -40,12 +41,10 @@ private slots:
     void handleKeyPressed(DWORD key);
 
     void on_bAddResist_clicked();
-
     void on_bClearResists_clicked();
-
     void on_bDisablePID_clicked();
-
     void on_bEnablePID_clicked();
+    void on_bUpdatePID_clicked();
 
 private:
     void loadSettings();
@@ -57,6 +56,7 @@ private:
 
     Ui::MainWindow* ui;
     QLabel* m_pStatus;
+    QTimer* m_pTimerStatusMessage;
 
     SystemKeyboardHook* m_pSystemKeyboardHook;
 
@@ -65,6 +65,7 @@ private:
 
     SerialProtocol* m_pSerial;
     uint16_t m_sliderPos = 0;
+    uint32_t m_count = 0;
 };
 
 #endif // MAINWINDOW_H

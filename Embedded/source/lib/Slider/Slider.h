@@ -16,11 +16,24 @@ class Slider {
     void update();
 
     void setPosition(uint16_t val);
-    uint16_t getPosition() { return m_cPosition; }
+    uint16_t getPosition();
+
+    double getEstPosition() { return m_xk_1; }
+    double getEstVelocity() { return m_vk_1; }
+
     void setSpeed(uint16_t val);
     int getSpeed() { return m_tSpeed; }
 
     void setMode(int mode) { m_pPID->SetMode(mode); }
+    void setP(double P) {
+        m_pPID->SetTunings(P, m_pPID->GetKi(), m_pPID->GetKd());
+    }
+    void setI(double I) {
+        m_pPID->SetTunings(m_pPID->GetKp(), I, m_pPID->GetKd());
+    }
+    void setD(double D) {
+        m_pPID->SetTunings(m_pPID->GetKp(), m_pPID->GetKi(), D);
+    }
 
     void appendResist(uint16_t resist_at);
     void clearResists();
@@ -34,6 +47,10 @@ class Slider {
     PID *m_pPID;
     double m_cPosition = 0, m_tPosition = 0;
     double m_tSpeed = 0;
+
+    // Tracking filter part
+    double m_a = 0.9, m_b = 0.005, m_g = 2, m_acc = 0.;
+    double m_xk_1 = 0., m_vk_1 = 0.;
 };
 
 #endif // SLIDER_H

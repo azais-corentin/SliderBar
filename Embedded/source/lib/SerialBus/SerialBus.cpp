@@ -43,7 +43,7 @@ void SerialBus::receivePacket() {
     // Makes sure buffer ends with the first endflag
     m_buffer = m_buffer.left(m_buffer.indexOf(endflag) + 1);
 
-    // Packet is complete
+    // Packet is complete -- remove startflag and endflag
     Buffer data = m_buffer.mid(1);
     data.chop(1);
     int i = 0;
@@ -111,9 +111,9 @@ void SerialBus::sendPacket(const command &cmd) const {
 
 void SerialBus::sendAck() const {
     Buffer ack;
-    ack.append8(startflag);
-    ack.append8(ackflag);
-    ack.append8(endflag);
+    encode8(ack, startflag, false);
+    encode8(ack, ackflag, false);
+    encode8(ack, endflag, false);
     m_serial.write(ack.data(), ack.size());
 }
 

@@ -12,8 +12,8 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    m_pSystemKeyboardHook = SystemKeyboardHook::instance();
-    m_pSystemKeyboardHook->setConnected(true);
+    //m_pSystemKeyboardHook = SystemKeyboardHook::instance();
+    //m_pSystemKeyboardHook->setConnected(true);
 
     ui->setupUi(this);
     m_pStatus = new QLabel;
@@ -23,6 +23,10 @@ MainWindow::MainWindow(QWidget* parent) :
     m_pSerial = new SerialProtocol;
     m_pSettingsDialog = new SettingsDialog(this);
 
+    m_pTimerStatusMessage = new QTimer;
+    m_pTimerStatusMessage->setSingleShot(true);
+    m_pTimerStatusMessage->setInterval(2000);
+
     initConnections();
     loadSettings();
 
@@ -31,10 +35,19 @@ MainWindow::MainWindow(QWidget* parent) :
 
     //Setup plot
     ui->dataPlot->clearGraphs();
+    // Position
     ui->dataPlot->addGraph();
     ui->dataPlot->graph(0)->setPen(QPen(QColor(255, 110, 40)));
+    // Target position
     ui->dataPlot->addGraph();
     ui->dataPlot->graph(1)->setPen(QPen(QColor(40, 200, 40)));
+    // Estimated position
+    ui->dataPlot->addGraph();
+    ui->dataPlot->graph(2)->setPen(QPen(QColor(0, 0, 255)));
+    // Estimated velocity
+    ui->dataPlot->addGraph();
+    ui->dataPlot->graph(3)->setPen(QPen(QColor(70, 0, 70)));
+
     QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
     timeTicker->setTimeFormat("%z");
     ui->dataPlot->xAxis->setTicker(timeTicker);
@@ -44,6 +57,7 @@ MainWindow::MainWindow(QWidget* parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete m_pTimerStatusMessage;
 
     delete m_pSystemKeyboardHook;
     delete m_pSerial;
@@ -71,23 +85,36 @@ void MainWindow::enableConnect()
     ui->actionDisconnect->setEnabled(false);
 }
 
-void MainWindow::writePacket(command& packet)
-{
-    m_pSerial->writePacket(packet);
-}
-
 void MainWindow::receivePacket(const command& packet)
 {
+    m_count++;
+    static QTime time(QTime::currentTime());
+
     switch (packet.type)
     {
         case command::FORC_POSITION:
         {
-            static QTime time(QTime::currentTime());
             m_sliderPos = packet.value;
             double key = time.elapsed() / 1000.0;
-            ui->progressBar->setValue(int(0.0975879 * double(packet.value) + 0.42659893));
-            ui->dataPlot->graph(0)->addData(key, 0.0975879 * double(packet.value) + 0.42659893);
-            ui->dataPlot->graph(1)->addData(key, 0.0975879 * double(ui->eProgress->value()) + 0.42659893);
+            ui->progressBar->setValue(int(0.0975879 * double(packet.value) + 0.2651662));
+            ui->dataPlot->graph(0)->addData(key, 0.0975879 * double(packet.value) + 0.2651662);
+            ui->dataPlot->graph(1)->addData(key, 0.0975879 * double(ui->eProgress->value()) + 0.2651662);
+            ui->dataPlot->xAxis->setRange(key, 4, Qt::AlignRight);
+            ui->dataPlot->replot();
+            break;
+        }
+        case command::FORC_EST_POS:
+        {
+            double key = time.elapsed() / 1000.0;
+            ui->dataPlot->graph(2)->addData(key, 0.0975879 * double(packet.value) + 0.2651662);
+            ui->dataPlot->xAxis->setRange(key, 4, Qt::AlignRight);
+            ui->dataPlot->replot();
+            break;
+        }
+        case command::FORC_EST_VEL:
+        {
+            double key = time.elapsed() / 1000.0;
+            ui->dataPlot->graph(3)->addData(key, 0.0975879 * double(packet.value));
             ui->dataPlot->xAxis->setRange(key, 4, Qt::AlignRight);
             ui->dataPlot->replot();
             break;
@@ -96,6 +123,7 @@ void MainWindow::receivePacket(const command& packet)
             qDebug() << "Error: Packet not meant for computer!";
             break;
     }
+    showStatusMessage(QString::number(m_count));
 }
 
 int MainWindow::showConfiguration()
@@ -130,12 +158,19 @@ void MainWindow::initConnections()
     connect(m_pSerial, &SerialProtocol::statusMessage, this, &MainWindow::showStatusMessage);
     connect(m_pSerial, &SerialProtocol::packetReady, this, &MainWindow::receivePacket);
 
-    connect(m_pSystemKeyboardHook, &SystemKeyboardHook::keyPressed, this, &MainWindow::handleKeyPressed);
+    connect(m_pTimerStatusMessage, &QTimer::timeout, this, &MainWindow::clearStatusMessage);
+    //connect(m_pSystemKeyboardHook, &SystemKeyboardHook::keyPressed, this, &MainWindow::handleKeyPressed);
 }
 
 void MainWindow::showStatusMessage(const QString& message)
 {
     m_pStatus->setText(message);
+    m_pTimerStatusMessage->start(1000 + message.split(' ').length() * 800);
+}
+
+void MainWindow::clearStatusMessage()
+{
+    m_pStatus->clear();
 }
 
 void MainWindow::on_eProgress_valueChanged(int value)
@@ -179,4 +214,26 @@ void MainWindow::on_bEnablePID_clicked()
     command cmd;
     cmd.type = command::FORS_START_PID;
     m_pSerial->writePacket(cmd);
+}
+
+void MainWindow::on_bUpdatePID_clicked()
+{
+    double pg = ui->epGain->value();
+    double ig = ui->eiGain->value();
+    double dg = ui->edGain->value();
+
+    command pcmd;
+    pcmd.type = command::FORS_PID_P;
+    pcmd.value = static_cast<uint16_t>(pg * 327.68);
+    m_pSerial->writePacket(pcmd);
+
+    command icmd;
+    icmd.type = command::FORS_PID_I;
+    icmd.value = static_cast<uint16_t>(ig * 327.68);
+    m_pSerial->writePacket(icmd);
+
+    command dcmd;
+    dcmd.type = command::FORS_PID_D;
+    dcmd.value = static_cast<uint16_t>(dg * 327.68);
+    m_pSerial->writePacket(dcmd);
 }

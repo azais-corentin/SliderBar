@@ -25,7 +25,7 @@ public:
     bool openSerialPort();
     void closeSerialPort();
 
-    void writePacket(const command& packet, bool noAck = false);
+    void writePacket(const command& packet);
 
 signals:
     void packetReady(const command& packet);
