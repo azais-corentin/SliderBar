@@ -19,7 +19,7 @@ MouseWheelPlugin::~MouseWheelPlugin()
 SliderSettings MouseWheelPlugin::exposeSettings()
 {
     SliderSettings settings;
-    settings["Wheel scroll multiplier (scroll/mm)"] = 4;
+    settings["Wheel scroll multiplier (scroll/mm)"] = m_scrollMultiplier;
 
     return settings;
 }
@@ -29,21 +29,24 @@ void MouseWheelPlugin::updateSettings(SliderSettings& settings)
     if (settings.contains("Wheel scroll multiplier (scroll/mm)"))
     {
         m_scrollMultiplier = settings.value("Wheel scroll multiplier (scroll/mm)").toFloat();
+        return;
     }
 
-    qDebug() << "MouseWheel error: wrong settings hash";
+    qDebug() << "MouseWheel error: wrong SliderSettings values";
 }
 
-void MouseWheelPlugin::processEvent(const SliderInterface::SliderEventType& type, const QVariant& value)
+QVector<SliderEventType> MouseWheelPlugin::getEventTypes()
 {
-    if (type == SLIDER_MOVED)
-    {
-        float dx = value.toFloat();
-        mouseWheel(dx * m_scrollMultiplier * WHEEL_DELTA);
-    }
+    return QVector<SliderEventType>(SLIDER_DELTA);
 }
 
-void MouseWheelPlugin::mouseWheel(int n)
+void MouseWheelPlugin::processEvent(const SliderEventType& type, const QVariant& value)
+{
+    if (type == SLIDER_DELTA)
+        mouseWheel(value.toFloat() * m_scrollMultiplier * WHEEL_DELTA);
+}
+
+void MouseWheelPlugin::mouseWheel(float n)
 {
     INPUT input;
     input.type = INPUT_MOUSE;

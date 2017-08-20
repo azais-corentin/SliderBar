@@ -17,8 +17,6 @@ class Slider {
 
     void setPosition(uint16_t val);
     uint16_t getPosition();
-
-    double getEstPosition() { return m_xk_1; }
     double getEstVelocity() { return m_vk_1; }
 
     void setSpeed(uint16_t val);

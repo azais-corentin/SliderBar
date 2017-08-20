@@ -25,26 +25,12 @@ void Slider::update() {
     // Read current slider position
     m_cPosition = analogRead(A4);
 
-    double dt = double(micros() - old_time) / 1000000.;
-    old_time = micros();
+    auto currentTime = micros();
+    double dt = double(currentTime - old_time) / 1000000.;
+    old_time = currentTime;
 
     m_vk_1 = m_alpha * (m_cPosition - m_xk_1) / dt + (1 - m_alpha) * m_vk_1;
     m_xk_1 = m_cPosition;
-
-    /*
-        // Apply tracking filter
-        // Predicts new position and velocity
-        double x_pk = m_xk_1 + dt * m_vk_1 + dt * dt * m_ak_1 / 2.;
-        double v_pk = m_vk_1 + dt * m_ak_1;
-
-        // Calculates error and adapts
-        double rk = m_cPosition - x_pk;
-        m_xk_1 = x_pk + m_a * rk;
-        m_vk_1 = v_pk + m_b * rk / dt;
-        m_ak_1 = m_ak_1 + 2. * m_y * rk / (dt * dt);
-
-        // m_cPosition = m_xk_1; // Save estimated position
-    */
 
     // Continue if PID is active
     if (m_pPID->GetMode() == MANUAL) {

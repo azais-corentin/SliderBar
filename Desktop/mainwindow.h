@@ -14,7 +14,7 @@
 #include "systemkeyboardhook.h"
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 class SerialProtocol;
@@ -28,6 +28,9 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
+
+signals:
+    void eventDispatch(SliderEventType type, QVariant value);
 
 private slots:
     void openSerialPort();
@@ -75,8 +78,10 @@ private:
     QSettings m_settings;
 
     SerialProtocol* m_pSerial = nullptr;
-    uint16_t m_sliderPos = 0;
+    double m_sliderPos = 0;
     uint32_t m_count = 0;
+
+    float m_sliderLastPosition = 0.f;
 };
 
 #endif // MAINWINDOW_H

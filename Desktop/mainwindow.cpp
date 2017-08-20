@@ -109,13 +109,19 @@ void MainWindow::receivePacket(const command& packet)
     {
         case command::FORC_POSITION:
         {
-            m_sliderPos = packet.value;
+            m_sliderPos = 0.0975879 * double(packet.value) + 0.2651662;
             double key = time.elapsed() / 1000.0;
-            ui->progressBar->setValue(int(0.0975879 * double(packet.value) + 0.2651662));
-            ui->dataPlot->graph(0)->addData(key, 0.0975879 * double(packet.value) + 0.2651662);
+            ui->progressBar->setValue(int(m_sliderPos));
+            ui->dataPlot->graph(0)->addData(key, m_sliderPos);
             ui->dataPlot->graph(1)->addData(key, 0.0975879 * double(ui->eProgress->value()) + 0.2651662);
             ui->dataPlot->xAxis->setRange(key, 4, Qt::AlignRight);
             ui->dataPlot->replot();
+
+            emit eventDispatch(SLIDER_POSITION, m_sliderPos);
+            emit eventDispatch(SLIDER_DELTA, float(m_sliderPos) - m_sliderLastPosition);
+            qDebug() << "delta:" << float(m_sliderPos) - m_sliderLastPosition;
+            m_sliderLastPosition = float(m_sliderPos);
+
             break;
         }
         case command::FORC_EST_POS:
@@ -255,10 +261,13 @@ void MainWindow::on_bUpdatePID_clicked()
 
 void MainWindow::selectPlugin(int i)
 {
+    auto plugin = m_pluginList.at(i);
     bool checked = ui->menuPlugins->actions().at(i)->isChecked();
-    qDebug() << "Selected plugin:" << i;
-    qDebug() << m_pluginFileNames.at(i);
-    qDebug() << "Checked:" << checked;
+    //FIXME bug at the connect
+    if (checked)
+        connect(this, &MainWindow::eventDispatch, plugin, &SliderInterface::processEvent);
+    else
+        disconnect(this, &MainWindow::eventDispatch, plugin, &SliderInterface::processEvent);
 }
 
 void MainWindow::loadPlugins()
