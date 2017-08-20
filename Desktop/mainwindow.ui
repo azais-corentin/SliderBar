@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>667</width>
-    <height>442</height>
+    <width>973</width>
+    <height>583</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -114,7 +114,7 @@
            <double>100.000000000000000</double>
           </property>
           <property name="value">
-           <double>40.000000000000000</double>
+           <double>50.000000000000000</double>
           </property>
          </widget>
         </item>
@@ -152,7 +152,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>667</width>
+     <width>973</width>
      <height>20</height>
     </rect>
    </property>
@@ -173,8 +173,14 @@
     <addaction name="separator"/>
     <addaction name="actionAuto_connect"/>
    </widget>
+   <widget class="QMenu" name="menuPlugins">
+    <property name="title">
+     <string>Plugins</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
+   <addaction name="menuPlugins"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionConnect">

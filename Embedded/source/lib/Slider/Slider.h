@@ -49,7 +49,9 @@ class Slider {
     double m_tSpeed = 0;
 
     // Tracking filter part
-    double m_a = 0.9, m_b = 0.005, m_g = 2, m_acc = 0.;
+    unsigned long old_time;
+    // double m_a = 0.18, m_b = 0.00178459, m_y = 0.00088466;
+    double m_alpha = 0.001;
     double m_xk_1 = 0., m_vk_1 = 0.;
 };
 

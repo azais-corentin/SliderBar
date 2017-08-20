@@ -169,10 +169,8 @@ void SettingsDialog::saveSettings()
         static_cast<uint8_t>(ui->eXORFlag->text().mid(2).toInt(nullptr, 16)));
     m_settings.setValue("serial/protocol/ackflag",
         static_cast<uint8_t>(ui->eACKFlag->text().mid(2).toInt(nullptr, 16)));
-    QString ackTimeout_str = ui->eAckTimeOut->text();
-    ackTimeout_str.chop(3);
     m_settings.setValue("serial/protocol/acktimeout",
-        static_cast<uint8_t>(ackTimeout_str.toInt(nullptr, 10)));
+        static_cast<uint8_t>(ui->eAckTimeOut->value()));
 }
 
 void SettingsDialog::loadSettings()

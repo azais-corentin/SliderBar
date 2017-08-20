@@ -17,11 +17,12 @@ MainWindow::MainWindow(QWidget* parent) :
 
     ui->setupUi(this);
     m_pStatus = new QLabel;
-    ui->statusBar->addWidget(m_pStatus);
+    ui->statusBar->addPermanentWidget(m_pStatus, 0);
     enableConnect();
 
     m_pSerial = new SerialProtocol;
     m_pSettingsDialog = new SettingsDialog(this);
+    m_pSignalMapper = new QSignalMapper(this);
 
     m_pTimerStatusMessage = new QTimer;
     m_pTimerStatusMessage->setSingleShot(true);
@@ -38,29 +39,43 @@ MainWindow::MainWindow(QWidget* parent) :
     // Position
     ui->dataPlot->addGraph();
     ui->dataPlot->graph(0)->setPen(QPen(QColor(255, 110, 40)));
+    ui->dataPlot->graph(0)->setName("Position");
     // Target position
     ui->dataPlot->addGraph();
     ui->dataPlot->graph(1)->setPen(QPen(QColor(40, 200, 40)));
+    ui->dataPlot->graph(1)->setName("Target position");
     // Estimated position
     ui->dataPlot->addGraph();
     ui->dataPlot->graph(2)->setPen(QPen(QColor(0, 0, 255)));
+    ui->dataPlot->graph(2)->setName("Estimated position");
     // Estimated velocity
     ui->dataPlot->addGraph();
     ui->dataPlot->graph(3)->setPen(QPen(QColor(70, 0, 70)));
+    ui->dataPlot->graph(3)->setName("Estimated velocity");
 
     QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
     timeTicker->setTimeFormat("%z");
     ui->dataPlot->xAxis->setTicker(timeTicker);
     ui->dataPlot->yAxis->setRange(0, 100);
+    ui->dataPlot->legend->setVisible(true);
+
+    loadPlugins();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete m_pTimerStatusMessage;
+    if (m_pStatus)
+        delete m_pStatus;
+    if (m_pSettingsDialog)
+        delete m_pSettingsDialog;
+    if (m_pTimerStatusMessage)
+        delete m_pTimerStatusMessage;
 
-    delete m_pSystemKeyboardHook;
-    delete m_pSerial;
+    if (m_pSystemKeyboardHook)
+        delete m_pSystemKeyboardHook;
+    if (m_pSerial)
+        delete m_pSerial;
 }
 
 void MainWindow::openSerialPort()
@@ -236,4 +251,72 @@ void MainWindow::on_bUpdatePID_clicked()
     dcmd.type = command::FORS_PID_D;
     dcmd.value = static_cast<uint16_t>(dg * 327.68);
     m_pSerial->writePacket(dcmd);
+}
+
+void MainWindow::selectPlugin(int i)
+{
+    bool checked = ui->menuPlugins->actions().at(i)->isChecked();
+    qDebug() << "Selected plugin:" << i;
+    qDebug() << m_pluginFileNames.at(i);
+    qDebug() << "Checked:" << checked;
+}
+
+void MainWindow::loadPlugins()
+{
+    qDebug() << "Loading plugins...";
+
+    m_PluginsDir = QDir(qApp->applicationDirPath());
+
+#if defined(Q_OS_WIN)
+    if (m_PluginsDir.dirName().toLower() == "debug" || m_PluginsDir.dirName().toLower() == "release")
+        m_PluginsDir.cdUp();
+#elif defined(Q_OS_MAC)
+    if (pluginsDir.dirName() == "MacOS")
+    {
+        pluginsDir.cdUp();
+        pluginsDir.cdUp();
+        pluginsDir.cdUp();
+    }
+#endif
+    m_PluginsDir.cd("plugins");
+
+    m_currentPluginIndex = 0;
+    ui->menuPlugins->clear();
+    int i = 0;
+
+    foreach (QString fileName, m_PluginsDir.entryList(QDir::Files))
+    {
+        QPluginLoader loader(m_PluginsDir.absoluteFilePath(fileName));
+        QObject* plugin = loader.instance();
+        if (plugin)
+        {
+            SliderInterface* iPlugin = qobject_cast<SliderInterface*>(plugin);
+            if (iPlugin)
+            {
+                //TODO Implement refreshing of the plugins
+                //IMPL Clear WebsiteList and relaunch function
+                QAction* pluginAction = ui->menuPlugins->addAction(loader.metaData()
+                        .value("MetaData").toObject().value("name").toString(), m_pSignalMapper, SLOT(map()));
+                QString tooltip = loader.metaData().value("MetaData")
+                    .toObject().value("description").toString();
+                pluginAction->setWhatsThis(tooltip);
+                pluginAction->setToolTip(tooltip);
+                pluginAction->setCheckable(true);
+
+                m_pSignalMapper->setMapping(ui->menuPlugins->actions().at(i), i);
+                m_pluginList.append(iPlugin);
+                m_pluginFileNames += fileName;
+                i++;
+            }
+        }
+    }
+
+    if ( i <= 0)
+    {
+        qWarning() << "No plugin found";
+        m_currentPluginIndex = -1;
+        return;
+    }
+    connect(m_pSignalMapper, SIGNAL(mapped(int)),
+        this, SLOT(selectPlugin(int)), Qt::UniqueConnection);
 }

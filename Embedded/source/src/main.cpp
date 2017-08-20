@@ -77,7 +77,7 @@ void sendPosition() {
     est_pos.type = command::FORC_EST_POS;
     est_pos.value = static_cast<uint16_t>(slider.getEstPosition());
     est_vel.type = command::FORC_EST_VEL;
-    est_vel.value = static_cast<uint16_t>(slider.getEstVelocity() + 500);
+    est_vel.value = static_cast<uint16_t>(slider.getEstVelocity() / 10. + 500);
 
     bus.sendPacket(est_pos);
     bus.sendPacket(est_vel);

@@ -2,11 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include <QDir>
+#include <QSignalMapper>
 #include <QSettings>
 #include <QtSerialPort/QSerialPortInfo>
 
 #include "settingsdialog.h"
+#include "sliderinterface.h"
 #include "serialpacketdefinition.h"
 
 #include "systemkeyboardhook.h"
@@ -46,6 +48,9 @@ private slots:
     void on_bEnablePID_clicked();
     void on_bUpdatePID_clicked();
 
+    void selectPlugin(int i);
+    void loadPlugins();
+
 private:
     void loadSettings();
     void toggleAutoconnect();
@@ -54,16 +59,22 @@ private:
 
     void showStatusMessage(const QString& message);
 
-    Ui::MainWindow* ui;
-    QLabel* m_pStatus;
-    QTimer* m_pTimerStatusMessage;
+    Ui::MainWindow* ui = nullptr;
+    QLabel* m_pStatus = nullptr;
+    QTimer* m_pTimerStatusMessage = nullptr;
 
-    SystemKeyboardHook* m_pSystemKeyboardHook;
+    QDir m_PluginsDir;
+    QStringList m_pluginFileNames;
+    QList<SliderInterface*> m_pluginList;
+    int m_currentPluginIndex;
+    QSignalMapper* m_pSignalMapper = nullptr;
 
-    SettingsDialog* m_pSettingsDialog;
+    SystemKeyboardHook* m_pSystemKeyboardHook = nullptr;
+
+    SettingsDialog* m_pSettingsDialog = nullptr;
     QSettings m_settings;
 
-    SerialProtocol* m_pSerial;
+    SerialProtocol* m_pSerial = nullptr;
     uint16_t m_sliderPos = 0;
     uint32_t m_count = 0;
 };

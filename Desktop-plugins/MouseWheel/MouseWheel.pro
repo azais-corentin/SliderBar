@@ -11,4 +11,4 @@ HEADERS     += MouseWheel.h
 
 DISTFILES   += MouseWheel.json
 
-DESTDIR     = ../../build-SliderBar-Desktop_Qt_5_8_0_MinGW_32bit-Debug/plugins
+DESTDIR     = ../../build-SliderBar-Desktop_Qt_5_9_0_MinGW_32bit-Debug/plugins

@@ -16,12 +16,18 @@ public:
     MouseWheelPlugin();
     ~MouseWheelPlugin();
 
+    SliderSettings exposeSettings();
+    void updateSettings(SliderSettings& settings);
+
 public slots:
+    void processEvent(const SliderEventType& type, const QVariant& value);
 
 signals:
 
 private:
     void mouseWheel(int n);
+
+    float m_scrollMultiplier = 20;
 };
 
 #endif // MOUSEWHEEL_H
