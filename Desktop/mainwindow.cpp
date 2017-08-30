@@ -265,9 +265,10 @@ void MainWindow::selectPlugin(int i)
     bool checked = ui->menuPlugins->actions().at(i)->isChecked();
     //FIXME bug at the connect
     if (checked)
-        connect(this, &MainWindow::eventDispatch, plugin, &SliderInterface::processEvent);
+        //connect(this, &MainWindow::eventDispatch, plugin, &SliderInterface::processEvent);
+        connect(this, SIGNAL(eventDispatch(SliderEventType, QVariant)), plugin, SLOT(processEvent(SliderEventType, QVariant)), Qt::QueuedConnection);
     else
-        disconnect(this, &MainWindow::eventDispatch, plugin, &SliderInterface::processEvent);
+        disconnect(this, SIGNAL(eventDispatch(SliderEventType, QVariant)), plugin, SLOT(processEvent(SliderEventType, QVariant)));
 }
 
 void MainWindow::loadPlugins()
