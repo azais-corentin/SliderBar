@@ -60,6 +60,7 @@ void SerialBus::receivePacket() {
     uint8_t crc_computed =
         CRC::compute(receivedBytes.data(), receivedBytes.size());
 
+    // Compares CRC (computed vs. received) 
     if (crc_computed != crc_received) {
         m_buffer.clear();
         return;
@@ -69,10 +70,13 @@ void SerialBus::receivePacket() {
     received.type = static_cast<command::command_type>(type);
     received.value = value;
 
+    // Send Acknowledgement for command types other than position
+    // (avoids overhead)
     if (received.type < command::FORC_POSITION &&
         received.type != command::FORS_POSITION)
         sendAck();
 
+    //Process the received packet
     m_receiver(received);
 
     m_buffer.clear();
