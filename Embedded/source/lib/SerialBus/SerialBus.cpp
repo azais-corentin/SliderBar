@@ -43,7 +43,7 @@ void SerialBus::receivePacket() {
     // Makes sure buffer ends with the first endflag
     m_buffer = m_buffer.left(m_buffer.indexOf(endflag) + 1);
 
-    // Packet is complete
+    // Packet is complete -- remove startflag and endflag
     Buffer data = m_buffer.mid(1);
     data.chop(1);
     int i = 0;
@@ -60,6 +60,7 @@ void SerialBus::receivePacket() {
     uint8_t crc_computed =
         CRC::compute(receivedBytes.data(), receivedBytes.size());
 
+    // Compares CRC (computed vs. received) 
     if (crc_computed != crc_received) {
         m_buffer.clear();
         return;
@@ -69,11 +70,14 @@ void SerialBus::receivePacket() {
     received.type = static_cast<command::command_type>(type);
     received.value = value;
 
-    m_receiver(received);
-
+    // Send Acknowledgement for command types other than position
+    // (avoids overhead)
     if (received.type < command::FORC_POSITION &&
         received.type != command::FORS_POSITION)
         sendAck();
+
+    //Process the received packet
+    m_receiver(received);
 
     m_buffer.clear();
 }
@@ -111,9 +115,9 @@ void SerialBus::sendPacket(const command &cmd) const {
 
 void SerialBus::sendAck() const {
     Buffer ack;
-    ack.append8(startflag);
-    ack.append8(ackflag);
-    ack.append8(endflag);
+    encode8(ack, startflag, false);
+    encode8(ack, ackflag, false);
+    encode8(ack, endflag, false);
     m_serial.write(ack.data(), ack.size());
 }
 
@@ -136,6 +140,7 @@ uint8_t SerialBus::decode8(const Buffer &packet, int &i) {
         return packet.at8(i++) ^ xorflag;
     return packet.at8(i - 1);
 }
+
 uint16_t SerialBus::decode16(const Buffer &packet, int &i) {
     uint8_t b1, b2;
     b1 = decode8(packet, i);

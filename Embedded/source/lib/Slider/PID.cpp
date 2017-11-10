@@ -22,6 +22,8 @@ PID::PID(double *Input, double *Output, double *Setpoint, double Kp, double Ki,
 
 void PID::setIenabled(bool enabled) { iEnabled = enabled; }
 
+void PID::resetI() { ITerm = 0.; }
+
 bool PID::Compute() {
     if (!inAuto)
         return false;

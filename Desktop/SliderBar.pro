@@ -16,15 +16,17 @@ SOURCES     += main.cpp\
             settingsdialog.cpp \
             serialprotocol.cpp \
     systemkeyboardhook.cpp \
-    qcustomplot.cpp
+    qcustomplot.cpp \
+    pluginsettingsdialog.cpp
 
 HEADERS     += mainwindow.h \
             settingsdialog.h \
             serialprotocol.h \
             serialpacketdefinition.h \
             sliderinterface.h \
-    systemkeyboardhook.h \
-    qcustomplot.h
+            systemkeyboardhook.h \
+            qcustomplot.h \
+    pluginsettingsdialog.h
 
 FORMS       += mainwindow.ui \
             settingsdialog.ui

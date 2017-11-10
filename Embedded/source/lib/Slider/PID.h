@@ -14,6 +14,7 @@ class PID {
         double Kd, int ControllerDirection);
 
     void setIenabled(bool enabled);
+    void resetI();
 
     void SetMode(int Mode);
     bool Compute();

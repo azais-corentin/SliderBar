@@ -49,8 +49,8 @@ private:
     // Encoding, decoding
     QByteArray m_buffer;
     bool isFlag(uint8_t ch) { return (ch == startflag) | (ch == endflag) | (ch == escapeflag); }
-    uint8_t decode8(const QByteArray& packet, int& i);
-    uint16_t decode16(const QByteArray& packet, int& i);
+    uint8_t decode8(const QByteArray& packet, int& i, bool escape = true);
+    uint16_t decode16(const QByteArray& packet, int& i, bool escape = true);
     void encode8(QByteArray& packet, int& i, const uint8_t& ch, bool escape = true);
     void encode16(QByteArray& packet, int& i, const uint16_t& ch, bool escape = true);
 };

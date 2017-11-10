@@ -56,6 +56,11 @@
        <string>Serial port</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>Plugins</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item row="1" column="1">
@@ -75,7 +80,7 @@
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <widget class="QLabel" name="categoryTitle">
+        <widget class="QLabel" name="serialTitle">
          <property name="font">
           <font>
            <weight>75</weight>
@@ -88,9 +93,9 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QTabWidget" name="tabItems">
+        <widget class="QTabWidget" name="tabWidgetSerial">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="tabSerial">
           <attribute name="title">
@@ -424,7 +429,38 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_2"/>
+     <widget class="QWidget" name="pluginSettings">
+      <layout class="QGridLayout" name="gridLayout_4">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="pluginTitle">
+         <property name="text">
+          <string>Plugin settings</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QTabWidget" name="tabWidgetPlugin">
+         <widget class="QWidget" name="tab">
+          <attribute name="title">
+           <string>Tab 1</string>
+          </attribute>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
