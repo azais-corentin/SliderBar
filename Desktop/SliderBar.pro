@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT          += widgets serialport printsupport
+CONFIG      += c++11
 
 TARGET      = SliderBar
 TEMPLATE    = app
@@ -15,9 +16,9 @@ SOURCES     += main.cpp\
             mainwindow.cpp \
             settingsdialog.cpp \
             serialprotocol.cpp \
-    systemkeyboardhook.cpp \
-    qcustomplot.cpp \
-    pluginsettingsdialog.cpp
+            systemkeyboardhook.cpp \
+            qcustomplot.cpp \
+            pluginsettingsdialog.cpp
 
 HEADERS     += mainwindow.h \
             settingsdialog.h \
@@ -26,7 +27,7 @@ HEADERS     += mainwindow.h \
             sliderinterface.h \
             systemkeyboardhook.h \
             qcustomplot.h \
-    pluginsettingsdialog.h
+            pluginsettingsdialog.h
 
 FORMS       += mainwindow.ui \
             settingsdialog.ui

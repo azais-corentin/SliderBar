@@ -1,4 +1,4 @@
-CONFIG      += plugin
+CONFIG      += plugin c++11
 TARGET      = MouseWheel
 TEMPLATE    = lib
 
