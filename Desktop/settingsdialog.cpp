@@ -169,6 +169,8 @@ void SettingsDialog::saveSettings()
         static_cast<uint8_t>(ui->eXORFlag->text().mid(2).toInt(nullptr, 16)));
     m_settings.setValue("serial/protocol/ackflag",
         static_cast<uint8_t>(ui->eACKFlag->text().mid(2).toInt(nullptr, 16)));
+    m_settings.setValue("serial/protocol/nackflag",
+        static_cast<uint8_t>(ui->eNACKFlag->text().mid(2).toInt(nullptr, 16)));
     m_settings.setValue("serial/protocol/acktimeout",
         static_cast<uint8_t>(ui->eAckTimeOut->value()));
 }
@@ -212,7 +214,9 @@ void SettingsDialog::loadSettings()
     ui->eXORFlag->setValue(static_cast<uint8_t>(
             m_settings.value("serial/protocol/xorflag", 0x20).toInt()));
     ui->eACKFlag->setValue(static_cast<uint8_t>(
-            m_settings.value("serial/protocol/ackflag", 0xfb).toInt()));
+            m_settings.value("serial/protocol/ackflag", 0xFB).toInt()));
+    ui->eNACKFlag->setValue(static_cast<uint8_t>(
+            m_settings.value("serial/protocol/nackflag", 0xFC).toInt()));
     ui->eAckTimeOut->setValue(static_cast<uint8_t>(
             m_settings.value("serial/protocol/acktimeout", 50).toInt()));
 }

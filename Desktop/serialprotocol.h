@@ -30,8 +30,8 @@ public:
 signals:
     void packetReady(const command& packet);
     void statusMessage(const QString& message);
-    void serialDisconnected();
     void serialConnected();
+    void serialDisconnected();
 
 private slots:
     void readData(); //read data and emits packetReady() once a packet is totally received

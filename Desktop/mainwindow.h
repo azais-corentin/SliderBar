@@ -14,7 +14,7 @@
 #include "systemkeyboardhook.h"
 
 namespace Ui {
-    class MainWindow;
+class MainWindow;
 }
 
 class SerialProtocol;

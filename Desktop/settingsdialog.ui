@@ -95,7 +95,7 @@
        <item row="1" column="0">
         <widget class="QTabWidget" name="tabWidgetSerial">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tabSerial">
           <attribute name="title">
@@ -369,6 +369,29 @@
                 </property>
                 <property name="value">
                  <number>251</number>
+                </property>
+                <property name="displayIntegerBase">
+                 <number>16</number>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="lNACKFlag">
+                <property name="text">
+                 <string>NACK Flag</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QSpinBox" name="eNACKFlag">
+                <property name="prefix">
+                 <string>0x</string>
+                </property>
+                <property name="maximum">
+                 <number>255</number>
+                </property>
+                <property name="value">
+                 <number>252</number>
                 </property>
                 <property name="displayIntegerBase">
                  <number>16</number>
