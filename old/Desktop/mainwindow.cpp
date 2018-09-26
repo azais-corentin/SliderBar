@@ -8,7 +8,7 @@
 #include <QKeySequence>
 #include <QTimer>
 
-MainWindow::MainWindow(QWidget* parent) :
+MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget* parent) :
     m_pSerial = new SerialProtocol;
     m_pSettingsDialog = new SettingsDialog(this);
     m_pSignalMapper = new QSignalMapper(this);
+    // TODO: Get rid of QSignalMapper
+    // See https://evileg.com/en/post/159/
 
     m_pTimerStatusMessage = new QTimer;
     m_pTimerStatusMessage->setSingleShot(true);
@@ -31,8 +33,10 @@ MainWindow::MainWindow(QWidget* parent) :
     initConnections();
     loadSettings();
 
-    if (m_settings.value("serial/autoconnect", false).toBool())
+    if(m_settings.value("serial/autoconnect", false).toBool())
+    {
         openSerialPort();
+    }
 
     //Setup plot
     ui->dataPlot->clearGraphs();
@@ -65,17 +69,27 @@ MainWindow::MainWindow(QWidget* parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    if (m_pStatus)
+    if(m_pStatus)
+    {
         delete m_pStatus;
-    if (m_pSettingsDialog)
+    }
+    if(m_pSettingsDialog)
+    {
         delete m_pSettingsDialog;
-    if (m_pTimerStatusMessage)
+    }
+    if(m_pTimerStatusMessage)
+    {
         delete m_pTimerStatusMessage;
+    }
 
-    if (m_pSystemKeyboardHook)
+    if(m_pSystemKeyboardHook)
+    {
         delete m_pSystemKeyboardHook;
-    if (m_pSerial)
+    }
+    if(m_pSerial)
+    {
         delete m_pSerial;
+    }
 }
 
 void MainWindow::openSerialPort()
@@ -100,49 +114,52 @@ void MainWindow::enableConnect()
     ui->actionDisconnect->setEnabled(false);
 }
 
-void MainWindow::receivePacket(const command& packet)
+void MainWindow::receivePacket(const command &packet)
 {
     m_count++;
     static QTime time(QTime::currentTime());
 
-    switch (packet.type)
+    switch(packet.type)
     {
-        case command::FORC_POSITION:
-        {
-            m_sliderPos = 0.0975879 * double(packet.value) + 0.2651662;
-            double key = time.elapsed() / 1000.0;
-            ui->progressBar->setValue(int(m_sliderPos));
-            ui->dataPlot->graph(0)->addData(key, m_sliderPos);
-            ui->dataPlot->graph(1)->addData(key, 0.0975879 * double(ui->eProgress->value()) + 0.2651662);
-            ui->dataPlot->xAxis->setRange(key, 4, Qt::AlignRight);
-            ui->dataPlot->replot();
+    case command::FORC_POSITION:
+    {
+        m_sliderPos = 0.0975879 * double(packet.value) + 0.2651662;
+        double key = time.elapsed() / 1000.0;
+        ui->progressBar->setValue(int(m_sliderPos));
+        ui->dataPlot->graph(0)->addData(key, m_sliderPos);
+        ui->dataPlot->graph(1)->addData(key, 0.0975879 * double(ui->eProgress->value()) + 0.2651662);
+        ui->dataPlot->xAxis->setRange(key, 4, Qt::AlignRight);
+        ui->dataPlot->replot();
 
-            emit eventDispatch(SLIDER_POSITION, m_sliderPos);
-            emit eventDispatch(SLIDER_DELTA, float(m_sliderPos) - m_sliderLastPosition);
-            qDebug() << "delta:" << float(m_sliderPos) - m_sliderLastPosition;
-            m_sliderLastPosition = float(m_sliderPos);
+        //TODO Replace signal "eventDispatch" with a function that sends the event
+        // directly to the currently loaded plugin by calling the function
+        // instead of using signals/slots
+        emit eventDispatch(SLIDER_POSITION, m_sliderPos);
+        emit eventDispatch(SLIDER_DELTA, float(m_sliderPos) - m_sliderLastPosition);
+        qDebug() << "delta:" << float(m_sliderPos) - m_sliderLastPosition;
+        m_sliderLastPosition = float(m_sliderPos);
 
-            break;
-        }
-        case command::FORC_EST_POS:
-        {
-            double key = time.elapsed() / 1000.0;
-            ui->dataPlot->graph(2)->addData(key, 0.0975879 * double(packet.value) + 0.2651662);
-            ui->dataPlot->xAxis->setRange(key, 4, Qt::AlignRight);
-            ui->dataPlot->replot();
-            break;
-        }
-        case command::FORC_EST_VEL:
-        {
-            double key = time.elapsed() / 1000.0;
-            ui->dataPlot->graph(3)->addData(key, 0.0975879 * double(packet.value));
-            ui->dataPlot->xAxis->setRange(key, 4, Qt::AlignRight);
-            ui->dataPlot->replot();
-            break;
-        }
-        default:
-            qDebug() << "Error: Packet not meant for computer!";
-            break;
+        break;
+    }
+    case command::FORC_EST_POS:
+    {
+        double key = time.elapsed() / 1000.0;
+        ui->dataPlot->graph(2)->addData(key, 0.0975879 * double(packet.value) + 0.2651662);
+        ui->dataPlot->xAxis->setRange(key, 4, Qt::AlignRight);
+        ui->dataPlot->replot();
+        break;
+    }
+    case command::FORC_EST_VEL:
+    {
+        double key = time.elapsed() / 1000.0;
+        ui->dataPlot->graph(3)->addData(key, 0.0975879 * double(packet.value));
+        ui->dataPlot->xAxis->setRange(key, 4, Qt::AlignRight);
+        ui->dataPlot->replot();
+        break;
+    }
+    default:
+        qDebug() << "Error: Packet not meant for computer!";
+        break;
     }
     showStatusMessage(QString::number(m_count));
 }
@@ -183,7 +200,7 @@ void MainWindow::initConnections()
     //connect(m_pSystemKeyboardHook, &SystemKeyboardHook::keyPressed, this, &MainWindow::handleKeyPressed);
 }
 
-void MainWindow::showStatusMessage(const QString& message)
+void MainWindow::showStatusMessage(const QString &message)
 {
     m_pStatus->setText(message);
     m_pTimerStatusMessage->start(1000 + message.split(' ').length() * 800);
@@ -264,11 +281,17 @@ void MainWindow::selectPlugin(int i)
     auto plugin = m_pluginList.at(i);
     bool checked = ui->menuPlugins->actions().at(i)->isChecked();
     //FIXME bug at the connect
-    if (checked)
+    if(checked)
+    {
         //connect(this, &MainWindow::eventDispatch, plugin, &SliderInterface::processEvent);
-        connect(this, SIGNAL(eventDispatch(SliderEventType, QVariant)), plugin, SLOT(processEvent(SliderEventType, QVariant)), Qt::QueuedConnection);
-    else
-        disconnect(this, SIGNAL(eventDispatch(SliderEventType, QVariant)), plugin, SLOT(processEvent(SliderEventType, QVariant)));
+    }
+    /*connect(this, &MainWindow::eventDispatch, plugin, [this, plugin]()
+    {
+    //plugin->processEvent(type, value);
+    });*/
+    //connect(this, SIGNAL(eventDispatch(SliderEventType, QVariant)), plugin, SLOT(processEvent(SliderEventType, QVariant)), Qt::QueuedConnection);
+    //else
+    //    disconnect(this, SIGNAL(eventDispatch(SliderEventType, QVariant)), plugin, SLOT(processEvent(SliderEventType, QVariant)));
 }
 
 void MainWindow::loadPlugins()
@@ -278,10 +301,12 @@ void MainWindow::loadPlugins()
     m_PluginsDir = QDir(qApp->applicationDirPath());
 
 #if defined(Q_OS_WIN)
-    if (m_PluginsDir.dirName().toLower() == "debug" || m_PluginsDir.dirName().toLower() == "release")
+    if(m_PluginsDir.dirName().toLower() == "debug" || m_PluginsDir.dirName().toLower() == "release")
+    {
         m_PluginsDir.cdUp();
+    }
 #elif defined(Q_OS_MAC)
-    if (pluginsDir.dirName() == "MacOS")
+    if(pluginsDir.dirName() == "MacOS")
     {
         pluginsDir.cdUp();
         pluginsDir.cdUp();
@@ -294,21 +319,21 @@ void MainWindow::loadPlugins()
     ui->menuPlugins->clear();
     int i = 0;
 
-    foreach (QString fileName, m_PluginsDir.entryList(QDir::Files))
+    foreach(QString fileName, m_PluginsDir.entryList(QDir::Files))
     {
         QPluginLoader loader(m_PluginsDir.absoluteFilePath(fileName));
-        QObject* plugin = loader.instance();
-        if (plugin)
+        QObject *plugin = loader.instance();
+        if(plugin)
         {
-            SliderInterface* iPlugin = qobject_cast<SliderInterface*>(plugin);
-            if (iPlugin)
+            SliderInterface *iPlugin = qobject_cast<SliderInterface *>(plugin);
+            if(iPlugin)
             {
                 //TODO Implement refreshing of the plugins
                 //IMPL Clear WebsiteList and relaunch function
-                QAction* pluginAction = ui->menuPlugins->addAction(loader.metaData()
-                        .value("MetaData").toObject().value("name").toString(), m_pSignalMapper, SLOT(map()));
+                QAction *pluginAction = ui->menuPlugins->addAction(loader.metaData()
+                                                                   .value("MetaData").toObject().value("name").toString(), m_pSignalMapper, SLOT(map()));
                 QString tooltip = loader.metaData().value("MetaData")
-                    .toObject().value("description").toString();
+                                  .toObject().value("description").toString();
                 pluginAction->setWhatsThis(tooltip);
                 pluginAction->setToolTip(tooltip);
                 pluginAction->setCheckable(true);
@@ -321,12 +346,12 @@ void MainWindow::loadPlugins()
         }
     }
 
-    if ( i <= 0)
+    if(i <= 0)
     {
         qWarning() << "No plugin found";
         m_currentPluginIndex = -1;
         return;
     }
     connect(m_pSignalMapper, SIGNAL(mapped(int)),
-        this, SLOT(selectPlugin(int)), Qt::UniqueConnection);
+            this, SLOT(selectPlugin(int)), Qt::UniqueConnection);
 }

@@ -17,12 +17,11 @@ class QIntValidator;
 
 QT_END_NAMESPACE
 
-class SettingsDialog : public QDialog
-{
+class SettingsDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(QWidget* parent = 0);
+    explicit SettingsDialog(QWidget *parent = nullptr);
     ~SettingsDialog();
 
 public slots:
@@ -42,9 +41,9 @@ private:
     void saveSettings();
     void loadSettings();
 
-    Ui::SettingsDialog* ui;
+    Ui::SettingsDialog *ui;
     QSettings m_settings;
-    QIntValidator* m_pIntValidator;
+    QIntValidator *m_pIntValidator;
 };
 
 #endif // SETTINGSDIALOG_H

@@ -40,7 +40,7 @@ QVector<SliderEventType> MouseWheelPlugin::getEventTypes()
     return QVector<SliderEventType>(SLIDER_DELTA);
 }
 
-void MouseWheelPlugin::processEvent(const SliderEventType& type, const QVariant& value)
+void MouseWheelPlugin::processEvent(SliderEventType type, QVariant value)
 {
     if (type == SLIDER_DELTA)
         mouseWheel(value.toFloat() * m_scrollMultiplier * WHEEL_DELTA);

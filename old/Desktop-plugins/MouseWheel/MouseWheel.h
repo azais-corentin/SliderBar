@@ -9,7 +9,7 @@
 class MouseWheelPlugin : public SliderInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.Nelieru.SliderBar.SliderInterface/0.2" FILE "MouseWheel.json")
+    Q_PLUGIN_METADATA(IID "org.Nelieru.SliderBar.SliderInterface/0.3" FILE "MouseWheel.json")
     Q_INTERFACES(SliderInterface)
 
 public:
@@ -22,8 +22,6 @@ public:
     QVector<SliderEventType> getEventTypes();
 public slots:
     void processEvent(SliderEventType type, QVariant value);
-
-signals:
 
 private:
     void mouseWheel(float n);

@@ -9,7 +9,7 @@
 class SlideScrollPlugin : public SliderInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.Nelieru.SliderBar.SliderInterface/0.2" FILE "SliderScroll.json")
+    Q_PLUGIN_METADATA(IID "org.Nelieru.SliderBar.SliderInterface/0.3" FILE "SlideScroll.json")
     Q_INTERFACES(SliderInterface)
 
 public:
@@ -23,10 +23,10 @@ public:
 public slots:
     void processEvent(SliderEventType type, QVariant value);
 
-signals:
-
 private:
     void mouseWheel(float n);
+
+    float m_scrollMultiplier = 20;
 };
 
 #endif // SLIDESCROLL_H

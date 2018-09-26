@@ -2,6 +2,7 @@
 #define SLIDERINTERFACE_H
 
 #include <QtPlugin>
+#include <QObject>
 
 #include <QString>
 #include <QVariant>
@@ -15,10 +16,8 @@ typedef enum SliderEventType
     SLIDER_DELTA
 } SliderEventType;
 
-class SliderInterface : public QObject
+class SliderInterface
 {
-    Q_OBJECT
-
 public:
     virtual ~SliderInterface() {}
 
@@ -28,17 +27,14 @@ public:
 
     //add a way to register to certain events (sliderbar's dx)
     virtual QVector<SliderEventType> getEventTypes() = 0;
-public slots:
+
+public /*slots*/:
     virtual void processEvent(SliderEventType type, QVariant value) = 0;
 
 protected:
     bool m_active;
 };
 
-QT_BEGIN_NAMESPACE
-
-Q_DECLARE_INTERFACE(SliderInterface, "org.Nelieru.SliderBar.SliderInterface/0.2")
-
-QT_END_NAMESPACE
+Q_DECLARE_INTERFACE(SliderInterface, "org.Nelieru.SliderBar.SliderInterface/0.3")
 
 #endif // SLIDERINTERFACE_H
