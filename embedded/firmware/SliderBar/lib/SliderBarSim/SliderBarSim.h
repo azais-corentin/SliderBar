@@ -3,8 +3,13 @@
 
 #include <stdint.h>
 
-class SliderBarSim {
-public:
+/*! \brief Simulates the SliderBar.
+ *
+ *  Simulates the SliderBar using a first order system with friction.
+ */
+class SliderBarSim
+{
+  public:
     SliderBarSim();
     ~SliderBarSim();
 
@@ -18,7 +23,7 @@ public:
      */
     float update(float dt, float motorSpeed = 0.f);
 
-private:
+  private:
     float position = 0.5f;
 
     float K = 1;
