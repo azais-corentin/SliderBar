@@ -9,11 +9,11 @@
  */
 class SliderBarSim
 {
-  public:
-    SliderBarSim();
-    ~SliderBarSim();
+public:
+  SliderBarSim();
+  ~SliderBarSim();
 
-    /*! \brief Returns next SliderBar position.
+  /*! \brief Returns next SliderBar position.
      *
      *  Calculates and returns the next simulated SliderBar position.
      * 
@@ -21,13 +21,13 @@ class SliderBarSim
      *  \param motorSpeed motor speed in percentage
      *  \return New position in percent
      */
-    float update(float dt, float motorSpeed = 0.f);
+  float update(float dt, float motorSpeed = 0.f);
 
-  private:
-    float position = 0.5f;
+private:
+  float position = 0.5f;
 
-    float K = 1;
-    float tau = 0.1; // s
+  float K = 10;
+  float tau = 0.1; // s
 };
 
 #endif // __SLIDERBARSIM_H__
