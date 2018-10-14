@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:SliderBar-cache
 EELAYER 26 0
 EELAYER END
 $Descr A4 11693 8268
@@ -16,107 +17,25 @@ $EndDescr
 $Comp
 L MCU_ST_STM32F0:STM32F030K6Tx U?
 U 1 1 5BB22E86
-P 5400 3675
-F 0 "U?" H 5350 2589 50  0000 C CNN
-F 1 "STM32F030K6Tx" H 5350 2498 50  0000 C CNN
-F 2 "Package_QFP:LQFP-32_7x7mm_P0.8mm" H 4900 2775 50  0001 R CNN
-F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00088500.pdf" H 5400 3675 50  0001 C CNN
-	1    5400 3675
-	1    0    0    -1  
-$EndComp
-$Comp
-L nelib:HT7333 REG?
-U 1 1 5BB2301E
-P 2475 1650
-F 0 "REG?" H 2175 1950 60  0000 C CNN
-F 1 "HT7333" H 2725 1950 60  0000 C CNN
-F 2 "" H 2475 1650 60  0001 C CNN
-F 3 "http://www.angeladvance.com/HT73xx.pdf" H 2475 1450 60  0001 C CNN
-	1    2475 1650
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:VBUS #PWR?
-U 1 1 5BB23187
-P 1775 1550
-F 0 "#PWR?" H 1775 1400 50  0001 C CNN
-F 1 "VBUS" H 1790 1723 50  0000 C CNN
-F 2 "" H 1775 1550 50  0001 C CNN
-F 3 "" H 1775 1550 50  0001 C CNN
-	1    1775 1550
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR?
-U 1 1 5BB231CF
-P 2475 2200
-F 0 "#PWR?" H 2475 1950 50  0001 C CNN
-F 1 "GND" H 2480 2027 50  0000 C CNN
-F 2 "" H 2475 2200 50  0001 C CNN
-F 3 "" H 2475 2200 50  0001 C CNN
-	1    2475 2200
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:+3.3V #PWR?
-U 1 1 5BB232B9
-P 3175 1550
-F 0 "#PWR?" H 3175 1400 50  0001 C CNN
-F 1 "+3.3V" H 3190 1723 50  0000 C CNN
-F 2 "" H 3175 1550 50  0001 C CNN
-F 3 "" H 3175 1550 50  0001 C CNN
-	1    3175 1550
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	3175 1550 3175 1650
-Wire Wire Line
-	3175 1650 3075 1650
-Wire Wire Line
-	1875 1650 1775 1650
-Wire Wire Line
-	1775 1650 1775 1550
-Wire Wire Line
-	2475 2100 2475 2150
-$Comp
-L Device:C C?
-U 1 1 5BB23315
-P 3175 1900
-F 0 "C?" H 3290 1946 50  0000 L CNN
-F 1 "10uF" H 3290 1855 50  0000 L CNN
-F 2 "" H 3213 1750 50  0001 C CNN
-F 3 "~" H 3175 1900 50  0001 C CNN
-	1    3175 1900
+P 5400 3700
+F 0 "U?" H 5800 4550 50  0000 R CNN
+F 1 "STM32F030K6Tx" H 5800 2750 50  0000 C CNN
+F 2 "Package_QFP:LQFP-32_7x7mm_P0.8mm" H 4900 2800 50  0001 R CNN
+F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00088500.pdf" H 5400 3700 50  0001 C CNN
+	1    5400 3700
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:C C?
 U 1 1 5BB2338E
-P 1775 1900
-F 0 "C?" H 1890 1946 50  0000 L CNN
-F 1 "10uF" H 1890 1855 50  0000 L CNN
-F 2 "" H 1813 1750 50  0001 C CNN
-F 3 "~" H 1775 1900 50  0001 C CNN
-	1    1775 1900
+P 1950 1850
+F 0 "C?" H 2065 1896 50  0000 L CNN
+F 1 "100nF" H 2065 1805 50  0000 L CNN
+F 2 "" H 1988 1700 50  0001 C CNN
+F 3 "~" H 1950 1850 50  0001 C CNN
+	1    1950 1850
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	1775 1650 1775 1750
-Connection ~ 1775 1650
-Wire Wire Line
-	1775 2050 1775 2150
-Wire Wire Line
-	1775 2150 2475 2150
-Connection ~ 2475 2150
-Wire Wire Line
-	2475 2150 2475 2200
-Wire Wire Line
-	3175 2050 3175 2150
-Wire Wire Line
-	3175 2150 2475 2150
-Wire Wire Line
-	3175 1750 3175 1650
-Connection ~ 3175 1650
 $Comp
 L Connector_Generic:Conn_01x05 J?
 U 1 1 5BB23A1B
@@ -343,12 +262,12 @@ $EndComp
 $Comp
 L power:GND #PWR?
 U 1 1 5BB27E3D
-P 2950 4800
-F 0 "#PWR?" H 2950 4550 50  0001 C CNN
-F 1 "GND" V 2955 4672 50  0000 R CNN
-F 2 "" H 2950 4800 50  0001 C CNN
-F 3 "" H 2950 4800 50  0001 C CNN
-	1    2950 4800
+P 3050 4800
+F 0 "#PWR?" H 3050 4550 50  0001 C CNN
+F 1 "GND" V 3055 4672 50  0000 R CNN
+F 2 "" H 3050 4800 50  0001 C CNN
+F 3 "" H 3050 4800 50  0001 C CNN
+	1    3050 4800
 	0    -1   -1   0   
 $EndComp
 Wire Wire Line
@@ -361,4 +280,286 @@ Wire Wire Line
 	2550 4800 2650 4800
 Wire Wire Line
 	2550 4525 2550 4800
+$Comp
+L Regulator_Linear:LD1117S33TR_SOT223 U?
+U 1 1 5BC3390D
+P 2450 1650
+F 0 "U?" H 2450 1892 50  0000 C CNN
+F 1 "LD1117S33TR_SOT223" H 2450 1801 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-223-3_TabPin2" H 2450 1850 50  0001 C CNN
+F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/CD00000544.pdf" H 2550 1400 50  0001 C CNN
+	1    2450 1650
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5BC34408
+P 2450 2050
+F 0 "#PWR?" H 2450 1800 50  0001 C CNN
+F 1 "GND" H 2455 1877 50  0000 C CNN
+F 2 "" H 2450 2050 50  0001 C CNN
+F 3 "" H 2450 2050 50  0001 C CNN
+	1    2450 2050
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5BB23315
+P 2950 1850
+F 0 "C?" H 3065 1896 50  0000 L CNN
+F 1 "10uF" H 3065 1805 50  0000 L CNN
+F 2 "" H 2988 1700 50  0001 C CNN
+F 3 "~" H 2950 1850 50  0001 C CNN
+	1    2950 1850
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:VBUS #PWR?
+U 1 1 5BC359FB
+P 1950 1550
+F 0 "#PWR?" H 1950 1400 50  0001 C CNN
+F 1 "VBUS" H 1965 1723 50  0000 C CNN
+F 2 "" H 1950 1550 50  0001 C CNN
+F 3 "" H 1950 1550 50  0001 C CNN
+	1    1950 1550
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR?
+U 1 1 5BC35A77
+P 2950 1550
+F 0 "#PWR?" H 2950 1400 50  0001 C CNN
+F 1 "+3.3V" H 2965 1723 50  0000 C CNN
+F 2 "" H 2950 1550 50  0001 C CNN
+F 3 "" H 2950 1550 50  0001 C CNN
+	1    2950 1550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2750 1650 2950 1650
+Wire Wire Line
+	2950 1650 2950 1550
+Wire Wire Line
+	2150 1650 1950 1650
+Wire Wire Line
+	1950 1650 1950 1550
+Wire Wire Line
+	2450 1950 2450 2000
+Wire Wire Line
+	1950 2000 2450 2000
+Connection ~ 2450 2000
+Wire Wire Line
+	2450 2000 2450 2050
+Wire Wire Line
+	2950 2000 2450 2000
+Wire Wire Line
+	2950 1700 2950 1650
+Connection ~ 2950 1650
+Wire Wire Line
+	1950 1700 1950 1650
+Connection ~ 1950 1650
+$Comp
+L nelib:MT3608 U?
+U 1 1 5BC394FC
+P 5200 1950
+F 0 "U?" H 5200 2275 50  0000 C CNN
+F 1 "MT3608" H 5200 2184 50  0000 C CNN
+F 2 "" H 5100 1300 50  0001 C CNN
+F 3 "https://www.olimex.com/Products/Breadboarding/BB-PWR-3608/resources/MT3608.pdf" H 5200 1650 50  0001 C CNN
+	1    5200 1950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:VBUS #PWR?
+U 1 1 5BC39F8D
+P 4450 1350
+F 0 "#PWR?" H 4450 1200 50  0001 C CNN
+F 1 "VBUS" H 4465 1523 50  0000 C CNN
+F 2 "" H 4450 1350 50  0001 C CNN
+F 3 "" H 4450 1350 50  0001 C CNN
+	1    4450 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5BC3A8CB
+P 4450 2150
+F 0 "#PWR?" H 4450 1900 50  0001 C CNN
+F 1 "GND" H 4455 1977 50  0000 C CNN
+F 2 "" H 4450 2150 50  0001 C CNN
+F 3 "" H 4450 2150 50  0001 C CNN
+	1    4450 2150
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+10V #PWR?
+U 1 1 5BC3AC64
+P 6350 1450
+F 0 "#PWR?" H 6350 1300 50  0001 C CNN
+F 1 "+10V" V 6365 1578 50  0000 L CNN
+F 2 "" H 6350 1450 50  0001 C CNN
+F 3 "" H 6350 1450 50  0001 C CNN
+	1    6350 1450
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:L L?
+U 1 1 5BC3AD82
+P 5200 1450
+F 0 "L?" V 5022 1450 50  0000 C CNN
+F 1 "4.7uH" V 5113 1450 50  0000 C CNN
+F 2 "" H 5200 1450 50  0001 C CNN
+F 3 "~" H 5200 1450 50  0001 C CNN
+	1    5200 1450
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:D_Schottky D?
+U 1 1 5BC3AFD7
+P 5900 1450
+F 0 "D?" H 5900 1234 50  0000 C CNN
+F 1 "D_Schottky" H 5900 1325 50  0000 C CNN
+F 2 "" H 5900 1450 50  0001 C CNN
+F 3 "~" H 5900 1450 50  0001 C CNN
+	1    5900 1450
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5BC3EFA6
+P 4450 1700
+F 0 "C?" H 4565 1746 50  0000 L CNN
+F 1 "22uF" H 4565 1655 50  0000 L CNN
+F 2 "" H 4488 1550 50  0001 C CNN
+F 3 "~" H 4450 1700 50  0001 C CNN
+	1    4450 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5BC45001
+P 5900 2050
+F 0 "R?" V 5693 2050 50  0000 C CNN
+F 1 "47k" V 5784 2050 50  0000 C CNN
+F 2 "" V 5830 2050 50  0001 C CNN
+F 3 "~" H 5900 2050 50  0001 C CNN
+	1    5900 2050
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5BC47906
+P 5900 2350
+F 0 "R?" V 5693 2350 50  0000 C CNN
+F 1 "3k" V 5784 2350 50  0000 C CNN
+F 2 "" V 5830 2350 50  0001 C CNN
+F 3 "~" H 5900 2350 50  0001 C CNN
+	1    5900 2350
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5BC48783
+P 5700 2350
+F 0 "#PWR?" H 5700 2100 50  0001 C CNN
+F 1 "GND" V 5705 2222 50  0000 R CNN
+F 2 "" H 5700 2350 50  0001 C CNN
+F 3 "" H 5700 2350 50  0001 C CNN
+	1    5700 2350
+	0    1    1    0   
+$EndComp
+Text Notes 4900 1250 0    50   ~ 0
+Recommended:\n4.7uH - 22uH
+Text Notes 4650 2200 0    50   ~ 0
+Vout = 0.6 * (1 + R1 / R2)
+$Comp
+L Device:C C?
+U 1 1 5BC4B7C6
+P 6300 1850
+F 0 "C?" H 6185 1804 50  0000 R CNN
+F 1 "C" H 6185 1895 50  0000 R CNN
+F 2 "" H 6338 1700 50  0001 C CNN
+F 3 "~" H 6300 1850 50  0001 C CNN
+	1    6300 1850
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5BC4D897
+P 6300 2050
+F 0 "#PWR?" H 6300 1800 50  0001 C CNN
+F 1 "GND" H 6305 1877 50  0000 C CNN
+F 2 "" H 6300 2050 50  0001 C CNN
+F 3 "" H 6300 2050 50  0001 C CNN
+	1    6300 2050
+	1    0    0    -1  
+$EndComp
+Text Notes 5600 1150 0    50   ~ 0
+Id = sqrt(Iout * Imax)
+Text Notes 1800 1200 0    118  ~ 0
+3.3V REGULATOR
+Text Notes 4850 950  0    118  ~ 0
+10V BOOST
+Wire Wire Line
+	3050 4800 2950 4800
+Wire Wire Line
+	4800 1950 4750 1950
+Wire Wire Line
+	4750 1950 4750 1850
+Wire Wire Line
+	4750 1450 5050 1450
+Wire Wire Line
+	4800 1850 4750 1850
+Connection ~ 4750 1850
+Wire Wire Line
+	4750 1850 4750 1450
+Wire Wire Line
+	4450 2150 4450 2050
+Wire Wire Line
+	4450 1550 4450 1450
+Wire Wire Line
+	4750 1450 4450 1450
+Connection ~ 4750 1450
+Connection ~ 4450 1450
+Wire Wire Line
+	4450 1450 4450 1350
+Wire Wire Line
+	4800 2050 4450 2050
+Connection ~ 4450 2050
+Wire Wire Line
+	4450 2050 4450 1850
+Wire Wire Line
+	5350 1450 5650 1450
+Wire Wire Line
+	5600 1850 5650 1850
+Wire Wire Line
+	5650 1850 5650 1450
+Wire Wire Line
+	5750 1450 5650 1450
+Connection ~ 5650 1450
+Wire Wire Line
+	5750 2050 5600 2050
+Wire Wire Line
+	6050 2050 6100 2050
+Wire Wire Line
+	6100 2050 6100 1450
+Wire Wire Line
+	6050 2350 6100 2350
+Wire Wire Line
+	6100 2350 6100 2050
+Connection ~ 6100 2050
+Wire Wire Line
+	5750 2350 5700 2350
+Wire Wire Line
+	6100 1450 6050 1450
+Wire Wire Line
+	6350 1450 6300 1450
+Connection ~ 6100 1450
+Wire Wire Line
+	6300 1700 6300 1450
+Connection ~ 6300 1450
+Wire Wire Line
+	6300 1450 6100 1450
+Wire Wire Line
+	6300 2000 6300 2050
 $EndSCHEMATC
