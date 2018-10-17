@@ -38,5 +38,4 @@ Makefile*
 
 # KiCad cache, backups
 *.bak
-*-cache.lib
 *rescue-backup
