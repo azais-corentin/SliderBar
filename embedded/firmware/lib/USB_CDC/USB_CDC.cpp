@@ -3,12 +3,14 @@
 #include "stm32f1xx.h"
 #include "stm32f1xx_hal.h"
 
+#include "ErrorHandler.h"
+
 #include "usbd/usbd_cdc.h"
 #include "usbd/usbd_core.h"
 #include "usbd/usbd_desc.h"
 
 // Declares a global instance of the class
-extern USB_CDC cdc;
+USB_CDC cdc;
 
 // Define size for the receive and transmit buffer over CDC
 #define APP_RX_DATA_SIZE 1000
@@ -185,13 +187,13 @@ uint8_t USB_CDC::transmit(uint8_t* buf, uint16_t len)
 uint8_t USB_CDC::receive(uint8_t* buf, uint32_t* len)
 {
     if (buf[0] == '1') {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 0);
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
         uint8_t data[] = "LED ON\r\n";
-        CDC_Transmit_FS(data, strlen(data));
+        transmit(data, 9);
     } else if (buf[0] == '0') {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
+        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
         uint8_t data[] = "LED OFF\r\n";
-        CDC_Transmit_FS(data, strlen(data));
+        transmit(data, 10);
     }
 
     USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &buf[0]);

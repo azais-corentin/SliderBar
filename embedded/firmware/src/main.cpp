@@ -29,7 +29,7 @@ int main(void)
     uint8_t data[] = "0.986532\r";
 
     while (1) {
-        //CDC_Transmit_FS(data, 10);
+        cdc.transmit(data, 10);
 
         HAL_Delay(10);
     }
