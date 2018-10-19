@@ -15,17 +15,6 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L MCU_ST_STM32F0:STM32F030K6Tx U?
-U 1 1 5BB22E86
-P 5400 3700
-F 0 "U?" H 5800 4550 50  0000 R CNN
-F 1 "STM32F030K6Tx" H 5800 2750 50  0000 C CNN
-F 2 "Package_QFP:LQFP-32_7x7mm_P0.8mm" H 4900 2800 50  0001 R CNN
-F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00088500.pdf" H 5400 3700 50  0001 C CNN
-	1    5400 3700
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:C C?
 U 1 1 5BB2338E
 P 1950 1850
@@ -78,37 +67,18 @@ NRST
 $Comp
 L power:GND #PWR?
 U 1 1 5BB23C60
-P 9825 900
-F 0 "#PWR?" H 9825 650 50  0001 C CNN
-F 1 "GND" H 9830 727 50  0000 C CNN
-F 2 "" H 9825 900 50  0001 C CNN
-F 3 "" H 9825 900 50  0001 C CNN
-	1    9825 900 
+P 9800 850
+F 0 "#PWR?" H 9800 600 50  0001 C CNN
+F 1 "GND" H 9805 677 50  0000 C CNN
+F 2 "" H 9800 850 50  0001 C CNN
+F 3 "" H 9800 850 50  0001 C CNN
+	1    9800 850 
 	-1   0    0    1   
 $EndComp
-$Comp
-L power:VBUS #PWR?
-U 1 1 5BB23D01
-P 9625 900
-F 0 "#PWR?" H 9625 750 50  0001 C CNN
-F 1 "VBUS" H 9640 1073 50  0000 C CNN
-F 2 "" H 9625 900 50  0001 C CNN
-F 3 "" H 9625 900 50  0001 C CNN
-	1    9625 900 
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	9825 900  9825 1000
-Wire Wire Line
-	9825 1000 10250 1000
-Wire Wire Line
-	9625 900  9625 1200
-Wire Wire Line
-	9625 1200 10250 1200
 Text GLabel 10175 2050 0    50   Input ~ 0
-AOUT1
+MOTOR_OUT1
 Text GLabel 10175 2150 0    50   Input ~ 0
-AOUT2
+MOTOR_OUT2
 Text GLabel 10200 2725 0    50   Input ~ 0
 POT
 $Comp
@@ -191,9 +161,9 @@ Wire Wire Line
 	2550 6900 2450 6900
 Connection ~ 2450 6900
 Text GLabel 2950 5450 2    50   Input ~ 0
-AOUT1
+MOTOR_OUT1
 Text GLabel 2950 5650 2    50   Input ~ 0
-AOUT2
+MOTOR_OUT2
 Wire Wire Line
 	2950 5450 2900 5450
 Wire Wire Line
@@ -324,17 +294,6 @@ F 3 "" H 1950 1550 50  0001 C CNN
 	1    1950 1550
 	1    0    0    -1  
 $EndComp
-$Comp
-L power:+3.3V #PWR?
-U 1 1 5BC35A77
-P 2950 1550
-F 0 "#PWR?" H 2950 1400 50  0001 C CNN
-F 1 "+3.3V" H 2965 1723 50  0000 C CNN
-F 2 "" H 2950 1550 50  0001 C CNN
-F 3 "" H 2950 1550 50  0001 C CNN
-	1    2950 1550
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	2750 1650 2950 1650
 Wire Wire Line
@@ -437,17 +396,6 @@ F 3 "~" H 4450 1700 50  0001 C CNN
 $EndComp
 $Comp
 L Device:R R?
-U 1 1 5BC45001
-P 5900 2050
-F 0 "R?" V 5693 2050 50  0000 C CNN
-F 1 "47k" V 5784 2050 50  0000 C CNN
-F 2 "" V 5830 2050 50  0001 C CNN
-F 3 "~" H 5900 2050 50  0001 C CNN
-	1    5900 2050
-	0    1    1    0   
-$EndComp
-$Comp
-L Device:R R?
 U 1 1 5BC47906
 P 5900 2350
 F 0 "R?" V 5693 2350 50  0000 C CNN
@@ -477,7 +425,7 @@ L Device:C C?
 U 1 1 5BC4B7C6
 P 6300 1850
 F 0 "C?" H 6185 1804 50  0000 R CNN
-F 1 "C" H 6185 1895 50  0000 R CNN
+F 1 "22uF" H 6185 1895 50  0000 R CNN
 F 2 "" H 6338 1700 50  0001 C CNN
 F 3 "~" H 6300 1850 50  0001 C CNN
 	1    6300 1850
@@ -562,4 +510,159 @@ Wire Wire Line
 	6300 1450 6100 1450
 Wire Wire Line
 	6300 2000 6300 2050
+$Comp
+L Device:RTRIM R?
+U 1 1 5BCA1C5C
+P 5900 2050
+F 0 "R?" V 5660 2050 50  0000 C CNN
+F 1 "100k" V 5751 2050 50  0000 C CNN
+F 2 "" V 5830 2050 50  0001 C CNN
+F 3 "~" H 5900 2050 50  0001 C CNN
+	1    5900 2050
+	0    1    1    0   
+$EndComp
+Text Notes 5750 1750 0    50   ~ 0
+approx\n47k
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5BCA296C
+P 2950 1550
+F 0 "#PWR?" H 2950 1400 50  0001 C CNN
+F 1 "+3V3" H 2965 1723 50  0000 C CNN
+F 2 "" H 2950 1550 50  0001 C CNN
+F 3 "" H 2950 1550 50  0001 C CNN
+	1    2950 1550
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5BCA2B2D
+P 6750 2800
+F 0 "#PWR?" H 6750 2650 50  0001 C CNN
+F 1 "+3V3" H 6765 2973 50  0000 C CNN
+F 2 "" H 6750 2800 50  0001 C CNN
+F 3 "" H 6750 2800 50  0001 C CNN
+	1    6750 2800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10250 1000 9800 1000
+Wire Wire Line
+	9800 1000 9800 850 
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5BCA6950
+P 9550 850
+F 0 "#PWR?" H 9550 700 50  0001 C CNN
+F 1 "+3V3" H 9565 1023 50  0000 C CNN
+F 2 "" H 9550 850 50  0001 C CNN
+F 3 "" H 9550 850 50  0001 C CNN
+	1    9550 850 
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9550 850  9550 1200
+Wire Wire Line
+	9550 1200 10250 1200
+Wire Wire Line
+	6750 2800 6750 2900
+Wire Wire Line
+	6650 3000 6650 2900
+Wire Wire Line
+	6650 2900 6750 2900
+Connection ~ 6750 2900
+Wire Wire Line
+	6750 2900 6750 3000
+Wire Wire Line
+	6550 3000 6550 2900
+Wire Wire Line
+	6550 2900 6650 2900
+Connection ~ 6650 2900
+$Comp
+L power:GND #PWR?
+U 1 1 5BCAB682
+P 6550 6200
+F 0 "#PWR?" H 6550 5950 50  0001 C CNN
+F 1 "GND" H 6555 6027 50  0000 C CNN
+F 2 "" H 6550 6200 50  0001 C CNN
+F 3 "" H 6550 6200 50  0001 C CNN
+	1    6550 6200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6550 6200 6550 6100
+Wire Wire Line
+	6650 6000 6650 6100
+Wire Wire Line
+	6650 6100 6550 6100
+Connection ~ 6550 6100
+Wire Wire Line
+	6550 6100 6550 6000
+$Comp
+L MCU_ST_STM32F0:STM32F072C8Tx U?
+U 1 1 5BCADD80
+P 6750 4500
+F 0 "U?" H 6200 5950 50  0000 C CNN
+F 1 "STM32F072C8Tx" H 7350 5950 50  0000 C CNN
+F 2 "Package_QFP:LQFP-48_7x7mm_P0.5mm" H 6150 3100 50  0001 R CNN
+F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00090510.pdf" H 6750 4500 50  0001 C CNN
+	1    6750 4500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6650 6100 6750 6100
+Wire Wire Line
+	6750 6100 6750 6000
+Connection ~ 6650 6100
+Wire Wire Line
+	6750 6100 6850 6100
+Wire Wire Line
+	6850 6100 6850 6000
+Connection ~ 6750 6100
+Wire Wire Line
+	6750 2900 6850 2900
+Wire Wire Line
+	6850 2900 6850 3000
+Wire Wire Line
+	6850 2900 6950 2900
+Wire Wire Line
+	6950 2900 6950 3000
+Connection ~ 6850 2900
+$Comp
+L power:GND #PWR?
+U 1 1 5BCB754A
+P 5600 3600
+F 0 "#PWR?" H 5600 3350 50  0001 C CNN
+F 1 "GND" H 5605 3427 50  0000 C CNN
+F 2 "" H 5600 3600 50  0001 C CNN
+F 3 "" H 5600 3600 50  0001 C CNN
+	1    5600 3600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5BCB759C
+P 5600 3350
+F 0 "C?" H 5715 3396 50  0000 L CNN
+F 1 "C" H 5715 3305 50  0000 L CNN
+F 2 "" H 5638 3200 50  0001 C CNN
+F 3 "~" H 5600 3350 50  0001 C CNN
+	1    5600 3350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6050 3200 5600 3200
+Wire Wire Line
+	5500 3200 5600 3200
+Connection ~ 5600 3200
+Text GLabel 5500 3200 0    50   Input ~ 0
+NRST
+Wire Wire Line
+	5600 3600 5600 3500
+Text GLabel 7350 5600 2    50   Input ~ 0
+SWDIO
+Text GLabel 7350 5700 2    50   Input ~ 0
+SWCLK
+Text GLabel 6050 4300 0    50   Input ~ 0
+POT
 $EndSCHEMATC
