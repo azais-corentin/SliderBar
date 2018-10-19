@@ -1,6 +1,7 @@
 // Includes
 #include "stm32f1xx_hal.h"
 
+// Creates a ready to use 'cdc' object
 #include "USB_CDC.h"
 
 #include "ErrorHandler.h"
@@ -16,7 +17,6 @@ static void MX_GPIO_Init(void);
 int main(void)
 {
     // MCU Configuration
-
     // Reset of all peripherals, Initializes the Flash interface and the Systick.
     HAL_Init();
     /* Configure the system clock */
