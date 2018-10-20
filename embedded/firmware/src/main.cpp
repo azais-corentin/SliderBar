@@ -1,13 +1,16 @@
 // Includes
 #include "stm32f1xx_hal.h"
 
-// Creates a ready to use 'cdc' object
-#include "USB_CDC.h"
-
 #include "ErrorHandler.h"
+
+#include "SliderBar.h"
+#include "USB_CDC.h"
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+
+USB_CDC cdc;
+SliderBar sliderbar;
 
 /**
   * @brief  The application entry point.
@@ -26,13 +29,7 @@ int main(void)
     MX_GPIO_Init();
     cdc.initialise();
 
-    uint8_t data[] = "0.986532\r";
-
-    while (1) {
-        cdc.transmit(data, 10);
-
-        HAL_Delay(10);
-    }
+    sliderbar.run();
 }
 
 /**
