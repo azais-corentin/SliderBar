@@ -9,8 +9,7 @@
 #include "usbd/usbd_core.h"
 #include "usbd/usbd_desc.h"
 
-// Declares a global instance of the class
-USB_CDC cdc;
+USB_CDC* g_usb_cdc_ptr = nullptr;
 
 // Define size for the receive and transmit buffer over CDC
 #define APP_RX_DATA_SIZE 1000
@@ -144,11 +143,15 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   */
 static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t* Len)
 {
-    return cdc.receive(Buf, Len);
+    if (g_usb_cdc_ptr)
+        return g_usb_cdc_ptr->receive(Buf, Len);
+    else
+        return USBD_OK;
 }
 
 USB_CDC::USB_CDC()
 {
+    g_usb_cdc_ptr = this;
 }
 
 USB_CDC::~USB_CDC()
@@ -186,15 +189,9 @@ uint8_t USB_CDC::transmit(uint8_t* buf, uint16_t len)
 
 uint8_t USB_CDC::receive(uint8_t* buf, uint32_t* len)
 {
-    if (buf[0] == '1') {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-        uint8_t data[] = "LED ON\r\n";
-        transmit(data, 9);
-    } else if (buf[0] == '0') {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-        uint8_t data[] = "LED OFF\r\n";
-        transmit(data, 10);
-    }
+    char data[USB_FS_MAX_PACKET_SIZE];
+    //sprintf(data, "length: %lu bytes\r\n", *len);
+    transmit(buf, *len);
 
     USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &buf[0]);
     USBD_CDC_ReceivePacket(&hUsbDeviceFS);
