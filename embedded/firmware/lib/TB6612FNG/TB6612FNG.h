@@ -25,23 +25,34 @@ public:
      *  @retval None
      */
     TB6612FNG(
-        GPIO_TypeDef* IN1Port, uint16_t IN1Pin,
-        GPIO_TypeDef* IN2Port, uint16_t IN2Pin,
-        GPIO_TypeDef* SPEEDPort, uint16_t SPEEDPin,
-        GPIO_TypeDef* STBYPort, uint16_t SYBYPin);
+        GPIO_TypeDef* _IN1Port, uint16_t _IN1Pin,
+        GPIO_TypeDef* _IN2Port, uint16_t _IN2Pin,
+        GPIO_TypeDef* _SPEEDPort, uint16_t _SPEEDPin,
+        GPIO_TypeDef* _STBYPort, uint16_t _SYBYPin);
 
-    void drive(uint16_t speed);
-    void drive(uint16_t speed, uint16_t duration);
+    void drive(int8_t speed);
+    void drive(int8_t speed, uint8_t duration);
 
     void brake();
 
-    void standby();
+    void standby(bool enable = true);
 
 private:
     void forward(uint16_t speed);
     void reverse(uint16_t speed);
 
-    void initialisePWM(GPIO_TypeDef* SPEEDPort, uint16_t SPEEDPin);
+    void initialisePWM();
+
+    GPIO_TypeDef* IN1Port;
+    uint16_t IN1Pin;
+    GPIO_TypeDef* IN2Port;
+    uint16_t IN2Pin;
+    GPIO_TypeDef* SPEEDPort;
+    uint16_t SPEEDPin;
+    GPIO_TypeDef* STBYPort;
+    uint16_t STBYPin;
+
+    bool cur_standby = false;
 };
 
 #endif // __TB6612FNG_H__
