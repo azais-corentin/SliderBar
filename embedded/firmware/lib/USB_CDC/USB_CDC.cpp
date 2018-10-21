@@ -9,6 +9,8 @@
 #include "usbd/usbd_core.h"
 #include "usbd/usbd_desc.h"
 
+#include "SliderBar.h"
+
 USB_CDC* g_usb_cdc_ptr = nullptr;
 
 // Define size for the receive and transmit buffer over CDC
@@ -189,9 +191,10 @@ uint8_t USB_CDC::transmit(uint8_t* buf, uint16_t len)
 
 uint8_t USB_CDC::receive(uint8_t* buf, uint32_t* len)
 {
+    g_sliderbar_ptr->receive(buf, len);
     char data[USB_FS_MAX_PACKET_SIZE];
     //sprintf(data, "length: %lu bytes\r\n", *len);
-    transmit(buf, *len);
+    //transmit(buf, *len);
 
     USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &buf[0]);
     USBD_CDC_ReceivePacket(&hUsbDeviceFS);
