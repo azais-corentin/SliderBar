@@ -1,4 +1,9 @@
-#include <stdint.h>
+#ifndef __PROTODEF_H__
+#define __PROTODEF_H__
+
+#include <cstdint>
+
+namespace protocol {
 
 extern uint8_t startflag;
 extern uint8_t endflag;
@@ -9,7 +14,7 @@ extern uint8_t ackflag;
 typedef struct {
     // Command documentation structure:
     // type name (unit) [range] = formula
-    enum command_type : uint8_t {
+    enum class command_type : uint8_t {
         /// FOR EVERYONE
         NACK = 0xFC,
 
@@ -40,6 +45,7 @@ typedef struct {
     };
     command_type type;
     int16_t value = 0;
+    bool crc_valid = true;
 
     static bool isFlag(const uint8_t& ch)
     {
@@ -50,3 +56,6 @@ typedef struct {
             || ch == ackflag;
     }
 } command;
+}
+
+#endif // __PROTODEF_H__

@@ -33,21 +33,26 @@ void SliderBar::receive(uint8_t* buf, uint32_t* len)
 void SliderBar::decode()
 {
     // Makes sure buffer contains at least 1 startflag & 1 endflag
-    if (!m_buffer.contains(startflag) || !m_buffer.contains(endflag)) {
+    if (!m_buffer.contains(protocol::startflag) || !m_buffer.contains(protocol::endflag)) {
         m_buffer.clear();
         return;
     }
 
     // Makes sure buffer starts with the first startflag
-    m_buffer = m_buffer.mid(m_buffer.indexOf(startflag));
+    m_buffer = m_buffer.mid(m_buffer.indexOf(protocol::startflag));
 
     // Makes sure buffer ends with the last endflag
-    m_buffer = m_buffer.left(m_buffer.lastIndexOf(endflag) + 1);
+    m_buffer = m_buffer.left(m_buffer.lastIndexOf(protocol::endflag) + 1);
 
     // Packet is complete -- remove startflag and endflag
-    Buffer data = m_buffer.mid(1);
+    BufferSB data = m_buffer.mid(1);
     data.chop(1);
     int i = 0;
+
+    // Decode packet using protodec:
+    protocol::command received;
+
+    /*
 
     // Extract data and CRC
     uint8_t type = decode8(data, i);
@@ -70,13 +75,17 @@ void SliderBar::decode()
     received.type = static_cast<command::command_type>(type);
     received.value = value;
 
+    */
+
     // Send Acknowledgement for command types other than position
     // (avoids overhead)
-    if (received.type < command::FORC_POSITION && received.type != command::FORS_POSITION)
-        sendAck();
+    using command_type = protocol::command::command_type;
+
+    /*if (received.type < FORC_POSITION && received.type != FORS_POSITION)
+        sendAck();*/
 
     //Process the received packet
-    m_receiver(received);
+    //m_receiver(received);
 
     m_buffer.clear();
 }
