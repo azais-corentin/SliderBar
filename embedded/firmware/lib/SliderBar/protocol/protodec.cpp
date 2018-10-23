@@ -17,14 +17,14 @@ void encode16(BufferSB& buffer, const uint16_t& data, bool& escape)
     encode8(buffer, static_cast<uint8_t>(data), escape);
 }
 
-uint8_t decode8(const BufferSB& buffer, int& i)
+uint8_t decode8(const BufferSB& buffer, uint8_t& i)
 {
     if (command::isFlag(buffer.at8(i++)))
         return buffer.at8(i++) ^ xorflag;
     return buffer.at8(i - 1);
 }
 
-uint16_t decode16(const BufferSB& buffer, int& i)
+uint16_t decode16(const BufferSB& buffer, uint8_t& i)
 {
     uint8_t b1, b2;
     b1 = decode8(buffer, i);
@@ -38,13 +38,13 @@ command decode(BufferSB& packet)
     command received;
 
     uint8_t i = 0;
-    received.type = decode8(packet, i);
-    received.value = decode16(packet, i);
+    uint8_t type = decode8(packet, i);
+    uint16_t value = decode16(packet, i);
     uint8_t crc_received = decode8(packet, i);
 
     // Computes CRC
-    Buffer<MAX_PACKET_SIZE> receivedBytes;
-    encode8(receivedBytes, received.type, false);
+    BufferSB receivedBytes;
+    encode8(receivedBytes, type, false);
     encode16(receivedBytes, value, false);
     uint8_t crc_computed = CRC::compute(receivedBytes.data(), receivedBytes.size());
 

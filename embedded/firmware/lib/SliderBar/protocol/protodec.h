@@ -16,8 +16,8 @@ namespace protocol {
  */
 void encode8(BufferSB& buffer, const uint8_t& data, const bool& escape = true);
 void encode16(BufferSB& buffer, const uint16_t& data, const bool& escape = true);
-uint8_t decode8(const BufferSB& buffer, int& i);
-uint16_t decode16(const BufferSB& buffer, int& i);
+uint8_t decode8(const BufferSB& buffer, uint8_t& i);
+uint16_t decode16(const BufferSB& buffer, uint8_t& i);
 
 /**
  * @brief Decodes a buffer containing 1 command.
