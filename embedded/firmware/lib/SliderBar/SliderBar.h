@@ -7,9 +7,7 @@
 
 #include "Buffer.hpp"
 
-#define MAX_PACKET_SIZE 2 * USB_FS_MAX_PACKET_SIZE
-
-using BufferSB = Buffer<MAX_PACKET_SIZE>;
+const uint8_t MAX_PACKET_SIZE = 2 * USB_FS_MAX_PACKET_SIZE;
 
 class SliderBar {
 public:
@@ -28,7 +26,7 @@ public:
     void receive(uint8_t* buf, uint32_t* len);
 
 private:
-    Buffer<MAX_PACKET_SIZE> m_buffer;
+    Buffer m_buffer;
 
     void decode();
 };
