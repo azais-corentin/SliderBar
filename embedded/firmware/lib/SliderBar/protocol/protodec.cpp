@@ -2,7 +2,7 @@
 
 namespace protocol {
 
-void encode8(BufferSB& buffer, const uint8_t& data, bool& escape)
+void encode8(Buffer& buffer, const uint8_t& data, bool& escape)
 {
     if (escape && command::isFlag(data)) {
         buffer.append8(escapeflag);
@@ -11,20 +11,20 @@ void encode8(BufferSB& buffer, const uint8_t& data, bool& escape)
         buffer.append8(data);
 }
 
-void encode16(BufferSB& buffer, const uint16_t& data, bool& escape)
+void encode16(Buffer& buffer, const uint16_t& data, bool& escape)
 {
     encode8(buffer, static_cast<uint8_t>(data >> 8), escape);
     encode8(buffer, static_cast<uint8_t>(data), escape);
 }
 
-uint8_t decode8(const BufferSB& buffer, uint8_t& i)
+uint8_t decode8(const Buffer& buffer, uint8_t& i)
 {
     if (command::isFlag(buffer.at8(i++)))
         return buffer.at8(i++) ^ xorflag;
     return buffer.at8(i - 1);
 }
 
-uint16_t decode16(const BufferSB& buffer, uint8_t& i)
+uint16_t decode16(const Buffer& buffer, uint8_t& i)
 {
     uint8_t b1, b2;
     b1 = decode8(buffer, i);
@@ -33,7 +33,7 @@ uint16_t decode16(const BufferSB& buffer, uint8_t& i)
     return static_cast<uint16_t>((b1 << 8) | (b2 & 0xff));
 }
 
-command decode(BufferSB& packet)
+command decode(Buffer& packet)
 {
     command received;
 
@@ -43,10 +43,10 @@ command decode(BufferSB& packet)
     uint8_t crc_received = decode8(packet, i);
 
     // Computes CRC
-    BufferSB receivedBytes;
+    Buffer receivedBytes;
     encode8(receivedBytes, type, false);
     encode16(receivedBytes, value, false);
-    uint8_t crc_computed = CRC::compute(receivedBytes.data(), receivedBytes.size());
+    uint8_t crc_computed = CRC8::compute(receivedBytes.data(), receivedBytes.size());
 
     // Compares CRC (computed vs. received)
     if (crc_computed != crc_received) {
