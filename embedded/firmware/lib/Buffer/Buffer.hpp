@@ -1,38 +1,64 @@
 #ifndef __BUFFER_H__
 #define __BUFFER_H__
 
+#include <array>
 #include <cstdint>
 
-template <uint8_t maxSize>
+#include "SliderBar.h"
+
+typedef std::array<uint8_t, MAX_PACKET_SIZE> sbarray;
+
 class Buffer {
 public:
     Buffer();
-    Buffer(uint8_t* data, uint8_t length);
+    Buffer(uint8_t* _data, uint8_t length);
+    Buffer(sbarray _data);
     virtual ~Buffer();
 
-    uint8_t* data() { return m_buffer; }
+    uint8_t* data() { return data.data(); }
 
     uint8_t at8(uint8_t i) const;
     uint16_t at16(uint8_t i) const;
     void clear();
 
     /**
-     *  @brief Copies data to the end of the buffer.
-     *  @note The data will be truncated if it goes past the length of the
-     *   buffer.
+     * @brief Copies data to the end of the buffer.
+     * @note The data will be truncated if it goes past the length of the
+     *  buffer.
      *  
-     *  @param data: The data to copy.
-     *  @param len: The length of the data to copy.
-     *  @retval True.
+     * @param data: The data to copy.
+     * @param len: The length of the data to copy.
+     * @return true All the data was copied.
+     * @return false Not enough space to copy all the data.
      */
-    bool append(uint8_t* data, uint32_t len);
+    bool append(uint8_t* data, uint8_t len);
     bool append8(uint8_t ch);
     bool append16(uint16_t ch);
     bool write8(uint8_t ch, uint8_t i);
     bool write16(uint16_t ch, uint8_t i);
 
-    uint8_t size() { return m_iBuffer; };
-    bool full() { return m_iBuffer == maxSize; };
+    /**
+     * @brief Returns the size of the buffer.
+     * @note Size is the highest modified position, not maximum size.
+     * 
+     * @return uint8_t The size of the array.
+     */
+    uint8_t size() { return index; }
+
+    /**
+     * @brief Resizes the buffer to length bytes.
+     * 
+     * @param length The new size of the array (in bytes).
+     */
+    void resize(uint8_t length) { index = length; }
+
+    /**
+     * @brief Returns whether the buffer is full.
+     * 
+     * @return true The buffer is full.
+     * @return false The buffer isn't full.
+     */
+    bool full() { return index >= MAX_PACKET_SIZE; };
 
     /**
      *  @brief Returns the number of ch in the buffer.
@@ -74,22 +100,17 @@ public:
      */
     Buffer mid(uint8_t position, uint8_t length = -1);
 
-    Buffer left(uint8_t length);
-
     /**
      *  @brief Removes the last n values.
      *  This replaces the last n values with 0 and changes the index.
      *  
      *  @param n: number of values to erase.
-     *  @retval None.
      */
     void chop(uint8_t n);
 
 private:
-    uint8_t m_buffer[maxSize];
-    uint8_t m_iBuffer;
+    sbarray buffer;
+    uint8_t index;
 };
-
-#include "Buffer.tpp"
 
 #endif // __BUFFER_H__
