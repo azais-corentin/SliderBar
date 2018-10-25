@@ -4,18 +4,17 @@
 #include <array>
 #include <cstdint>
 
-#include "SliderBar.h"
+#include <SliderBar.h>
 
-typedef std::array<uint8_t, MAX_PACKET_SIZE> sbarray;
+typedef uint8_t sbarray[MAX_PACKET_SIZE];
 
 class Buffer {
 public:
     Buffer();
     Buffer(uint8_t* _data, uint8_t length);
-    Buffer(sbarray _data);
     virtual ~Buffer();
 
-    uint8_t* data() { return data.data(); }
+    uint8_t* data() { return buffer; }
 
     uint8_t at8(uint8_t i) const;
     uint16_t at16(uint8_t i) const;
@@ -23,17 +22,19 @@ public:
 
     /**
      * @brief Copies data to the end of the buffer.
-     * @note The data will be truncated if it goes past the length of the
-     *  buffer.
-     *  
+     * @note The data will be truncated if it goes past the maximum size of the
+     * buffer.
+     *
      * @param data: The data to copy.
      * @param len: The length of the data to copy.
      * @return true All the data was copied.
-     * @return false Not enough space to copy all the data.
+     * @return false Not all the data was copied, or no data was copied.
      */
     bool append(uint8_t* data, uint8_t len);
+
     bool append8(uint8_t ch);
     bool append16(uint16_t ch);
+
     bool write8(uint8_t ch, uint8_t i);
     bool write16(uint16_t ch, uint8_t i);
 
@@ -92,13 +93,12 @@ public:
     int lastIndexOf(uint8_t ch);
 
     /**
-     *  @brief Returns a copy of Buffer cut from position to length.
+     *  @brief Keep the data from position to position + length, removing everything else.
      *  
      *  @param position: The position to cut from.
-     *  @param length: The length of the copy.
-     *  @retval The new Buffer object.
+     *  @param length: The length of the copy. (-1 to copy until the end)
      */
-    Buffer mid(uint8_t position, uint8_t length = -1);
+    void mid(uint8_t position, uint8_t length = -1);
 
     /**
      *  @brief Removes the last n values.

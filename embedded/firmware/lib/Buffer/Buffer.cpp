@@ -2,28 +2,23 @@
 
 #include <algorithm>
 // For std::memcpy
-#include <cstrin>
+#include <cstring>
 
 Buffer::Buffer()
 {
     index = 0;
+    /*
     for (int i = 0; i < MAX_PACKET_SIZE; i++)
         buffer[i] = 0;
+    */
 }
 
 Buffer::Buffer(uint8_t* _buffer, uint8_t length)
-    : Buffer()
 {
     length = std::min<uint8_t>(length, MAX_PACKET_SIZE);
     for (int i = 0; i < length; i++)
         buffer[i] = buffer[i];
     index = length;
-}
-
-Buffer::Buffer(sbarray _buffer)
-{
-    buffer = _buffer;
-    index = buffer.size();
 }
 
 Buffer::~Buffer()
@@ -40,16 +35,15 @@ uint8_t Buffer::at8(uint8_t i) const
 
 uint16_t Buffer::at16(uint8_t i) const
 {
-    if ((i + 1) >= MAX_PACKET_SIZE || i < 0 || (i + 2) >= index)
+    // Check if out of bounds
+    if (i < 0 || (i + 1) >= index)
         return 0;
 
-    return static_cast<uint16_t>((buffer[i] << 8) | (buffer[i + 1] & 0xff));
+    return static_cast<uint16_t>((buffer[i] << 8) | buffer[i + 1]);
 }
 
 void Buffer::clear()
 {
-    for (int i = 0; i < MAX_PACKET_SIZE; i++)
-        buffer[i] = 0;
     index = 0;
 }
 
@@ -57,15 +51,14 @@ bool Buffer::append(uint8_t* data, uint8_t len)
 {
     if (index >= MAX_PACKET_SIZE)
         return false;
-    else if (len >= MAX_PACKET_SIZE - index) {
-        uint8_t reallen = std::min(len, static_cast<uint8_t>(MAX_PACKET_SIZE - index));
+    else if (index + len > MAX_PACKET_SIZE) {
+        uint8_t reallen = std::min<uint8_t>(len, MAX_PACKET_SIZE - index);
 
-        std::memcpy(buffer, data, reallen);
+        std::memcpy(&buffer[index], data, reallen);
         return false;
     }
 
-    std::memcpy(buffer, data, len);
-
+    std::memcpy(&buffer[index], data, len);
     return true;
 }
 
@@ -128,7 +121,7 @@ bool Buffer::contains(uint8_t ch)
 
 int Buffer::indexOf(uint8_t ch)
 {
-    for (uint8_t i = 0; i < MAX_PACKET_SIZE; i++)
+    for (uint8_t i = 0; i < index; i++)
         if (buffer[i] == ch)
             return i;
     return -1;
@@ -142,20 +135,27 @@ int Buffer::lastIndexOf(uint8_t ch)
     return -1;
 }
 
-Buffer Buffer::mid(uint8_t position, uint8_t length)
+void Buffer::mid(uint8_t position, uint8_t length)
 {
-    if (length == -1)
-        return Buffer(&buffer[0] + position, size() - position);
-    if (position <= size())
-        return Buffer(&buffer[0] + position, length);
-    else
-        return Buffer();
+    // There's no data to copy, simple empty the array.
+    if (position >= index) {
+        index = 0;
+        return;
+    }
+
+    // Length would encompass elements out of bounds Calculate a new length.
+    if (position + length > MAX_PACKET_SIZE)
+        length = MAX_PACKET_SIZE - position;
+
+    // Move the elements in range [position, position + length] to the front and
+    // discards the other elements.
+    for (uint8_t i = 0; i < length; i++) {
+        buffer[i] = buffer[i + position];
+    }
+    index = length;
 }
 
 void Buffer::chop(uint8_t n)
 {
-    uint8_t length = size() - n;
-    for (uint8_t i = length; i < size(); i++)
-        buffer[i] = 0;
-    index = length;
+    index -= n;
 }
