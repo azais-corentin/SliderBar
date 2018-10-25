@@ -1,10 +1,10 @@
 // Includes
 #include "stm32f1xx_hal.h"
 
-#include "ErrorHandler.h"
+#include <ErrorHandler.h>
 
-#include "SliderBar.h"
-#include "USB_CDC.h"
+#include <SliderBar.h>
+#include <USBCDC.h>
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -27,6 +27,10 @@ int main(void)
 
     // Initialize all configured peripherals
     MX_GPIO_Init();
+
+    // Set the SliderBar as the USB CDC data receiver.
+    cdc.setReceiver(&sliderbar);
+
     cdc.initialise();
 
     sliderbar.run();
