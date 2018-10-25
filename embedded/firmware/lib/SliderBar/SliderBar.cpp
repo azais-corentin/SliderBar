@@ -1,11 +1,14 @@
 #include "SliderBar.h"
 
-#include "protocol/protodef.h"
+#include "protocol/protodec.h"
+#include <Buffer.hpp>
 
 SliderBar* g_sliderbar_ptr = nullptr;
 
 SliderBar::SliderBar()
 {
+    m_buffer = new Buffer();
+
     g_sliderbar_ptr = this;
 }
 
@@ -22,70 +25,48 @@ void SliderBar::run()
     }
 }
 
-void SliderBar::receive(uint8_t* buf, uint32_t* len)
+void SliderBar::receive(uint8_t* buf, uint8_t len)
 {
-    if (m_buffer.full())
-        m_buffer.clear();
+    if (m_buffer->full())
+        m_buffer->clear();
 
-    m_buffer.append(buf, *len);
+    m_buffer->append(buf, len);
+    newData = true;
 }
 
 void SliderBar::decode()
 {
     // Makes sure buffer contains at least 1 startflag & 1 endflag
-    if (!m_buffer.contains(protocol::startflag) || !m_buffer.contains(protocol::endflag)) {
-        m_buffer.clear();
+    if (!m_buffer->contains(protocol::startflag) || !m_buffer->contains(protocol::endflag)) {
+        m_buffer->clear();
         return;
     }
 
     // Makes sure buffer starts with the first startflag
-    m_buffer = m_buffer.mid(m_buffer.indexOf(protocol::startflag));
+    m_buffer->mid(m_buffer->indexOf(protocol::startflag));
 
     // Makes sure buffer ends with the last endflag
-    m_buffer = m_buffer.left(m_buffer.lastIndexOf(protocol::endflag) + 1);
+    m_buffer->resize(m_buffer->lastIndexOf(protocol::endflag) + 1);
 
     // Packet is complete -- remove startflag and endflag
-    BufferSB data = m_buffer.mid(1);
-    data.chop(1);
-    int i = 0;
+    // TODO: Assume that there are multiple command packets in one buffer: split
+    // the buffer with start/end flags and process each buffer independantly.
+    m_buffer->mid(1);
+    m_buffer->chop(1);
 
     // Decode packet using protodec:
-    protocol::command received;
-
-    /*
-
-    // Extract data and CRC
-    uint8_t type = decode8(data, i);
-    uint16_t value = decode16(data, i);
-    uint8_t crc_received = decode8(data, i);
-
-    // Computes CRC
-    Buffer receivedBytes;
-    encode8(receivedBytes, type, false);
-    encode16(receivedBytes, value, false);
-    uint8_t crc_computed = CRC::compute(receivedBytes.data(), receivedBytes.size());
-
-    // Compares CRC (computed vs. received)
-    if (crc_computed != crc_received) {
-        m_buffer.clear();
-        return;
-    }
-
-    command received;
-    received.type = static_cast<command::command_type>(type);
-    received.value = value;
-
-    */
+    protocol::command received = protocol::decode(*m_buffer);
 
     // Send Acknowledgement for command types other than position
     // (avoids overhead)
     using command_type = protocol::command::command_type;
 
+    // TODO: Ad the Ack to the queue.
     /*if (received.type < FORC_POSITION && received.type != FORS_POSITION)
         sendAck();*/
 
-    //Process the received packet
-    //m_receiver(received);
+    // TODO: Add the command to a queue; process the queue in the run() loop.
 
-    m_buffer.clear();
+    m_buffer->clear();
+    newData = false;
 }

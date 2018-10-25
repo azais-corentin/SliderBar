@@ -3,13 +3,21 @@
 
 #include <cstdint>
 
-#include "usbd/usbd_def.h"
+//#include "../USB_CDC/USBInterface.h"
+#include <USBInterface.h>
+#include <usbd/usbd_def.h>
 
-#include "Buffer.hpp"
+const uint8_t MAX_PACKET_SIZE = USB_FS_MAX_PACKET_SIZE;
 
-const uint8_t MAX_PACKET_SIZE = 2 * USB_FS_MAX_PACKET_SIZE;
+class Buffer;
 
-class SliderBar {
+/**
+ * @brief The SliderBar class.
+ * Serves as the main loop of the SliderBar system.
+ * This receives commands through USB, and execute actions accordingly.
+ * 
+ */
+class SliderBar : public USBInterface {
 public:
     SliderBar();
     ~SliderBar();
@@ -23,10 +31,20 @@ public:
      */
     void run();
 
-    void receive(uint8_t* buf, uint32_t* len);
+    /**
+     * @brief 
+     * Called by the data layer (ie: USB, serial, ...) when there is new data
+     * available. This should normally contain startflag, packet data 
+     * (type, value, crc) and endflag.
+     *
+     * @param buf Pointer to the data.
+     * @param len Length of the data.
+     */
+    void receive(uint8_t* buf, uint8_t len) override;
 
 private:
-    Buffer m_buffer;
+    Buffer* m_buffer = nullptr;
+    bool newData = false;
 
     void decode();
 };
