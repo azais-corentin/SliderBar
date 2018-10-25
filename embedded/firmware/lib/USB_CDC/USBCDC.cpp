@@ -1,15 +1,15 @@
-#include "USB_CDC.h"
+#include "USBCDC.h"
 
 #include "stm32f1xx.h"
 #include "stm32f1xx_hal.h"
 
-#include "ErrorHandler.h"
+#include <ErrorHandler.h>
 
 #include "usbd/usbd_cdc.h"
 #include "usbd/usbd_core.h"
 #include "usbd/usbd_desc.h"
 
-#include "SliderBar.h"
+#include <SliderBar.h>
 
 USB_CDC* g_usb_cdc_ptr = nullptr;
 
@@ -189,12 +189,15 @@ uint8_t USB_CDC::transmit(uint8_t* buf, uint16_t len)
     return result;
 }
 
+void USB_CDC::setReceiver(USBInterface* receiver_class)
+{
+    receiver = receiver_class;
+}
+
 uint8_t USB_CDC::receive(uint8_t* buf, uint32_t* len)
 {
-    g_sliderbar_ptr->receive(buf, len);
-    char data[USB_FS_MAX_PACKET_SIZE];
-    //sprintf(data, "length: %lu bytes\r\n", *len);
-    //transmit(buf, *len);
+    if (receiver)
+        receiver->receive(buf, *len);
 
     USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &buf[0]);
     USBD_CDC_ReceivePacket(&hUsbDeviceFS);
