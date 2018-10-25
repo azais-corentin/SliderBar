@@ -36,26 +36,26 @@ uint16_t decode16(const Buffer& buffer, uint8_t& i)
 command decode(Buffer& packet)
 {
     command received;
+    received.crc_valid = true;
 
+    // Decodes the type, value, data from the data packet.
     uint8_t i = 0;
-    uint8_t type = decode8(packet, i);
+    received.type = static_cast<command::command_type>(decode8(packet, i));
     uint16_t value = decode16(packet, i);
     uint8_t crc_received = decode8(packet, i);
 
     // Computes CRC
     Buffer receivedBytes;
-    encode8(receivedBytes, type, false);
+    encode8(receivedBytes, static_cast<uint8_t>(received.type), false);
     encode16(receivedBytes, value, false);
+    // TODO: Use hardware CRC generation
     uint8_t crc_computed = CRC8::compute(receivedBytes.data(), receivedBytes.size());
 
     // Compares CRC (computed vs. received)
     if (crc_computed != crc_received) {
-        m_buffer.clear();
-        return;
+        received.crc_valid = false;
     }
 
-    command received;
-    received.type = static_cast<command::command_type>(type);
-    received.value = value;
+    return received;
 }
 }

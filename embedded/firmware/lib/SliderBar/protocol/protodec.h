@@ -3,8 +3,8 @@
 
 #include "protodef.h"
 
-#include "Buffer.hpp"
-#include "SliderBar.h"
+#include <Buffer.hpp>
+#include <SliderBar.h>
 
 namespace protocol {
 /**
@@ -90,7 +90,7 @@ namespace CRC8 {
             crc = roll(input_array[b], crc);
         return crc;
     }
-};
-}
+} // namespace CRC8
+} // namespace protocol
 
 #endif // __PROTODEC_H__
