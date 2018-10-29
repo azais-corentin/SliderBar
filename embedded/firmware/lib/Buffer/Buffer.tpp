@@ -4,28 +4,32 @@
 // For std::memcpy
 #include <cstring>
 
-Buffer::Buffer()
+template <uint8_t N>
+Buffer<N>::Buffer()
 {
     index = 0;
     /*
-    for (int i = 0; i < MAX_PACKET_SIZE; i++)
+    for (int i = 0; i < N; i++)
         buffer[i] = 0;
     */
 }
 
-Buffer::Buffer(uint8_t* _buffer, uint8_t length)
+template <uint8_t N>
+Buffer<N>::Buffer(uint8_t* _buffer, uint8_t length)
 {
-    length = std::min<uint8_t>(length, MAX_PACKET_SIZE);
+    length = std::min<uint8_t>(length, N);
     for (int i = 0; i < length; i++)
         buffer[i] = buffer[i];
     index = length;
 }
 
-Buffer::~Buffer()
+template <uint8_t N>
+Buffer<N>::~Buffer()
 {
 }
 
-uint8_t Buffer::at8(uint8_t i) const
+template <uint8_t N>
+uint8_t Buffer<N>::at8(uint8_t i) const
 {
     if (i >= index || i < 0)
         return 0;
@@ -33,7 +37,8 @@ uint8_t Buffer::at8(uint8_t i) const
     return buffer[i];
 }
 
-uint16_t Buffer::at16(uint8_t i) const
+template <uint8_t N>
+uint16_t Buffer<N>::at16(uint8_t i) const
 {
     // Check if out of bounds
     if (i < 0 || (i + 1) >= index)
@@ -42,17 +47,19 @@ uint16_t Buffer::at16(uint8_t i) const
     return static_cast<uint16_t>((buffer[i] << 8) | buffer[i + 1]);
 }
 
-void Buffer::clear()
+template <uint8_t N>
+void Buffer<N>::clear()
 {
     index = 0;
 }
 
-bool Buffer::append(uint8_t* data, uint8_t len)
+template <uint8_t N>
+bool Buffer<N>::append(uint8_t* data, uint8_t len)
 {
-    if (index >= MAX_PACKET_SIZE)
+    if (index >= N)
         return false;
-    else if (index + len > MAX_PACKET_SIZE) {
-        uint8_t reallen = std::min<uint8_t>(len, MAX_PACKET_SIZE - index);
+    else if (index + len > N) {
+        uint8_t reallen = std::min<uint8_t>(len, N - index);
 
         std::memcpy(&buffer[index], data, reallen);
         return false;
@@ -62,18 +69,20 @@ bool Buffer::append(uint8_t* data, uint8_t len)
     return true;
 }
 
-bool Buffer::append8(uint8_t ch)
+template <uint8_t N>
+bool Buffer<N>::append8(uint8_t ch)
 {
-    if (index >= MAX_PACKET_SIZE)
+    if (index >= N)
         return false; // buffer is full
 
     buffer[index++] = ch;
     return true;
 }
 
-bool Buffer::append16(uint16_t ch)
+template <uint8_t N>
+bool Buffer<N>::append16(uint16_t ch)
 {
-    if ((index + 1) >= MAX_PACKET_SIZE)
+    if ((index + 1) >= N)
         return false; // buffer is full
 
     buffer[index++] = static_cast<uint8_t>(ch >> 8);
@@ -81,9 +90,10 @@ bool Buffer::append16(uint16_t ch)
     return true;
 }
 
-bool Buffer::write8(uint8_t ch, uint8_t i)
+template <uint8_t N>
+bool Buffer<N>::write8(uint8_t ch, uint8_t i)
 {
-    if (i >= MAX_PACKET_SIZE || i < 0)
+    if (i >= N || i < 0)
         return false;
     buffer[i++] = ch;
 
@@ -91,9 +101,10 @@ bool Buffer::write8(uint8_t ch, uint8_t i)
     return true;
 }
 
-bool Buffer::write16(uint16_t ch, uint8_t i)
+template <uint8_t N>
+bool Buffer<N>::write16(uint16_t ch, uint8_t i)
 {
-    if ((i + 1) >= MAX_PACKET_SIZE || i < 0)
+    if ((i + 1) >= N || i < 0)
         return false;
     buffer[i++] = static_cast<uint8_t>(ch >> 8);
     buffer[i++] = static_cast<uint8_t>(ch);
@@ -102,7 +113,8 @@ bool Buffer::write16(uint16_t ch, uint8_t i)
     return true;
 }
 
-uint8_t Buffer::count(uint8_t ch)
+template <uint8_t N>
+uint8_t Buffer<N>::count(uint8_t ch)
 {
     uint8_t cnt = 0;
     for (uint8_t i = 0; i < index; i++)
@@ -111,7 +123,8 @@ uint8_t Buffer::count(uint8_t ch)
     return cnt;
 }
 
-bool Buffer::contains(uint8_t ch)
+template <uint8_t N>
+bool Buffer<N>::contains(uint8_t ch)
 {
     for (uint8_t i = 0; i < index; i++)
         if (buffer[i] == ch)
@@ -119,7 +132,8 @@ bool Buffer::contains(uint8_t ch)
     return false;
 }
 
-int Buffer::indexOf(uint8_t ch)
+template <uint8_t N>
+int Buffer<N>::indexOf(uint8_t ch)
 {
     for (uint8_t i = 0; i < index; i++)
         if (buffer[i] == ch)
@@ -127,7 +141,8 @@ int Buffer::indexOf(uint8_t ch)
     return -1;
 }
 
-int Buffer::lastIndexOf(uint8_t ch)
+template <uint8_t N>
+int Buffer<N>::lastIndexOf(uint8_t ch)
 {
     for (uint8_t i = index - 1; i >= 0; i--)
         if (buffer[i] == ch)
@@ -135,7 +150,8 @@ int Buffer::lastIndexOf(uint8_t ch)
     return -1;
 }
 
-void Buffer::mid(uint8_t position, uint8_t length)
+template <uint8_t N>
+void Buffer<N>::mid(uint8_t position, uint8_t length)
 {
     // There's no data to copy, simple empty the array.
     if (position >= index) {
@@ -144,8 +160,8 @@ void Buffer::mid(uint8_t position, uint8_t length)
     }
 
     // Length would encompass elements out of bounds Calculate a new length.
-    if (position + length > MAX_PACKET_SIZE)
-        length = MAX_PACKET_SIZE - position;
+    if (position + length > N)
+        length = N - position;
 
     // Move the elements in range [position, position + length] to the front and
     // discards the other elements.
@@ -155,7 +171,8 @@ void Buffer::mid(uint8_t position, uint8_t length)
     index = length;
 }
 
-void Buffer::chop(uint8_t n)
+template <uint8_t N>
+void Buffer<N>::chop(uint8_t n)
 {
     index -= n;
 }

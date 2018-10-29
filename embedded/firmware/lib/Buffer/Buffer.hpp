@@ -4,10 +4,7 @@
 #include <array>
 #include <cstdint>
 
-#include <SliderBar.h>
-
-typedef uint8_t sbarray[MAX_PACKET_SIZE];
-
+template <uint8_t N>
 class Buffer {
 public:
     Buffer();
@@ -59,7 +56,7 @@ public:
      * @return true The buffer is full.
      * @return false The buffer isn't full.
      */
-    bool full() { return index >= MAX_PACKET_SIZE; };
+    bool full() { return index >= N; };
 
     /**
      *  @brief Returns the number of ch in the buffer.
@@ -109,8 +106,10 @@ public:
     void chop(uint8_t n);
 
 private:
-    sbarray buffer;
+    uint8_t buffer[N];
     uint8_t index;
 };
+
+#include "Buffer.tpp"
 
 #endif // __BUFFER_H__

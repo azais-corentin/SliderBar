@@ -5,10 +5,12 @@
 
 //#include "../USB_CDC/USBInterface.h"
 #include <USBInterface.h>
+#include <protocol/protodef.h>
 #include <usbd/usbd_def.h>
 
-const uint8_t MAX_PACKET_SIZE = USB_FS_MAX_PACKET_SIZE;
+//const uint8_t MAX_PACKET_SIZE = USB_FS_MAX_PACKET_SIZE;
 
+template <uint8_t N>
 class Buffer;
 
 /**
@@ -43,7 +45,7 @@ public:
     void receive(uint8_t* buf, uint8_t len) override;
 
 private:
-    Buffer* m_buffer = nullptr;
+    Buffer<protocol::MAX_PACKET_SIZE>* m_buffer = nullptr;
     bool newData = false;
 
     void decode();

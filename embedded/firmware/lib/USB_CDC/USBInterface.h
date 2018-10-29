@@ -12,7 +12,7 @@
  */
 class USBInterface {
 public:
-    virtual ~USBInterface();
+    //virtual ~USBInterface();
 
     /**
      * @brief The receive method.

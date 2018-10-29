@@ -1,13 +1,13 @@
 #include "SliderBar.h"
 
-#include "protocol/protodec.h"
 #include <Buffer.hpp>
+#include <protocol/protodec.h>
 
 SliderBar* g_sliderbar_ptr = nullptr;
 
 SliderBar::SliderBar()
 {
-    m_buffer = new Buffer();
+    m_buffer = new Buffer<protocol::MAX_PACKET_SIZE>();
 
     g_sliderbar_ptr = this;
 }
@@ -36,6 +36,9 @@ void SliderBar::receive(uint8_t* buf, uint8_t len)
 
 void SliderBar::decode()
 {
+    if (!newData)
+        return;
+
     // Makes sure buffer contains at least 1 startflag & 1 endflag
     if (!m_buffer->contains(protocol::startflag) || !m_buffer->contains(protocol::endflag)) {
         m_buffer->clear();
@@ -59,9 +62,9 @@ void SliderBar::decode()
 
     // Send Acknowledgement for command types other than position
     // (avoids overhead)
-    using command_type = protocol::command::command_type;
+    //using command_type = protocol::command::command_type;
 
-    // TODO: Ad the Ack to the queue.
+    // TODO: Add the Ack to the queue.
     /*if (received.type < FORC_POSITION && received.type != FORS_POSITION)
         sendAck();*/
 

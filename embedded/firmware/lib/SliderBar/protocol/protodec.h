@@ -14,7 +14,7 @@ namespace protocol {
  * @param data The byte to encode.
  * @param escape Whether to escape the byte if needed or not.
  */
-void encode8(Buffer& buffer, const uint8_t& data, const bool& escape = true);
+void encode8(Buffer<MAX_PACKET_SIZE>& buffer, const uint8_t& data, const bool& escape = true);
 
 /**
  * @brief Encodes 2 bytes into the buffer, escaping if needed.
@@ -24,7 +24,7 @@ void encode8(Buffer& buffer, const uint8_t& data, const bool& escape = true);
  * @param data The byte to encode.
  * @param escape Whether to escape the byte if needed or not.
  */
-void encode16(Buffer& buffer, const uint16_t& data, const bool& escape = true);
+void encode16(Buffer<MAX_PACKET_SIZE>& buffer, const uint16_t& data, const bool& escape = true);
 
 /**
  * @brief Decodes a byte from the buffer and increments the index.
@@ -34,7 +34,7 @@ void encode16(Buffer& buffer, const uint16_t& data, const bool& escape = true);
  * @param i The index of the data to decode.
  * @return uint8_t The decoded byte of data.
  */
-uint8_t decode8(const Buffer& buffer, uint8_t& i);
+uint8_t decode8(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
 
 /**
  * @brief Decodes 2 bytes from the buffer and increments the index.
@@ -45,7 +45,7 @@ uint8_t decode8(const Buffer& buffer, uint8_t& i);
  * @param i The index of the data to decode.
  * @return uint8_t The decoded bytes of data.
  */
-uint16_t decode16(const Buffer& buffer, uint8_t& i);
+uint16_t decode16(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
 
 /**
  * @brief Decodes a buffer containing 1 command.
@@ -55,7 +55,7 @@ uint16_t decode16(const Buffer& buffer, uint8_t& i);
  * @param buf The buffer to decode.
  * @return command The decoded command. command.crc_valid is set to false if there was an error.
  */
-command decode(Buffer& packet);
+command decode(Buffer<MAX_PACKET_SIZE>& packet);
 
 namespace CRC8 {
     /**

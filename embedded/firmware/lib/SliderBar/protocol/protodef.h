@@ -3,13 +3,26 @@
 
 #include <cstdint>
 
+#include <usbd/usbd_def.h>
+
 namespace protocol {
+
+const uint8_t MAX_PACKET_SIZE = USB_FS_MAX_PACKET_SIZE;
 
 extern uint8_t startflag;
 extern uint8_t endflag;
 extern uint8_t escapeflag;
 extern uint8_t xorflag;
 extern uint8_t ackflag;
+
+static bool isFlag(const uint8_t& ch)
+{
+    return ch == startflag
+        || ch == endflag
+        || ch == escapeflag
+        || ch == xorflag
+        || ch == ackflag;
+}
 
 typedef struct {
     // Command documentation structure:
@@ -43,18 +56,9 @@ typedef struct {
         FORC_EST_POS, // uint16_t estimated_position (lsb) [0 to 2^12] = value
         FORC_EST_VEL, // int16_t estimated_velocity (lsb / s) [-2^12 to 2^12] = value
     };
-    command_type type;
+    uint8_t type;
     int16_t value = 0;
     bool crc_valid = true;
-
-    static bool isFlag(const uint8_t& ch)
-    {
-        return ch == startflag
-            || ch == endflag
-            || ch == escapeflag
-            || ch == xorflag
-            || ch == ackflag;
-    }
 } command;
 }
 
