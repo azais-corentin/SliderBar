@@ -39,3 +39,7 @@ Makefile*
 # KiCad cache, backups
 *.bak
 *rescue-backup
+
+# Word files
+~*.docx
+~*.tmp
