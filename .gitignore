@@ -39,7 +39,7 @@ Makefile*
 # KiCad cache, backups
 *.bak
 *rescue-backup
-*-kicad_pcb-bak
+*.kicad_pcb-bak
 
 
 # Word files
