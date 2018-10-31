@@ -437,29 +437,8 @@ F 3 "" H 1500 2000 50  0001 C CNN
 	1    1500 2000
 	1    0    0    -1  
 $EndComp
-Text Notes 2200 3650 0    50   ~ 0
-approx\n47k
-Wire Wire Line
-	2750 3900 2750 3950
-Wire Wire Line
-	2750 3350 2550 3350
-Wire Wire Line
-	2750 3600 2750 3350
-Connection ~ 2750 3350
-Connection ~ 2550 3350
-Wire Wire Line
-	2550 3350 2500 3350
-Wire Wire Line
-	2500 4250 2550 4250
-Wire Wire Line
-	2550 4250 2550 3950
-Wire Wire Line
-	2550 3950 2550 3350
-Connection ~ 2550 3950
-Wire Wire Line
-	2500 3950 2550 3950
-Wire Wire Line
-	2200 3950 2050 3950
+Text Notes 2300 3700 0    50   ~ 0
+~~47k
 Wire Wire Line
 	2200 3350 2100 3350
 Wire Wire Line
@@ -502,50 +481,50 @@ Id = sqrt(Iout * Imax)
 $Comp
 L power:GND #PWR012
 U 1 1 5BC4D897
-P 2750 3950
-F 0 "#PWR012" H 2750 3700 50  0001 C CNN
-F 1 "GND" H 2755 3777 50  0000 C CNN
-F 2 "" H 2750 3950 50  0001 C CNN
-F 3 "" H 2750 3950 50  0001 C CNN
-	1    2750 3950
+P 2850 3850
+F 0 "#PWR012" H 2850 3600 50  0001 C CNN
+F 1 "GND" H 2855 3677 50  0000 C CNN
+F 2 "" H 2850 3850 50  0001 C CNN
+F 3 "" H 2850 3850 50  0001 C CNN
+	1    2850 3850
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:C C6
 U 1 1 5BC4B7C6
-P 2750 3750
-F 0 "C6" H 2635 3704 50  0000 R CNN
-F 1 "22µ" H 2635 3795 50  0000 R CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 2788 3600 50  0001 C CNN
-F 3 "~" H 2750 3750 50  0001 C CNN
-	1    2750 3750
+P 2850 3600
+F 0 "C6" H 2735 3554 50  0000 R CNN
+F 1 "22µ" H 2735 3645 50  0000 R CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 2888 3450 50  0001 C CNN
+F 3 "~" H 2850 3600 50  0001 C CNN
+	1    2850 3600
 	-1   0    0    1   
 $EndComp
-Text Notes 1100 4100 0    50   ~ 0
+Text Notes 950  4100 0    50   ~ 0
 Vout = 0.6 * (1 + RV1 / R2)
 Text Notes 1350 3150 0    50   ~ 0
 Recommended:\n4.7uH - 22uH
 $Comp
 L power:GND #PWR011
 U 1 1 5BC48783
-P 2100 4350
-F 0 "#PWR011" H 2100 4100 50  0001 C CNN
-F 1 "GND" V 2105 4222 50  0000 R CNN
-F 2 "" H 2100 4350 50  0001 C CNN
-F 3 "" H 2100 4350 50  0001 C CNN
-	1    2100 4350
+P 2150 4450
+F 0 "#PWR011" H 2150 4200 50  0001 C CNN
+F 1 "GND" H 2155 4277 50  0000 C CNN
+F 2 "" H 2150 4450 50  0001 C CNN
+F 3 "" H 2150 4450 50  0001 C CNN
+	1    2150 4450
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:R R2
 U 1 1 5BC47906
-P 2350 4250
-F 0 "R2" V 2465 4250 50  0000 C CNN
-F 1 "3k" V 2556 4250 50  0000 C CNN
-F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 2280 4250 50  0001 C CNN
-F 3 "~" H 2350 4250 50  0001 C CNN
-	1    2350 4250
-	0    1    1    0   
+P 2150 4200
+F 0 "R2" V 2265 4200 50  0000 C CNN
+F 1 "3k" V 2356 4200 50  0000 C CNN
+F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 2080 4200 50  0001 C CNN
+F 3 "~" H 2150 4200 50  0001 C CNN
+	1    2150 4200
+	-1   0    0    1   
 $EndComp
 $Comp
 L Device:C C5
@@ -719,14 +698,6 @@ F 3 "" H 3750 1200 50  0001 C CNN
 	1    3750 1200
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2850 3250 2850 3350
-Wire Wire Line
-	2750 3350 2850 3350
-Wire Wire Line
-	2100 4250 2100 4350
-Wire Wire Line
-	2100 4250 2200 4250
 Wire Notes Line width 12 style solid
 	3200 4700 750  4700
 Wire Notes Line width 12 style solid
@@ -785,7 +756,7 @@ Wire Wire Line
 Connection ~ 3750 1300
 Connection ~ 3550 1300
 Text GLabel 7350 4500 2    50   Input ~ 0
-USB_DM
+USB_DN
 Text GLabel 7350 4600 2    50   Input ~ 0
 USB_DP
 $Comp
@@ -822,7 +793,7 @@ F 3 "~" H 1750 5600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text GLabel 1850 5900 2    50   Input ~ 0
-USB_DM
+USB_DN
 Text GLabel 1850 5800 2    50   Input ~ 0
 USB_DP
 $Comp
@@ -1266,13 +1237,42 @@ Wire Wire Line
 $Comp
 L Device:R_POT_TRIM RV1
 U 1 1 5BDA4ED9
-P 2350 3950
-F 0 "RV1" V 2143 3950 50  0000 C CNN
-F 1 "100k" V 2234 3950 50  0000 C CNN
-F 2 "ab2_passive:AB2_POT_TRIM" H 2350 3950 50  0001 C CNN
-F 3 "~" H 2350 3950 50  0001 C CNN
-	1    2350 3950
+P 2400 3950
+F 0 "RV1" V 2193 3950 50  0000 C CNN
+F 1 "100k" V 2284 3950 50  0000 C CNN
+F 2 "ab2_passive:AB2_POT_TRIM" H 2400 3950 50  0001 C CNN
+F 3 "~" H 2400 3950 50  0001 C CNN
+	1    2400 3950
 	0    1    1    0   
 $EndComp
-NoConn ~ 2350 4100
+NoConn ~ 2400 4100
+Wire Wire Line
+	2500 3350 2650 3350
+Wire Wire Line
+	2550 3950 2650 3950
+Wire Wire Line
+	2650 3950 2650 3350
+Wire Wire Line
+	2650 3350 2850 3350
+Wire Wire Line
+	2850 3350 2850 3250
+Connection ~ 2650 3350
+Wire Wire Line
+	2850 3350 2850 3450
+Connection ~ 2850 3350
+Wire Wire Line
+	2850 3750 2850 3850
+Wire Wire Line
+	2050 3950 2150 3950
+Wire Wire Line
+	2150 4350 2150 4450
+Wire Wire Line
+	2150 4050 2150 3950
+Connection ~ 2150 3950
+Wire Wire Line
+	2150 3950 2250 3950
+Text Label 1350 5800 0    50   ~ 0
+D+
+Text Label 1350 5900 0    50   ~ 0
+D-
 $EndSCHEMATC
