@@ -439,17 +439,6 @@ F 3 "" H 1500 2000 50  0001 C CNN
 $EndComp
 Text Notes 2200 3650 0    50   ~ 0
 approx\n47k
-$Comp
-L Device:RTRIM R1
-U 1 1 5BCA1C5C
-P 2350 3950
-F 0 "R1" V 2110 3950 50  0000 C CNN
-F 1 "100k" V 2201 3950 50  0000 C CNN
-F 2 "ab2_passive:AB2_POT_TRIM" V 2280 3950 50  0001 C CNN
-F 3 "~" H 2350 3950 50  0001 C CNN
-	1    2350 3950
-	0    1    1    0   
-$EndComp
 Wire Wire Line
 	2750 3900 2750 3950
 Wire Wire Line
@@ -533,7 +522,7 @@ F 3 "~" H 2750 3750 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 Text Notes 1100 4100 0    50   ~ 0
-Vout = 0.6 * (1 + R1 / R2)
+Vout = 0.6 * (1 + RV1 / R2)
 Text Notes 1350 3150 0    50   ~ 0
 Recommended:\n4.7uH - 22uH
 $Comp
@@ -1274,4 +1263,16 @@ Wire Wire Line
 	3000 1650 3150 1650
 Wire Wire Line
 	3000 1300 3150 1300
+$Comp
+L Device:R_POT_TRIM RV1
+U 1 1 5BDA4ED9
+P 2350 3950
+F 0 "RV1" V 2143 3950 50  0000 C CNN
+F 1 "100k" V 2234 3950 50  0000 C CNN
+F 2 "ab2_passive:AB2_POT_TRIM" H 2350 3950 50  0001 C CNN
+F 3 "~" H 2350 3950 50  0001 C CNN
+	1    2350 3950
+	0    1    1    0   
+$EndComp
+NoConn ~ 2350 4100
 $EndSCHEMATC
