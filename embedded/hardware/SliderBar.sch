@@ -554,7 +554,7 @@ U 1 1 5BC3AD82
 P 1650 3350
 F 0 "L1" V 1472 3350 50  0000 C CNN
 F 1 "4.7µ" V 1563 3350 50  0000 C CNN
-F 2 "Inductor_SMD:L_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 1650 3350 50  0001 C CNN
+F 2 "Inductor_SMD:L_7.3x7.3_H3.5" H 1650 3350 50  0001 C CNN
 F 3 "~" H 1650 3350 50  0001 C CNN
 	1    1650 3350
 	0    1    1    0   
@@ -987,17 +987,6 @@ F 3 "" H 5500 7400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR?
-U 1 1 5BE61F1E
-P 6150 7400
-F 0 "#PWR?" H 6150 7150 50  0001 C CNN
-F 1 "GND" H 6155 7227 50  0000 C CNN
-F 2 "" H 6150 7400 50  0001 C CNN
-F 3 "" H 6150 7400 50  0001 C CNN
-	1    6150 7400
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:+5V #PWR?
 U 1 1 5BE6210E
 P 5500 6800
@@ -1006,17 +995,6 @@ F 1 "+5V" H 5515 6973 50  0000 C CNN
 F 2 "" H 5500 6800 50  0001 C CNN
 F 3 "" H 5500 6800 50  0001 C CNN
 	1    5500 6800
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:+10V #PWR?
-U 1 1 5BE621BC
-P 6150 6800
-F 0 "#PWR?" H 6150 6650 50  0001 C CNN
-F 1 "+10V" H 6165 6973 50  0000 C CNN
-F 2 "" H 6150 6800 50  0001 C CNN
-F 3 "" H 6150 6800 50  0001 C CNN
-	1    6150 6800
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1124,29 +1102,6 @@ Wire Wire Line
 	5500 7200 5500 7400
 Wire Wire Line
 	5500 7000 5500 6800
-$Comp
-L Device:C_Small C12
-U 1 1 5BEB3209
-P 6150 7100
-F 0 "C12" H 6242 7146 50  0000 L CNN
-F 1 "470µ" H 6242 7055 50  0000 L CNN
-F 2 "Capacitor_SMD:C_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 6150 7100 50  0001 C CNN
-F 3 "~" H 6150 7100 50  0001 C CNN
-	1    6150 7100
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6150 6800 6150 7000
-Wire Wire Line
-	6150 7200 6150 7400
-Wire Notes Line width 12 style solid
-	6050 7250 6050 7300
-Wire Notes Line width 12 style solid
-	6050 7300 6500 7300
-Wire Notes Line width 12 style solid
-	6500 7300 6500 7250
-Text Notes 6050 7400 0    50   ~ 0
-NOT NEEDED
 $Comp
 L power:GND #PWR?
 U 1 1 5BEDB912
@@ -1275,4 +1230,26 @@ Text Label 1350 5800 0    50   ~ 0
 D+
 Text Label 1350 5900 0    50   ~ 0
 D-
+$Comp
+L Mechanical:MountingHole H1
+U 1 1 5BDC03AF
+P 2750 5400
+F 0 "H1" H 2850 5446 50  0000 L CNN
+F 1 "MountingHole" H 2850 5355 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_ISO14580" H 2750 5400 50  0001 C CNN
+F 3 "~" H 2750 5400 50  0001 C CNN
+	1    2750 5400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole H2
+U 1 1 5BDC0899
+P 2750 5600
+F 0 "H2" H 2850 5646 50  0000 L CNN
+F 1 "MountingHole" H 2850 5555 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_ISO14580" H 2750 5600 50  0001 C CNN
+F 3 "~" H 2750 5600 50  0001 C CNN
+	1    2750 5600
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
