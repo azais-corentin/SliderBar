@@ -3,12 +3,13 @@
 
 #include <QMainWindow>
 
+class SliderBar;
+
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -16,7 +17,12 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    void initialiseActions();
+
+    Ui::MainWindow *ui = nullptr;
+    QAction *actionPlugins = nullptr;
+
+    SliderBar *m_sliderbar;
 };
 
 #endif // MAINWINDOW_H
