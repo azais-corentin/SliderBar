@@ -5,7 +5,8 @@
 
 //#include "../USB_CDC/USBInterface.h"
 #include <USBInterface.h>
-#include <protocol/protodef.h>
+
+#include <protodef.h>
 #include <usbd/usbd_def.h>
 
 //const uint8_t MAX_PACKET_SIZE = USB_FS_MAX_PACKET_SIZE;

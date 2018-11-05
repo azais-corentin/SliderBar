@@ -1,7 +1,7 @@
 #include "SliderBar.h"
 
 #include <Buffer.hpp>
-#include <protocol/protodec.h>
+#include <protodec.h>
 
 SliderBar* g_sliderbar_ptr = nullptr;
 
