@@ -20,17 +20,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    settingsdialog.cpp \
-    sliderbar/sliderbar.cpp
+    sliderbar/sliderbar.cpp \
+    sliderbar/settingsdialog.cpp
 
 HEADERS += \
         mainwindow.h \
-    settingsdialog.h \
-    sliderbar/sliderbar.h
+    sliderbar/sliderbar.h \
+    sliderbar/settingsdialog.h
 
 FORMS += \
         mainwindow.ui \
-    settingsdialog.ui
+    sliderbar/settingsdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

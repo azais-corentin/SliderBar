@@ -16,11 +16,15 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+public slots:
+    void loadSettings();
+    void saveSettings();
+
 private:
     void initialiseActions();
 
     Ui::MainWindow *ui = nullptr;
-    QAction *actionPlugins = nullptr;
+    QAction *m_actionPlugins = nullptr;
 
     SliderBar *m_sliderbar;
 };
