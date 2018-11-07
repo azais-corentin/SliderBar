@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     QCoreApplication::setOrganizationName("SliderBar");
     QCoreApplication::setOrganizationDomain("github.com/Haellsigh/SliderBar/");

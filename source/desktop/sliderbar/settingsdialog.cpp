@@ -5,9 +5,9 @@
 
 static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
 
-SettingsDialog::SettingsDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::SettingsDialog)
+SettingsDialog::SettingsDialog(QWidget* parent)
+    : QDialog(parent)
+    , ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
 
@@ -63,18 +63,19 @@ void SettingsDialog::loadSettings()
 
     // Loads serial protocol information
     ui->eStartFlag->setValue(static_cast<uint8_t>(
-                                 m_settings.value("sliderbar/protocol/startflag",
-                                                  0x12).toInt()));
+        m_settings.value("sliderbar/protocol/startflag",
+                         0x12)
+            .toInt()));
     ui->eEndFlag->setValue(static_cast<uint8_t>(
-                               m_settings.value("sliderbar/protocol/endflag", 0x13).toInt()));
+        m_settings.value("sliderbar/protocol/endflag", 0x13).toInt()));
     ui->eEscapeFlag->setValue(static_cast<uint8_t>(
-                                  m_settings.value("sliderbar/protocol/escapeflag", 0x7D).toInt()));
+        m_settings.value("sliderbar/protocol/escapeflag", 0x7D).toInt()));
     ui->eXORFlag->setValue(static_cast<uint8_t>(
-                               m_settings.value("sliderbar/protocol/xorflag", 0x20).toInt()));
+        m_settings.value("sliderbar/protocol/xorflag", 0x20).toInt()));
     ui->eACKFlag->setValue(static_cast<uint8_t>(
-                               m_settings.value("sliderbar/protocol/ackflag", 0xFB).toInt()));
+        m_settings.value("sliderbar/protocol/ackflag", 0xFB).toInt()));
     ui->eNACKFlag->setValue(static_cast<uint8_t>(
-                                m_settings.value("sliderbar/protocol/nackflag", 0xFC).toInt()));
+        m_settings.value("sliderbar/protocol/nackflag", 0xFC).toInt()));
     ui->eAckTimeOut->setValue(static_cast<uint8_t>(
-                                  m_settings.value("sliderbar/protocol/acktimeout", 50).toInt()));
+        m_settings.value("sliderbar/protocol/acktimeout", 50).toInt()));
 }

@@ -5,9 +5,9 @@
 
 #include "sliderbar/sliderbar.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -42,7 +42,8 @@ void MainWindow::saveSettings()
 
 void MainWindow::initialiseActions()
 {
-    connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
+    connect(ui->actionExit, &QAction::triggered,
+            this, &MainWindow::close);
 
     // Connect SliderBar
     connect(ui->actionConnect, &QAction::triggered,

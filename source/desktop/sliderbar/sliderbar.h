@@ -7,8 +7,8 @@ class SliderBar : public QObject {
     Q_OBJECT
 
 public:
-    SliderBar(QWidget *parent);
-    ~SliderBar();
+    SliderBar(QWidget* parent);
+    ~SliderBar() override;
 
 public slots:
     /**
@@ -39,8 +39,7 @@ signals:
     void settingsChanged();
 
 private:
-
-    QWidget *m_parent;
+    QWidget* m_parent;
 };
 
 #endif // SLIDERBAR_H

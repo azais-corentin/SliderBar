@@ -3,8 +3,7 @@
 
 #include "protodef.h"
 
-#include <Buffer.hpp>
-#include <SliderBar.h>
+#include "../Buffer/Buffer.hpp"
 
 namespace protocol {
 /**

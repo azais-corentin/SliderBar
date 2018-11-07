@@ -13,8 +13,8 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    explicit MainWindow(QWidget* parent = nullptr);
+    ~MainWindow() override;
 
 public slots:
     void loadSettings();
@@ -23,10 +23,10 @@ public slots:
 private:
     void initialiseActions();
 
-    Ui::MainWindow *ui = nullptr;
-    QAction *m_actionPlugins = nullptr;
+    Ui::MainWindow* ui       = nullptr;
+    QAction* m_actionPlugins = nullptr;
 
-    SliderBar *m_sliderbar;
+    SliderBar* m_sliderbar;
 };
 
 #endif // MAINWINDOW_H

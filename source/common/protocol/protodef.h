@@ -3,28 +3,29 @@
 
 #include <cstdint>
 
-#include <usbd/usbd_def.h>
-
 namespace protocol {
 
-const uint8_t MAX_PACKET_SIZE = USB_FS_MAX_PACKET_SIZE;
+const uint8_t MAX_PACKET_SIZE = 64;
 
 extern uint8_t startflag;
 extern uint8_t endflag;
 extern uint8_t escapeflag;
 extern uint8_t xorflag;
 extern uint8_t ackflag;
+extern uint8_t nackflag;
 
 static bool isFlag(const uint8_t& ch)
 {
     return ch == startflag
-        || ch == endflag
-        || ch == escapeflag
-        || ch == xorflag
-        || ch == ackflag;
+           || ch == endflag
+           || ch == escapeflag
+           || ch == xorflag
+           || ch == ackflag
+           || ch == nackflag;
 }
 
-typedef struct {
+typedef struct
+{
     // Command documentation structure:
     // type name (unit) [range] = formula
     enum class command_type : uint8_t {
@@ -34,14 +35,14 @@ typedef struct {
         /// FOR SLIDER
         // Sent by the Computer to the Slider
         FORS_POSITION = 0x01, // uint16_t position (lsb) [0 to 2^12] = value
-        FORS_VELOCITY, // int16_t velocity (lsb / s) [-2^12 to 2^12] = value
-        FORS_VIBRATE, // int16_t time (ms) [0 - 2^16] = value
+        FORS_VELOCITY,        // int16_t velocity (lsb / s) [-2^12 to 2^12] = value
+        FORS_VIBRATE,         // int16_t time (ms) [0 - 2^16] = value
         /*
         FORS_START_PID,
         FORS_STOP_PID,
         */
 
-        FORS_RESIST_AT, // int16_t position (lsb) [0 to 2^12] = value / INT16_MAX
+        FORS_RESIST_AT,    // int16_t position (lsb) [0 to 2^12] = value / INT16_MAX
         FORS_RESIST_CLEAR, // None
 
         /*
@@ -53,11 +54,11 @@ typedef struct {
         /// FOR COMPUTER
         // Send by the Slider to the Computer
         FORC_POSITION = 0x80, // uint16_t position (lsb) [0 to 2^12] = value
-        FORC_EST_POS, // uint16_t estimated_position (lsb) [0 to 2^12] = value
-        FORC_EST_VEL, // int16_t estimated_velocity (lsb / s) [-2^12 to 2^12] = value
+        FORC_EST_POS,         // uint16_t estimated_position (lsb) [0 to 2^12] = value
+        FORC_EST_VEL,         // int16_t estimated_velocity (lsb / s) [-2^12 to 2^12] = value
     };
     uint8_t type;
-    int16_t value = 0;
+    int16_t value  = 0;
     bool crc_valid = true;
 } command;
 }

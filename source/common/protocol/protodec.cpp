@@ -40,9 +40,9 @@ command decode(Buffer<MAX_PACKET_SIZE>& packet)
     received.crc_valid = true;
 
     // Decodes the type, value, data from the data packet.
-    uint8_t i = 0;
-    received.type = decode8(packet, i);
-    received.value = decode16(packet, i);
+    uint8_t i            = 0;
+    received.type        = decode8(packet, i);
+    received.value       = decode16(packet, i);
     uint8_t crc_received = decode8(packet, i);
 
     // Computes CRC

@@ -1,8 +1,8 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
-#include <QSettings>
 #include <QDialog>
+#include <QSettings>
 
 QT_USE_NAMESPACE
 
@@ -20,8 +20,8 @@ class SettingsDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(QWidget *parent = nullptr);
-    ~SettingsDialog();
+    explicit SettingsDialog(QWidget* parent = nullptr);
+    ~SettingsDialog() override;
 
 public slots:
     int execute();
@@ -33,7 +33,7 @@ private:
     void saveSettings();
     void loadSettings();
 
-    Ui::SettingsDialog *ui;
+    Ui::SettingsDialog* ui;
     QSettings m_settings;
 };
 

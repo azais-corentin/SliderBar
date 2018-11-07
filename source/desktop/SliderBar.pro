@@ -21,12 +21,16 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     sliderbar/sliderbar.cpp \
-    sliderbar/settingsdialog.cpp
+    sliderbar/settingsdialog.cpp \
+    ../common/protocol/protodec.cpp \
+    ../common/protocol/protodef.cpp
 
 HEADERS += \
         mainwindow.h \
     sliderbar/sliderbar.h \
-    sliderbar/settingsdialog.h
+    sliderbar/settingsdialog.h \
+    ../common/protocol/protodec.h \
+    ../common/protocol/protodef.h
 
 FORMS += \
         mainwindow.ui \
