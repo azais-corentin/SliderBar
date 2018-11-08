@@ -15,6 +15,9 @@ public:
 
     uint8_t at8(uint8_t i) const;
     uint16_t at16(uint8_t i) const;
+
+    // TODO: Move this, this should be in the protodec part
+    int8_t at8_signed(uint8_t i) const;
     void clear();
 
     /**
@@ -31,7 +34,9 @@ public:
 
     bool append(uint8_t ch);
     bool append(uint16_t ch);
-    bool append(uint32_t ch);
+
+    // TODO: Move this, this should be in the protodec part
+    bool append(int8_t ch);
 
     /**
      * @brief Copies data to a position of the buffer.

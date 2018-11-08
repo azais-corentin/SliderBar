@@ -48,6 +48,19 @@ uint16_t Buffer<N>::at16(uint8_t i) const
 }
 
 template <uint8_t N>
+int8_t Buffer<N>::at8_signed(uint8_t i) const
+{
+    if (i >= index || i < 0)
+        return 0;
+
+    int8_t ret;
+    // Bit by bit copy to decode
+    memcpy(&ret, &buffer[i], sizeof(ret));
+
+    return ret;
+}
+
+template <uint8_t N>
 void Buffer<N>::clear()
 {
     index = 0;
@@ -88,6 +101,16 @@ bool Buffer<N>::append(uint16_t ch)
     buffer[index++] = static_cast<uint8_t>(ch >> 8);
     buffer[index++] = static_cast<uint8_t>(ch);
     return true;
+}
+
+template <uint8_t N>
+bool Buffer<N>::append(int8_t ch)
+{
+    if (index >= N)
+        return false; // buffer is full
+
+    // Bit by bit copy
+    memcpy(&buffer[index++], &ch, sizeof(ch));
 }
 
 template <uint8_t N>

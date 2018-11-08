@@ -7,23 +7,28 @@
 
 namespace protocol {
 /**
- * @brief Encodes a byte into the buffer, escaping if needed.
- * 
+ * @brief Encodes data into the buffer, protocol escaping if needed.
+ * @note The MSB is encoded first.
+ * @note Support types for data are:
+ *  - uint8_t, uint16_t, uint32_t, uint64_t
+ *  - int8_t, int16_t, int32_t, int64_t
+ *  - float
+ *  - std::string
+ *
  * @param buffer The buffer to write into.
- * @param data The byte to encode.
+ * @param data The data to encode. Can be of any suported type.
  * @param escape Whether to escape the byte if needed or not.
  */
-void encode8(Buffer<MAX_PACKET_SIZE>& buffer, const uint8_t& data, const bool& escape = true);
-
-/**
- * @brief Encodes 2 bytes into the buffer, escaping if needed.
- * @note MSB is first encoded.
- * 
- * @param buffer The buffer to write into.
- * @param data The byte to encode.
- * @param escape Whether to escape the byte if needed or not.
- */
-void encode16(Buffer<MAX_PACKET_SIZE>& buffer, const uint16_t& data, const bool& escape = true);
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint8_t& data, const bool& escape = true);
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint16_t& data, const bool& escape = true);
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint32_t& data, const bool& escape = true);
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint64_t& data, const bool& escape = true);
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int8_t& data, const bool& escape = true);
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int16_t& data, const bool& escape = true);
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int32_t& data, const bool& escape = true);
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int64_t& data, const bool& escape = true);
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const float& data, const bool& escape = true);
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const std::string& data, const bool& escape = true);
 
 /**
  * @brief Decodes a byte from the buffer and increments the index.
@@ -54,7 +59,7 @@ uint16_t decode16(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
  * @param buf The buffer to decode.
  * @return command The decoded command. command.crc_valid is set to false if there was an error.
  */
-command decode(Buffer<MAX_PACKET_SIZE>& packet);
+message decode(Buffer<MAX_PACKET_SIZE>& packet);
 
 namespace CRC8 {
     /**

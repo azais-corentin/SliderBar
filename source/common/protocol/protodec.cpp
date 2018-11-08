@@ -3,19 +3,82 @@
 
 namespace protocol {
 
-void encode8(Buffer<MAX_PACKET_SIZE>& buffer, const uint8_t& data, const bool& escape)
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint8_t& data, const bool& escape)
 {
     if (escape && isFlag(data)) {
-        buffer.append8(escapeflag);
-        buffer.append8(data ^ xorflag);
+        buffer.append(escapeflag);
+        buffer.append(static_cast<uint8_t>(data ^ xorflag));
     } else
-        buffer.append8(data);
+        buffer.append(data);
 }
 
-void encode16(Buffer<MAX_PACKET_SIZE>& buffer, const uint16_t& data, const bool& escape)
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint16_t& data, const bool& escape)
 {
-    encode8(buffer, static_cast<uint8_t>(data >> 8), escape);
-    encode8(buffer, static_cast<uint8_t>(data), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 8), escape);
+    encode(buffer, static_cast<uint8_t>(data), escape);
+}
+
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint32_t& data, const bool& escape)
+{
+    encode(buffer, static_cast<uint8_t>(data >> 24), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 16), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 8), escape);
+    encode(buffer, static_cast<uint8_t>(data), escape);
+}
+
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint64_t& data, const bool& escape)
+{
+    encode(buffer, static_cast<uint8_t>(data >> 56), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 48), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 40), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 32), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 24), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 16), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 8), escape);
+    encode(buffer, static_cast<uint8_t>(data), escape);
+}
+
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int8_t& data, const bool& escape)
+{
+    if (escape && isFlag(data)) {
+        buffer.append(escapeflag);
+        buffer.append(static_cast<int8_t>(data ^ xorflag));
+    } else
+        buffer.append(data);
+}
+
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int16_t& data, const bool& escape)
+{
+    encode(buffer, static_cast<uint8_t>(data >> 8), escape);
+    encode(buffer, static_cast<uint8_t>(data), escape);
+}
+
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int32_t& data, const bool& escape)
+{
+    encode(buffer, static_cast<uint8_t>(data >> 24), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 16), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 8), escape);
+    encode(buffer, static_cast<uint8_t>(data), escape);
+}
+
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int64_t& data, const bool& escape)
+{
+    encode(buffer, static_cast<uint8_t>(data >> 56), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 48), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 40), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 32), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 24), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 16), escape);
+    encode(buffer, static_cast<uint8_t>(data >> 8), escape);
+    encode(buffer, static_cast<uint8_t>(data), escape);
+}
+
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const float& data, const bool& escape)
+{
+}
+
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const std::string& data, const bool& escape)
+{
 }
 
 uint8_t decode8(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
@@ -34,9 +97,9 @@ uint16_t decode16(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
     return static_cast<uint16_t>((b1 << 8) | (b2 & 0xff));
 }
 
-command decode(Buffer<MAX_PACKET_SIZE>& packet)
+message decode(Buffer<MAX_PACKET_SIZE>& packet)
 {
-    command received;
+    message received;
     received.crc_valid = true;
 
     // Decodes the type, value, data from the data packet.
