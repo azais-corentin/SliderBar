@@ -70,7 +70,7 @@ bool Buffer<N>::append(uint8_t* data, uint8_t len)
 }
 
 template <uint8_t N>
-bool Buffer<N>::append8(uint8_t ch)
+bool Buffer<N>::append(uint8_t ch)
 {
     if (index >= N)
         return false; // buffer is full
@@ -80,7 +80,7 @@ bool Buffer<N>::append8(uint8_t ch)
 }
 
 template <uint8_t N>
-bool Buffer<N>::append16(uint16_t ch)
+bool Buffer<N>::append(uint16_t ch)
 {
     if ((index + 1) >= N)
         return false; // buffer is full
@@ -91,7 +91,7 @@ bool Buffer<N>::append16(uint16_t ch)
 }
 
 template <uint8_t N>
-bool Buffer<N>::write8(uint8_t ch, uint8_t i)
+bool Buffer<N>::write(const uint8_t ch, uint8_t i)
 {
     if (i >= N || i < 0)
         return false;
@@ -102,10 +102,24 @@ bool Buffer<N>::write8(uint8_t ch, uint8_t i)
 }
 
 template <uint8_t N>
-bool Buffer<N>::write16(uint16_t ch, uint8_t i)
+bool Buffer<N>::write(const uint16_t ch, uint8_t i)
 {
     if ((i + 1) >= N || i < 0)
         return false;
+    buffer[i++] = static_cast<uint8_t>(ch >> 8);
+    buffer[i++] = static_cast<uint8_t>(ch);
+
+    index = std::max(i, index);
+    return true;
+}
+
+template <uint8_t N>
+bool Buffer<N>::write(const uint32_t ch, uint8_t i)
+{
+    if ((i + 2) >= N || i < 0)
+        return false;
+
+    buffer[i++] = static_cast<uint8_t>(ch >> 16);
     buffer[i++] = static_cast<uint8_t>(ch >> 8);
     buffer[i++] = static_cast<uint8_t>(ch);
 

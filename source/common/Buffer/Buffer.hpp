@@ -29,11 +29,23 @@ public:
      */
     bool append(uint8_t* data, uint8_t len);
 
-    bool append8(uint8_t ch);
-    bool append16(uint16_t ch);
+    bool append(uint8_t ch);
+    bool append(uint16_t ch);
+    bool append(uint32_t ch);
 
-    bool write8(uint8_t ch, uint8_t i);
-    bool write16(uint16_t ch, uint8_t i);
+    /**
+     * @brief Copies data to a position of the buffer.
+     * @note The copy will fail and return false if it goes past the maximum size of the
+     * buffer.
+     *
+     * @param data: The data to copy.
+     * @param len: The length of the data to copy.
+     * @return true All the data was copied.
+     * @return false No data was copied.
+     */
+    bool write(const uint8_t ch, const uint8_t i);
+    bool write(const uint16_t ch, const uint8_t i);
+    bool write(const uint32_t ch, const uint8_t i);
 
     /**
      * @brief Returns the size of the buffer.
