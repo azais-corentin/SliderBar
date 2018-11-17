@@ -31,25 +31,22 @@ void encode(Buffer<MAX_PACKET_SIZE>& buffer, const float& data, const bool& esca
 void encode(Buffer<MAX_PACKET_SIZE>& buffer, const std::string& data, const bool& escape = true);
 
 /**
- * @brief Decodes a byte from the buffer and increments the index.
- * @note The index might be increased by more than one if the data was escaped.
+ * @brief Decodes data from the buffer and increments the index.
  * 
- * @param buffer The buffer to decode from
+ * @param buffer The buffer to decode from.
  * @param i The index of the data to decode.
- * @return uint8_t The decoded byte of data.
+ * @return The decoded data.
  */
-uint8_t decode8(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-
-/**
- * @brief Decodes 2 bytes from the buffer and increments the index.
- * @note MSB is first decoded.
- * @note The index might be increased by more than two if the data was escaped.
- * 
- * @param buffer The buffer to decode from
- * @param i The index of the data to decode.
- * @return uint8_t The decoded bytes of data.
- */
-uint16_t decode16(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+uint8_t decodeu8(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+uint16_t decodeu16(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+uint32_t decodeu32(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+uint64_t decodeu64(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+int8_t decode8(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+int16_t decode16(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+int32_t decode32(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+int64_t decode64(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+float decodefloat(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+std::string decodestring(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
 
 /**
  * @brief Decodes a buffer containing 1 command.

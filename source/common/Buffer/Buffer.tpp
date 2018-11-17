@@ -15,11 +15,11 @@ Buffer<N>::Buffer()
 }
 
 template <uint8_t N>
-Buffer<N>::Buffer(uint8_t* _buffer, uint8_t length)
+Buffer<N>::Buffer(uint8_t* _data, uint8_t length)
 {
     length = std::min<uint8_t>(length, N);
     for (int i = 0; i < length; i++)
-        buffer[i] = buffer[i];
+        buffer[i] = _data[i];
     index = length;
 }
 
