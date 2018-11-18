@@ -19,34 +19,44 @@ namespace protocol {
  * @param data The data to encode. Can be of any suported type.
  * @param escape Whether to escape the byte if needed or not.
  */
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint8_t& data, const bool& escape = true);
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint16_t& data, const bool& escape = true);
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint32_t& data, const bool& escape = true);
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint64_t& data, const bool& escape = true);
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int8_t& data, const bool& escape = true);
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int16_t& data, const bool& escape = true);
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int32_t& data, const bool& escape = true);
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int64_t& data, const bool& escape = true);
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const float& data, const bool& escape = true);
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const std::string& data, const bool& escape = true);
+template <class T>
+void encode(Buffer<MAX_PACKET_SIZE>& buffer, const T& data, const bool& escape = true);
 
 /**
  * @brief Decodes data from the buffer and increments the index.
- * 
+ *
  * @param buffer The buffer to decode from.
  * @param i The index of the data to decode.
  * @return The decoded data.
  */
-uint8_t decodeu8(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-uint16_t decodeu16(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-uint32_t decodeu32(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-uint64_t decodeu64(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-int8_t decode8(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-int16_t decode16(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-int32_t decode32(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-int64_t decode64(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-float decodefloat(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-std::string decodestring(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+template <class T>
+T decode(Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+
+namespace detail {
+    // Implementation details
+
+    // Primary template
+    template <class T, size_t n>
+    struct F {
+        static void encodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, const T& data, const bool& escape = true);
+        static T decodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+    };
+
+    // <float, n> partial specialization
+    template <size_t n>
+    struct F<float, n> {
+        static void encodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, const float& data, const bool& escape = true);
+        static float decodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+    };
+
+    // <uint8_t, 1> full specialization
+    template <>
+    struct F<uint8_t, 1> {
+        static void encodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, const uint8_t& data, const bool& escape = true);
+        static uint8_t decodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+    };
+
+} // namespace detail
 
 /**
  * @brief Decodes a buffer containing 1 command.

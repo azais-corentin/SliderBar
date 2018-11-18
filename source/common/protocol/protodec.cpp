@@ -3,159 +3,85 @@
 
 namespace protocol {
 
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint8_t& data, const bool& escape)
+template <class T>
+void encode(Buffer<64>& buffer, const T& data, const bool& escape)
 {
-    if (escape && isFlag(data)) {
-        buffer.append(escapeflag);
-        buffer.append(static_cast<uint8_t>(data ^ xorflag));
-    } else
-        buffer.append(data);
+    detail::F<T, sizeof(T)>::encodeImpl(buffer, data, escape);
 }
 
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint16_t& data, const bool& escape)
+template <class T>
+T decode(Buffer<64>& buffer, uint8_t& i)
 {
-    encode(buffer, static_cast<uint8_t>(data >> 8), escape);
-    encode(buffer, static_cast<uint8_t>(data), escape);
+    return detail::F<T, sizeof(T)>::decodeImpl(buffer, i);
 }
 
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint32_t& data, const bool& escape)
-{
-    encode(buffer, static_cast<uint8_t>(data >> 24), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 16), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 8), escape);
-    encode(buffer, static_cast<uint8_t>(data), escape);
-}
+namespace detail {
+    // Primary template
+    template <class T, size_t n>
+    void F<T, n>::encodeImpl(Buffer<64>& buffer, const T& data, const bool& escape)
+    {
+        for (size_t nByte = n; nByte > 0; nByte--) {
+            F<uint8_t, 1>::encodeImpl(buffer, static_cast<uint8_t>(data >> (nByte - 1) * 8), escape);
+        }
+    }
 
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const uint64_t& data, const bool& escape)
-{
-    encode(buffer, static_cast<uint8_t>(data >> 56), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 48), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 40), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 32), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 24), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 16), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 8), escape);
-    encode(buffer, static_cast<uint8_t>(data), escape);
-}
+    template <class T, size_t n>
+    T F<T, n>::decodeImpl(Buffer<64>& buffer, uint8_t& i)
+    {
+        T value = T {};
 
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int8_t& data, const bool& escape)
-{
-    if (escape && isFlag(data)) {
-        buffer.append(escapeflag);
-        buffer.append(static_cast<int8_t>(data ^ xorflag));
-    } else
-        buffer.append(data);
-}
+        T byte;
+        for (uint8_t nByte = n; nByte > 0; nByte--) {
+            byte = F<uint8_t, 1>::decodeImpl(buffer, i);
+            value |= (byte << (nByte - 1) * 8);
+        }
 
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int16_t& data, const bool& escape)
-{
-    encode(buffer, static_cast<uint8_t>(data >> 8), escape);
-    encode(buffer, static_cast<uint8_t>(data), escape);
-}
+        return value;
+    }
 
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int32_t& data, const bool& escape)
-{
-    encode(buffer, static_cast<uint8_t>(data >> 24), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 16), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 8), escape);
-    encode(buffer, static_cast<uint8_t>(data), escape);
-}
+    // <float, n> partial specialization
+    template <size_t n>
+    void F<float, n>::encodeImpl(Buffer<64>& buffer, const float& data, const bool& escape)
+    {
+        // Copy each byte
+        uint8_t bytes[n];
+        memcpy(bytes, &data, n);
 
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const int64_t& data, const bool& escape)
-{
-    encode(buffer, static_cast<uint8_t>(data >> 56), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 48), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 40), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 32), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 24), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 16), escape);
-    encode(buffer, static_cast<uint8_t>(data >> 8), escape);
-    encode(buffer, static_cast<uint8_t>(data), escape);
-}
+        // Copy the bytes in the buffer in the memory order
+        for (size_t nByte = 0; nByte < n; nByte++)
+            F<uint8_t, 1>::encodeImpl(buffer, bytes[nByte], escape);
+    }
 
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const float& data, const bool& escape)
-{
-}
+    template <size_t n>
+    float F<float, n>::decodeImpl(Buffer<64>& buffer, uint8_t& i)
+    {
+        float value = 0.f;
 
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const std::string& data, const bool& escape)
-{
-}
+        // Copy the bytes directly into the float.
+        // This works because the order in the memory is right.
+        memcpy(&value, buffer.data(i), n);
 
-uint16_t decode16(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
-{
-    uint8_t b1, b2;
-    b1 = decode8(buffer, i);
-    b2 = decode8(buffer, i);
+        return value;
+    }
 
-    return static_cast<uint16_t>((b1 << 8) | (b2 & 0xff));
-}
+    // <uint8_t, 1> full specialization
+    void F<uint8_t, 1>::encodeImpl(Buffer<64>& buffer, const uint8_t& data, const bool& escape)
+    {
+        if (escape && isFlag(data)) {
+            buffer.append(escapeflag);
+            buffer.append(static_cast<uint8_t>(data ^ xorflag));
+        } else
+            buffer.append(data);
+    }
 
-uint8_t decodeu8(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
-{
-    if (isFlag(buffer.at8(i++)))
-        return buffer.at8(i++) ^ xorflag;
-    return buffer.at8(i - 1);
-}
+    uint8_t F<uint8_t, 1>::decodeImpl(Buffer<64>& buffer, uint8_t& i)
+    {
+        if (isFlag(buffer.at8(i++)))
+            return buffer.at8(i++) ^ xorflag;
+        return buffer.at8(i - 1);
+    }
 
-uint16_t decodeu16(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
-{
-    uint8_t bits[2];
-    bits[0] = decode8(buffer, i);
-    bits[1] = decode8(buffer, i);
-
-    return static_cast<uint16_t>((bits[0] << 8) | (bits[1]));
-}
-
-uint32_t decodeu32(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
-{
-    uint8_t bits[4];
-    bits[0] = decode8(buffer, i);
-    bits[1] = decode8(buffer, i);
-    bits[2] = decode8(buffer, i);
-    bits[3] = decode8(buffer, i);
-
-    return static_cast<uint16_t>((bits[0] << 24) | (bits[1] << 16) | (bits[2] << 8) | (bits[3]));
-}
-
-uint64_t decodeu64(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
-{
-    uint8_t bits[8];
-    bits[0] = decode8(buffer, i);
-    bits[1] = decode8(buffer, i);
-    bits[2] = decode8(buffer, i);
-    bits[3] = decode8(buffer, i);
-    bits[4] = decode8(buffer, i);
-    bits[5] = decode8(buffer, i);
-    bits[6] = decode8(buffer, i);
-    bits[7] = decode8(buffer, i);
-
-    return static_cast<uint16_t>((bits[0] << 56) | (bits[1] << 48) | (bits[2] << 40) | (bits[3] << 32)
-                                 | (bits[4] << 24) | (bits[5] << 16) | (bits[6] << 8) | (bits[7]));
-}
-
-int8_t decode8(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
-{
-}
-
-int16_t decode16(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
-{
-}
-
-int32_t decode32(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
-{
-}
-
-int64_t decode64(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
-{
-}
-
-float decodefloat(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
-{
-}
-
-std::string decodestring(const Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i)
-{
-}
+} // namespace detail
 
 message decode(Buffer<MAX_PACKET_SIZE>& packet)
 {
@@ -164,22 +90,47 @@ message decode(Buffer<MAX_PACKET_SIZE>& packet)
 
     // Decodes the type, value, data from the data packet.
     uint8_t i      = 0;
-    received.topic = decode8(packet, i);
-    received.type  = decode8(packet, i);
+    received.topic = decode<uint8_t>(packet, i);
+    received.type  = decode<uint8_t>(packet, i);
 
     switch (received.type) {
-    case value:
-
+    case UNSIGNED_INT_8:
+        received.value_ui8 = decode<uint8_t>(packet, i);
         break;
+    case UNSIGNED_INT_16:
+        received.value_ui16 = decode<uint16_t>(packet, i);
+        break;
+    case UNSIGNED_INT_32:
+        received.value_ui32 = decode<uint32_t>(packet, i);
+        break;
+    case UNSIGNED_INT_64:
+        received.value_ui64 = decode<uint64_t>(packet, i);
+        break;
+    case INT_8:
+        received.value_i8 = decode<int8_t>(packet, i);
+        break;
+    case INT_16:
+        received.value_i16 = decode<int16_t>(packet, i);
+        break;
+    case INT_32:
+        received.value_i32 = decode<int32_t>(packet, i);
+        break;
+    case INT_64:
+        received.value_i64 = decode<int64_t>(packet, i);
+        break;
+    case FLOAT:
+        received.value_flt = decode<float>(packet, i);
+        break;
+
     default:
         break;
     }
 
-    received.value       = decode16(packet, i);
-    uint8_t crc_received = decode8(packet, i);
+    uint8_t crc_received = decode(packet, i);
 
-    // Computes CRC
+    // Compute CRC
     Buffer<MAX_PACKET_SIZE> receivedBytes;
+    encode(receivedBytes, received.type, false);
     encode8(receivedBytes, received.type, false);
     encode16(receivedBytes, received.value, false);
     // TODO: Use hardware CRC generation

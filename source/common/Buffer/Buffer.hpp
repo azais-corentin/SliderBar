@@ -11,7 +11,7 @@ public:
     Buffer(uint8_t* _data, uint8_t length);
     virtual ~Buffer();
 
-    uint8_t* data() { return buffer; }
+    uint8_t* data(uint8_t i = 0) { return buffer + i; }
 
     uint8_t at8(uint8_t i) const;
     uint16_t at16(uint8_t i) const;

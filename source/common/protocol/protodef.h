@@ -62,10 +62,24 @@ enum class message_topic : uint8_t {
     FORC_EST_VEL,         // int16_t estimated_velocity (lsb / s) [-2^12 to 2^12] = value
 };
 
+enum message_type : uint8_t {
+    UNSIGNED_INT_8,
+    UNSIGNED_INT_16,
+    UNSIGNED_INT_32,
+    UNSIGNED_INT_64,
+    INT_8,
+    INT_16,
+    INT_32,
+    INT_64,
+    FLOAT
+};
+
 using message = struct message {
     uint8_t topic = 0;
     uint8_t type  = 0;
 
+    // TODO: Get rid of all but one value. Maybe store the raw bytes
+    // in an array and simply memcpy them to the right value type.
     uint8_t value_ui8   = 0;
     uint16_t value_ui16 = 0;
     uint32_t value_ui32 = 0;
@@ -75,9 +89,8 @@ using message = struct message {
     int32_t value_i32   = 0;
     int64_t value_i64   = 0;
     float value_flt     = 0;
-    std::string str     = {};
 
-    bool crc_valid = true;
+    bool crc_valid = false;
 };
 }
 
