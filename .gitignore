@@ -45,3 +45,8 @@ Makefile*
 # Word files
 ~*.docx
 ~*.tmp
+
+# Sphinx
+_build
+_static
+_templates
