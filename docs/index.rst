@@ -9,7 +9,11 @@ Welcome to SliderBar's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-
+   
+   tutorials
+   topic-guides
+   technical-reference
+   how-to-guides
 
 
 Indices and tables
@@ -18,3 +22,10 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+This is a paragraph that contains `a link`_.
+test
+
+
+.. _a link: https://domain.invalid/
