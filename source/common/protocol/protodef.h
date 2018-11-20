@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <string>
 
+#include "../Buffer/Buffer.hpp"
+
 namespace protocol {
 
 const uint8_t MAX_PACKET_SIZE = 64;
@@ -71,27 +73,20 @@ enum message_type : uint8_t {
     INT_16,
     INT_32,
     INT_64,
+    NONE8_1,
+    NONE16_1,
     FLOAT
-};
+}; // The size of the type is 2^(message_type % 4)
 
 using message = struct message {
-    uint8_t topic = 0;
-    uint8_t type  = 0;
+    uint8_t topic     = 0;
+    message_type type = 0;
 
-    // TODO: Get rid of all but one value. Maybe store the raw bytes
-    // in an array and simply memcpy them to the right value type.
-    uint8_t value_ui8   = 0;
-    uint16_t value_ui16 = 0;
-    uint32_t value_ui32 = 0;
-    uint64_t value_ui64 = 0;
-    int8_t value_i8     = 0;
-    int16_t value_i16   = 0;
-    int32_t value_i32   = 0;
-    int64_t value_i64   = 0;
-    float value_flt     = 0;
+    Buffer<MAX_PACKET_SIZE> value;
 
     bool crc_valid = false;
 };
-}
+
+} // namespace protocol
 
 #endif // __PROTODEF_H__

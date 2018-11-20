@@ -6,57 +6,60 @@
 #include "../Buffer/Buffer.hpp"
 
 namespace protocol {
-/**
- * @brief Encodes data into the buffer, protocol escaping if needed.
- * @note The MSB is encoded first.
- * @note Support types for data are:
- *  - uint8_t, uint16_t, uint32_t, uint64_t
- *  - int8_t, int16_t, int32_t, int64_t
- *  - float
- *  - std::string
- *
- * @param buffer The buffer to write into.
- * @param data The data to encode. Can be of any suported type.
- * @param escape Whether to escape the byte if needed or not.
- */
-template <class T>
-void encode(Buffer<MAX_PACKET_SIZE>& buffer, const T& data, const bool& escape = true);
 
-/**
- * @brief Decodes data from the buffer and increments the index.
- *
- * @param buffer The buffer to decode from.
- * @param i The index of the data to decode.
- * @return The decoded data.
- */
-template <class T>
-T decode(Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+namespace data {
+    /**
+    * @brief Encodes data into the buffer, protocol escaping if needed.
+    * @note The MSB is encoded first.
+    * @note Support types for data are:
+    *  - uint8_t, uint16_t, uint32_t, uint64_t
+    *  - int8_t, int16_t, int32_t, int64_t
+    *  - float
+    *  - std::string
+    *
+    * @param buffer The buffer to write into.
+    * @param data The data to encode. Can be of any suported type.
+    * @param escape Whether to escape the byte if needed or not.
+    */
+    template <class T>
+    void encode(Buffer<MAX_PACKET_SIZE>& buffer, const T& data, const bool& escape = true);
 
-namespace detail {
-    // Implementation details
+    /**
+    * @brief Decodes data from the buffer and increments the index.
+    *
+    * @param buffer The buffer to decode from.
+    * @param i The index of the data to decode.
+    * @return The decoded data.
+    */
+    template <class T>
+    T decode(Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
 
-    // Primary template
-    template <class T, size_t n>
-    struct F {
-        static void encodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, const T& data, const bool& escape = true);
-        static T decodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-    };
+    namespace detail {
+        // Implementation details
 
-    // <float, n> partial specialization
-    template <size_t n>
-    struct F<float, n> {
-        static void encodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, const float& data, const bool& escape = true);
-        static float decodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-    };
+        // Primary template
+        template <class T, size_t n>
+        struct F {
+            static void encodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, const T& data, const bool& escape = true);
+            static T decodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+        };
 
-    // <uint8_t, 1> full specialization
-    template <>
-    struct F<uint8_t, 1> {
-        static void encodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, const uint8_t& data, const bool& escape = true);
-        static uint8_t decodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
-    };
+        // <float, n> partial specialization
+        template <size_t n>
+        struct F<float, n> {
+            static void encodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, const float& data, const bool& escape = true);
+            static float decodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+        };
 
-} // namespace detail
+        // <uint8_t, 1> full specialization
+        template <>
+        struct F<uint8_t, 1> {
+            static void encodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, const uint8_t& data, const bool& escape = true);
+            static uint8_t decodeImpl(Buffer<MAX_PACKET_SIZE>& buffer, uint8_t& i);
+        };
+
+    } // namespace detail
+} // namespace data
 
 /**
  * @brief Decodes a buffer containing 1 command.
@@ -67,6 +70,7 @@ namespace detail {
  * @return command The decoded command. command.crc_valid is set to false if there was an error.
  */
 message decode(Buffer<MAX_PACKET_SIZE>& packet);
+Buffer<MAX_PACKET_SIZE> encode(const message& msg, const bool& escape = true);
 
 namespace CRC8 {
     /**
