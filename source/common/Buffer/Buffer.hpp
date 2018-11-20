@@ -9,9 +9,10 @@ class Buffer {
 public:
     Buffer();
     Buffer(uint8_t* _data, uint8_t length);
-    virtual ~Buffer();
+    virtual ~Buffer() = default;
 
     uint8_t* data(uint8_t i = 0) { return buffer + i; }
+    Buffer<N> extract(uint8_t iBegin, uint8_t iEnd);
 
     uint8_t at8(uint8_t i) const;
     uint16_t at16(uint8_t i) const;
@@ -30,13 +31,11 @@ public:
      * @return true All the data was copied.
      * @return false Not all the data was copied, or no data was copied.
      */
-    bool append(uint8_t* data, uint8_t len);
+    bool append(const uint8_t* data, const uint8_t& len);
+    bool append(const Buffer<N>& data);
 
-    bool append(uint8_t ch);
-    bool append(uint16_t ch);
-
-    // TODO: Move this, this should be in the protodec part
-    bool append(int8_t ch);
+    bool append(const uint8_t& ch);
+    bool append(const uint16_t& ch);
 
     /**
      * @brief Copies data to a position of the buffer.

@@ -24,8 +24,15 @@ Buffer<N>::Buffer(uint8_t* _data, uint8_t length)
 }
 
 template <uint8_t N>
-Buffer<N>::~Buffer()
+Buffer<N> Buffer<N>::extract(uint8_t iBegin, uint8_t iEnd)
 {
+    if (iBegin >= iEnd)
+        return Buffer();
+
+    if (iEnd >= size())
+        iEnd = size() - 1;
+
+    return Buffer(data(iBegin), iEnd - iBegin);
 }
 
 template <uint8_t N>
@@ -67,11 +74,12 @@ void Buffer<N>::clear()
 }
 
 template <uint8_t N>
-bool Buffer<N>::append(uint8_t* data, uint8_t len)
+bool Buffer<N>::append(const uint8_t* data, const uint8_t& len)
 {
     if (index >= N)
         return false;
-    else if (index + len > N) {
+
+    if (index + len > N) {
         uint8_t reallen = std::min<uint8_t>(len, N - index);
 
         std::memcpy(&buffer[index], data, reallen);
@@ -83,7 +91,26 @@ bool Buffer<N>::append(uint8_t* data, uint8_t len)
 }
 
 template <uint8_t N>
-bool Buffer<N>::append(uint8_t ch)
+bool Buffer<N>::append(const Buffer<N>& data)
+{
+    if (index >= N)
+        return false;
+
+    if (index + data.size() > N) {
+        uint8_t reallen = std::min<uint8_t>(data.size(), N - index);
+
+        std::memcpy(buffer + index, data.data(), reallen);
+
+        return false;
+    }
+
+    std::memcpy(&buffer[index], data.data(), data.size());
+
+    return true;
+}
+
+template <uint8_t N>
+bool Buffer<N>::append(const uint8_t& ch)
 {
     if (index >= N)
         return false; // buffer is full
@@ -93,7 +120,7 @@ bool Buffer<N>::append(uint8_t ch)
 }
 
 template <uint8_t N>
-bool Buffer<N>::append(uint16_t ch)
+bool Buffer<N>::append(const uint16_t& ch)
 {
     if ((index + 1) >= N)
         return false; // buffer is full
@@ -101,16 +128,6 @@ bool Buffer<N>::append(uint16_t ch)
     buffer[index++] = static_cast<uint8_t>(ch >> 8);
     buffer[index++] = static_cast<uint8_t>(ch);
     return true;
-}
-
-template <uint8_t N>
-bool Buffer<N>::append(int8_t ch)
-{
-    if (index >= N)
-        return false; // buffer is full
-
-    // Bit by bit copy
-    memcpy(&buffer[index++], &ch, sizeof(ch));
 }
 
 template <uint8_t N>
