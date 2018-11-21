@@ -1,4 +1,4 @@
-#include "protodef.h"
+#include "protocol_definition.h"
 
 namespace protocol {
 
@@ -8,12 +8,4 @@ uint8_t escapeflag = 0x7D;
 uint8_t xorflag    = 0x20;
 uint8_t ackflag    = 0xFB;
 uint8_t nackflag   = 0xFC;
-
-template <class T>
-void message::setType()
-{
-    if (std::is_same<T, uint8_t>::value) {
-    }
-}
-
 }

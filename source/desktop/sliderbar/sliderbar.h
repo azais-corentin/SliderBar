@@ -3,7 +3,9 @@
 
 #include <QObject>
 
-class SliderBar : public QObject {
+#include <DataInterface/DataInterface.h>
+
+class SliderBar : public QObject, public DataInterface {
     Q_OBJECT
 
 public:
@@ -34,6 +36,9 @@ public slots:
      * @param enabled True if autoconnect should be enabled.
      */
     void autoconnect(bool enabled);
+
+    void receive(uint8_t* buf, uint16_t len) final;
+    bool transmit(uint8_t* buf, uint16_t len) final;
 
 signals:
     void settingsChanged();

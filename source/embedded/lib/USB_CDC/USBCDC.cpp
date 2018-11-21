@@ -5,11 +5,8 @@
 
 #include <ErrorHandler.h>
 
-#include "usbd/usbd_cdc.h"
 #include "usbd/usbd_core.h"
 #include "usbd/usbd_desc.h"
-
-#include <SliderBar.h>
 
 USB_CDC* g_usb_cdc_ptr = nullptr;
 
@@ -47,7 +44,7 @@ static int8_t CDC_Init_FS(void)
     USBD_CDC_SetTxBuffer(&hUsbDeviceFS, UserTxBufferFS, 0);
     USBD_CDC_SetRxBuffer(&hUsbDeviceFS, UserRxBufferFS);
 
-    return (USBD_OK);
+    return USBD_OK;
 }
 
 /**
@@ -56,7 +53,7 @@ static int8_t CDC_Init_FS(void)
   */
 static int8_t CDC_DeInit_FS(void)
 {
-    return (USBD_OK);
+    return USBD_OK;
 }
 
 /**
@@ -126,7 +123,7 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
         break;
     }
 
-    return (USBD_OK);
+    return USBD_OK;
 }
 
 /**
@@ -145,10 +142,12 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   */
 static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t* Len)
 {
+    uint16_t len16 = *Len;
+
     if (g_usb_cdc_ptr)
-        return g_usb_cdc_ptr->receive(Buf, Len);
-    else
-        return USBD_OK;
+        g_usb_cdc_ptr->receive(Buf, len16);
+
+    return USBD_OK;
 }
 
 USB_CDC::USB_CDC()
@@ -174,7 +173,7 @@ void USB_CDC::initialise()
     USBD_Start(&hUsbDeviceFS);
 }
 
-uint8_t USB_CDC::transmit(uint8_t* buf, uint16_t len)
+bool USB_CDC::transmit(uint8_t* buf, uint16_t len)
 {
     uint8_t result = USBD_OK;
 
@@ -186,20 +185,19 @@ uint8_t USB_CDC::transmit(uint8_t* buf, uint16_t len)
     USBD_CDC_SetTxBuffer(&hUsbDeviceFS, buf, len);
     result = USBD_CDC_TransmitPacket(&hUsbDeviceFS);
 
-    return result;
+    return result == USBD_OK;
 }
 
-void USB_CDC::setReceiver(USBInterface* receiver_class)
-{
-    receiver = receiver_class;
-}
-
-uint8_t USB_CDC::receive(uint8_t* buf, uint32_t* len)
+void USB_CDC::receive(uint8_t* buf, uint16_t len)
 {
     if (receiver)
-        receiver->receive(buf, *len);
+        receiver->receive(buf, len);
 
     USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &buf[0]);
     USBD_CDC_ReceivePacket(&hUsbDeviceFS);
-    return (USBD_OK);
+}
+
+void USB_CDC::setReceiver(DataInterface* _receiver)
+{
+    receiver = _receiver;
 }

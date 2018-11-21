@@ -3,13 +3,9 @@
 
 #include <cstdint>
 
-//#include "../USB_CDC/USBInterface.h"
-#include <USBInterface.h>
+#include <DataInterface.h>
 
-#include <protodef.h>
-#include <usbd/usbd_def.h>
-
-//const uint8_t MAX_PACKET_SIZE = USB_FS_MAX_PACKET_SIZE;
+#include <protocol_definition.h>
 
 template <uint8_t N>
 class Buffer;
@@ -20,7 +16,7 @@ class Buffer;
  * This receives commands through USB, and execute actions accordingly.
  * 
  */
-class SliderBar : public USBInterface {
+class SliderBar : public DataInterface {
 public:
     SliderBar();
     ~SliderBar();
@@ -35,7 +31,7 @@ public:
     void run();
 
     /**
-     * @brief 
+     * @brief Receive new data.
      * Called by the data layer (ie: USB, serial, ...) when there is new data
      * available. This should normally contain startflag, packet data 
      * (type, value, crc) and endflag.
@@ -43,15 +39,31 @@ public:
      * @param buf Pointer to the data.
      * @param len Length of the data.
      */
-    void receive(uint8_t* buf, uint8_t len) override;
+    void receive(uint8_t* buf, uint16_t len) final;
+
+    /**
+     * @brief Transmits data.
+     * Called by encode() internally when a new packed is being sent.
+     * 
+     * @param buf Pointer to the data.
+     * @param len Length of the data.
+     * @return true If the transfer was successful.
+     * @return false If the transfer failed.
+     */
+    bool transmit(uint8_t* buf, uint16_t len) final;
+
+    void setTransmitter(DataInterface* _transmitter);
 
 private:
-    Buffer<protocol::MAX_PACKET_SIZE>* m_buffer = nullptr;
-    bool newData = false;
+    Buffer<protocol::MAX_PACKET_SIZE>* m_decodeBuffer = nullptr;
+    bool newData                                      = false;
 
     void decode();
-};
 
-extern SliderBar* g_sliderbar_ptr;
+    template <class T>
+    void encode(const T& msg);
+
+    DataInterface* transmitter = nullptr;
+};
 
 #endif // __SLIDERBAR_H__

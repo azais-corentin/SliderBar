@@ -83,10 +83,12 @@ bool Buffer<N>::append(const uint8_t* data, const uint8_t& len)
         uint8_t reallen = std::min<uint8_t>(len, N - index);
 
         std::memcpy(&buffer[index], data, reallen);
+        index += reallen;
         return false;
     }
 
     std::memcpy(&buffer[index], data, len);
+    index += len;
     return true;
 }
 
@@ -207,21 +209,21 @@ int Buffer<N>::lastIndexOf(uint8_t ch)
 template <uint8_t N>
 void Buffer<N>::mid(uint8_t position, uint8_t length)
 {
-    // There's no data to copy, simple empty the array.
+    // There's no data to copy, simple empty the array
     if (position >= index) {
         index = 0;
         return;
     }
 
-    // Length would encompass elements out of bounds Calculate a new length.
+    // Length would encompass elements out of bounds, calculate a new length
     if (position + length > N)
         length = N - position;
 
-    // Move the elements in range [position, position + length] to the front and
-    // discards the other elements.
+    // Move the elements in range [position, position + length] to the front
     for (uint8_t i = 0; i < length; i++) {
         buffer[i] = buffer[i + position];
     }
+    // Discards the other elements
     index = length;
 }
 

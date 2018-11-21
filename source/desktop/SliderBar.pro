@@ -17,22 +17,31 @@ TEMPLATE = app
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
+INCLUDEPATH += $$PWD/../common $$PWD/../common/nanopb
+
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
+    main.cpp \
+    mainwindow.cpp \
     sliderbar/sliderbar.cpp \
     sliderbar/settingsdialog.cpp \
-    ../common/protocol/protodec.cpp \
-    ../common/protocol/protodef.cpp \
-    ../common/Buffer/Buffer.tpp
+    ../common/Buffer/Buffer.tpp \
+    ../common/nanopb/pb_common.c \
+    ../common/nanopb/pb_decode.c \
+    ../common/nanopb/pb_encode.c \
+    ../common/protocol/protocol_definition.cpp
 
 HEADERS += \
-        mainwindow.h \
+    mainwindow.h \
     sliderbar/sliderbar.h \
     sliderbar/settingsdialog.h \
-    ../common/protocol/protodec.h \
-    ../common/protocol/protodef.h \
-    ../common/Buffer/Buffer.hpp
+    ../common/Buffer/Buffer.hpp \
+    ../common/nanopb/pb.h \
+    ../common/nanopb/pb_common.h \
+    ../common/nanopb/pb_decode.h \
+    ../common/nanopb/pb_encode.h \
+    ../common/protocol/protocol_definition.h \
+    ../common/protocol/messages/sliderbar.pb.h \
+    ../common/DataInterface/DataInterface.h
 
 FORMS += \
         mainwindow.ui \

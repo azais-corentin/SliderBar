@@ -50,3 +50,8 @@ Makefile*
 _build
 _static
 _templates
+
+# Nanopb
+*.pb
+*.pb.c
+*.pb.h

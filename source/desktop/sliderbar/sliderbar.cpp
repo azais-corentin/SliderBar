@@ -30,3 +30,11 @@ void SliderBar::autoconnect(bool enabled)
     QSettings set;
     set.setValue("sliderbar/autoconnect", enabled);
 }
+
+void SliderBar::receive(uint8_t* buf, uint16_t len)
+{
+}
+
+bool SliderBar::transmit(uint8_t* buf, uint16_t len)
+{
+}

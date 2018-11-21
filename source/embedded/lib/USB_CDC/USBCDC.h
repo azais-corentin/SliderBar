@@ -4,6 +4,8 @@
 #include "usbd/usbd_cdc.h"
 #include "usbd/usbd_def.h"
 
+#include <DataInterface.h>
+
 extern "C" {
 // USB device core handle
 extern USBD_HandleTypeDef hUsbDeviceFS;
@@ -12,9 +14,7 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 extern USBD_CDC_ItfTypeDef USBD_Interface_fops_FS;
 }
 
-class USBInterface;
-
-class USB_CDC {
+class USB_CDC : public DataInterface {
 public:
     USB_CDC();
     ~USB_CDC();
@@ -24,16 +24,6 @@ public:
       *  @retval None.
       */
     void initialise();
-
-    /** @brief Sends buf over USB IN endpoint.
-     *  Sends buf over USB IN endpoint
-     * 
-     *  @param buf: Buffer of data to be sent
-     *  @param len: Number of data to be sent (in bytes)
-     * 
-     *  @retval USBD_OK if all operations are OK else USBD_FAIL or USBD_BUSY
-     */
-    uint8_t transmit(uint8_t* buf, uint16_t len);
 
     /**
      * @brief Data received over USB OUT endpoint are sent over CDC interface
@@ -50,12 +40,22 @@ public:
      * @retval Result of the operation: USBD_OK if all operations are OK else
      * USBD_FAIL
       */
-    uint8_t receive(uint8_t* buf, uint32_t* len);
+    void receive(uint8_t* buf, uint16_t len) final;
 
-    void setReceiver(USBInterface* receiver_class);
+    /** @brief Sends buf over USB IN endpoint.
+     *  Sends buf over USB IN endpoint
+     * 
+     *  @param buf: Buffer of data to be sent
+     *  @param len: Number of data to be sent (in bytes)
+     * 
+     *  @retval USBD_OK if all operations are OK else USBD_FAIL or USBD_BUSY
+     */
+    bool transmit(uint8_t* buf, uint16_t len) final;
+
+    void setReceiver(DataInterface* _receiver);
 
 private:
-    USBInterface* receiver = nullptr;
+    DataInterface* receiver = nullptr;
 };
 
 extern USB_CDC* g_usb_cdc_ptr;
