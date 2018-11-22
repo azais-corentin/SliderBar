@@ -3,12 +3,11 @@
 
 #include <cstdint>
 
+#include <Buffer.hpp>
 #include <DataInterface.h>
 
+#include <messages/sliderbar.pb.h>
 #include <protocol_definition.h>
-
-template <uint8_t N>
-class Buffer;
 
 /**
  * @brief The SliderBar class.
@@ -18,18 +17,22 @@ class Buffer;
  */
 class SliderBar : public DataInterface {
 public:
-    SliderBar();
-    ~SliderBar();
+    SliderBar()  = default;
+    ~SliderBar() = default;
 
     /**
-     *  @brief Runs the main loop of the SliderBar
+     *  @brief Runs the main loop of the SliderBar.
      *  It decodes the messages sent through USB, and moves the motor
      *  accordingly.
-     *  
-     *  @retval None
      */
-    void run();
+    inline void run()
+    {
+        decode();
+    }
 
+    void setTransmitter(DataInterface* _transmitter);
+
+private:
     /**
      * @brief Receive new data.
      * Called by the data layer (ie: USB, serial, ...) when there is new data
@@ -52,16 +55,13 @@ public:
      */
     bool transmit(uint8_t* buf, uint16_t len) final;
 
-    void setTransmitter(DataInterface* _transmitter);
-
-private:
-    Buffer<protocol::MAX_PACKET_SIZE>* m_decodeBuffer = nullptr;
-    bool newData                                      = false;
-
     void decode();
 
-    template <class T>
-    void encode(const T& msg);
+    void encode(const Example& msg);
+
+private:
+    Buffer<protocol::MAX_PACKET_SIZE> m_decodeBuffer;
+    bool newData = false;
 
     DataInterface* transmitter = nullptr;
 };

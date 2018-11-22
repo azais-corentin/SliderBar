@@ -1,5 +1,5 @@
-syntax = "proto2";
+syntax = "proto3";
 
 message Example {
-    required int32 value = 1;
+    int32 value = 1;
 }

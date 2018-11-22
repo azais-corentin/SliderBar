@@ -41,7 +41,6 @@ Makefile*
 *rescue-backup
 *.kicad_pcb-bak
 
-
 # Word files
 ~*.docx
 ~*.tmp
@@ -55,3 +54,6 @@ _templates
 *.pb
 *.pb.c
 *.pb.h
+
+# VsCode
+.vscode

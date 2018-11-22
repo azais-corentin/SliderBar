@@ -30,7 +30,9 @@ int main(void)
     cdc.setReceiver(&sliderbar);
     sliderbar.setTransmitter(&cdc);
 
-    sliderbar.run();
+    while (1) {
+        sliderbar.run();
+    }
 }
 
 /**

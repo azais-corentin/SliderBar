@@ -7,23 +7,6 @@
 #include <pb_decode.h>
 #include <pb_encode.h>
 
-SliderBar::SliderBar()
-{
-    m_decodeBuffer = new Buffer<protocol::MAX_PACKET_SIZE>();
-}
-
-SliderBar::~SliderBar()
-{
-    delete m_decodeBuffer;
-}
-
-void SliderBar::run()
-{
-    while (1) {
-        decode();
-    }
-}
-
 void SliderBar::setTransmitter(DataInterface* _transmitter)
 {
     transmitter = _transmitter;
@@ -31,10 +14,10 @@ void SliderBar::setTransmitter(DataInterface* _transmitter)
 
 void SliderBar::receive(uint8_t* buf, uint16_t len)
 {
-    if (m_decodeBuffer->full())
-        m_decodeBuffer->clear();
+    if (m_decodeBuffer.full())
+        m_decodeBuffer.clear();
 
-    m_decodeBuffer->append(buf, len);
+    m_decodeBuffer.append(buf, len);
     newData = true;
 }
 
@@ -48,32 +31,43 @@ void SliderBar::decode()
     if (!newData)
         return;
 
+    Example msg;
+    msg.value = 1255;
+    encode(msg);
+
     // Makes sure buffer contains at least 1 startflag & 1 endflag
-    if (!m_decodeBuffer->contains(protocol::startflag) || !m_decodeBuffer->contains(protocol::endflag)) {
-        m_decodeBuffer->clear();
+    if (!m_decodeBuffer.contains(protocol::startflag) || !m_decodeBuffer.contains(protocol::endflag)) {
+        m_decodeBuffer.clear();
+        newData = false;
         return;
     }
 
     // Makes sure buffer starts with the first startflag
-    m_decodeBuffer->mid(m_decodeBuffer->indexOf(protocol::startflag));
+    m_decodeBuffer.mid(m_decodeBuffer.indexOf(protocol::startflag));
 
     // Makes sure buffer ends with the last endflag
-    m_decodeBuffer->resize(m_decodeBuffer->lastIndexOf(protocol::endflag) + 1);
+    m_decodeBuffer.resize(m_decodeBuffer.lastIndexOf(protocol::endflag) + 1);
 
     // Packet is complete -- remove startflag and endflag
     // TODO: Assume that there are multiple command packets in one buffer: split
     // the buffer with start/end flags and process each buffer independantly.
-    m_decodeBuffer->mid(1);
-    m_decodeBuffer->chop(1);
+    m_decodeBuffer.mid(1);
+    m_decodeBuffer.chop(1);
 
     // The buffer now contains:
     // - message
     // - crc
 
     // Decode packet using nanopb:
-    Example msg         = Example_init_zero;
-    pb_istream_t stream = pb_istream_from_buffer(m_decodeBuffer->data(), m_decodeBuffer->size() - 4);
-    bool status         = pb_decode(&stream, Example_fields, &msg);
+    Example decoded     = Example_init_zero;
+    pb_istream_t stream = pb_istream_from_buffer(m_decodeBuffer.data(), m_decodeBuffer.size() - 4);
+    bool status         = pb_decode(&stream, Example_fields, &decoded);
+
+    if (!status) {
+        m_decodeBuffer.clear();
+        newData = false;
+        return;
+    }
 
     // verify crc32
 
@@ -89,17 +83,20 @@ void SliderBar::decode()
 
     // TODO: Add the command to a queue; process the queue in the run() loop.
 
-    m_decodeBuffer->clear();
+    m_decodeBuffer.clear();
     newData = false;
 }
 
-template <>
 void SliderBar::encode(const Example& msg)
 {
     uint8_t dataBuffer[64];
     pb_ostream_t stream = pb_ostream_from_buffer(dataBuffer, sizeof(dataBuffer));
 
-    bool status                 = pb_encode(&stream, Example_fields, &msg);
+    bool status = pb_encode(&stream, Example_fields, &msg);
+
+    if (!status)
+        return;
+
     const size_t message_length = stream.bytes_written;
 
     // Create the data packet
