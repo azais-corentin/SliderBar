@@ -153,6 +153,8 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t* Len)
 USB_CDC::USB_CDC()
 {
     g_usb_cdc_ptr = this;
+
+    // We can't do initialisation here, because the clock is not yet initialised.
 }
 
 void USB_CDC::initialise()

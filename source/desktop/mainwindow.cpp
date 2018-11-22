@@ -3,6 +3,7 @@
 
 #include <QSettings>
 
+#include "sliderbar/serialinterface.h"
 #include "sliderbar/sliderbar.h"
 
 MainWindow::MainWindow(QWidget* parent)
@@ -14,7 +15,11 @@ MainWindow::MainWindow(QWidget* parent)
     m_actionPlugins = new QAction("Plugins");
     ui->menuBar->addAction(m_actionPlugins);
 
-    m_sliderbar = new SliderBar(this);
+    m_sliderbar     = new SliderBar(this);
+    m_dataInterface = new SerialInterface();
+
+    m_sliderbar->setTransmitter(m_dataInterface);
+    m_dataInterface->setReceiver(m_sliderbar);
 
     loadSettings();
 

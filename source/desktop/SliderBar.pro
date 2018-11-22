@@ -28,7 +28,9 @@ SOURCES += \
     ../common/nanopb/pb_common.c \
     ../common/nanopb/pb_decode.c \
     ../common/nanopb/pb_encode.c \
-    ../common/protocol/protocol_definition.cpp
+    ../common/protocol/protocol_definition.cpp \
+    sliderbar/serialinterface.cpp \
+    ../common/protocol/messages/sliderbar.pb.c
 
 HEADERS += \
     mainwindow.h \
@@ -41,7 +43,9 @@ HEADERS += \
     ../common/nanopb/pb_encode.h \
     ../common/protocol/protocol_definition.h \
     ../common/protocol/messages/sliderbar.pb.h \
-    ../common/DataInterface/DataInterface.h
+    ../common/DataInterface/DataInterface.h \
+    sliderbar/serialinterface.h \
+    ../common/protocol/messages/sliderbar.pb.h
 
 FORMS += \
         mainwindow.ui \

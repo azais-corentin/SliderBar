@@ -30,7 +30,7 @@ void SliderBar::decode()
 
     Example msg;
     msg.value = 1255;
-    encode(msg);
+    transmit(msg);
 
     // Makes sure buffer contains at least 1 startflag & 1 endflag
     if (!m_decodeBuffer.contains(protocol::startflag) || !m_decodeBuffer.contains(protocol::endflag)) {
@@ -84,7 +84,7 @@ void SliderBar::decode()
     newData = false;
 }
 
-void SliderBar::encode(const Example& msg)
+void SliderBar::transmit(const Example& msg)
 {
     uint8_t dataBuffer[64];
     pb_ostream_t stream = pb_ostream_from_buffer(dataBuffer, sizeof(dataBuffer));

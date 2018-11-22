@@ -3,9 +3,12 @@
 
 #include <QObject>
 
+#include <Buffer/Buffer.hpp>
 #include <DataInterface/DataInterface.h>
+#include <protocol/messages/sliderbar.pb.h>
+#include <protocol/protocol_definition.h>
 
-class SliderBar : public QObject, public DataInterface {
+class SliderBar : public QObject, public DataOutInterface {
     Q_OBJECT
 
 public:
@@ -39,12 +42,14 @@ public slots:
 
     void receive(uint8_t* buf, uint16_t len) final;
     bool transmit(uint8_t* buf, uint16_t len) final;
+    void transmit(const Example& msg);
 
 signals:
     void settingsChanged();
 
 private:
     QWidget* m_parent;
+    Buffer<protocol::MAX_PACKET_SIZE> m_dataBuffer;
 };
 
 #endif // SLIDERBAR_H

@@ -26,9 +26,10 @@ int main(void)
     // Initialize all configured peripherals
     MX_GPIO_Init();
 
-    cdc.initialise();
     cdc.setReceiver(&sliderbar);
     sliderbar.setTransmitter(&cdc);
+
+    cdc.initialise();
 
     while (1) {
         sliderbar.run();

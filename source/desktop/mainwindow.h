@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 class SliderBar;
+class SerialInterface;
 
 namespace Ui {
 class MainWindow;
@@ -27,6 +28,7 @@ private:
     QAction* m_actionPlugins = nullptr;
 
     SliderBar* m_sliderbar;
+    SerialInterface* m_dataInterface;
 };
 
 #endif // MAINWINDOW_H

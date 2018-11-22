@@ -52,10 +52,9 @@ private:
      * @return false If the transfer failed.
      */
     bool transmit(uint8_t* buf, uint16_t len) final;
+    void transmit(const Example& msg);
 
     void decode();
-
-    void encode(const Example& msg);
 
 private:
     Buffer<protocol::MAX_PACKET_SIZE> m_decodeBuffer;
