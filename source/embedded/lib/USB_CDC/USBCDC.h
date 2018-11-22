@@ -14,10 +14,10 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 extern USBD_CDC_ItfTypeDef USBD_Interface_fops_FS;
 }
 
-class USB_CDC : public DataInterface {
+class USB_CDC : public DataInInterface {
 public:
     USB_CDC();
-    ~USB_CDC();
+    ~USB_CDC() = default;
 
     /** @brief USB Device initialization function.
       *  
@@ -51,11 +51,6 @@ public:
      *  @retval USBD_OK if all operations are OK else USBD_FAIL or USBD_BUSY
      */
     bool transmit(uint8_t* buf, uint16_t len) final;
-
-    void setReceiver(DataInterface* _receiver);
-
-private:
-    DataInterface* receiver = nullptr;
 };
 
 extern USB_CDC* g_usb_cdc_ptr;

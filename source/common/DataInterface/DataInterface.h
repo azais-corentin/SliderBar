@@ -40,4 +40,29 @@ public:
     virtual bool transmit(uint8_t* buf, uint16_t len) = 0;
 };
 
+class DataInInterface;
+class DataOutInterface;
+
+class DataInInterface : public DataInterface {
+public:
+    void setReceiver(DataOutInterface* _receiver)
+    {
+        receiver = _receiver;
+    }
+
+protected:
+    DataOutInterface* receiver = nullptr;
+};
+
+class DataOutInterface : public DataInterface {
+public:
+    void setTransmitter(DataInInterface* _transmitter)
+    {
+        transmitter = _transmitter;
+    }
+
+protected:
+    DataInInterface* transmitter = nullptr;
+};
+
 #endif // __DATAINTERFACE_H__

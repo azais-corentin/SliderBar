@@ -7,11 +7,6 @@
 #include <pb_decode.h>
 #include <pb_encode.h>
 
-void SliderBar::setTransmitter(DataInterface* _transmitter)
-{
-    transmitter = _transmitter;
-}
-
 void SliderBar::receive(uint8_t* buf, uint16_t len)
 {
     if (m_decodeBuffer.full())
@@ -23,6 +18,8 @@ void SliderBar::receive(uint8_t* buf, uint16_t len)
 
 inline bool SliderBar::transmit(uint8_t* buf, uint16_t len)
 {
+    if (!transmitter)
+        return false;
     return transmitter->transmit(buf, len);
 }
 

@@ -155,10 +155,6 @@ USB_CDC::USB_CDC()
     g_usb_cdc_ptr = this;
 }
 
-USB_CDC::~USB_CDC()
-{
-}
-
 void USB_CDC::initialise()
 {
     // Init Device Library
@@ -195,9 +191,4 @@ void USB_CDC::receive(uint8_t* buf, uint16_t len)
 
     USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &buf[0]);
     USBD_CDC_ReceivePacket(&hUsbDeviceFS);
-}
-
-void USB_CDC::setReceiver(DataInterface* _receiver)
-{
-    receiver = _receiver;
 }

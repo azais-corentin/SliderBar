@@ -15,7 +15,7 @@
  * This receives commands through USB, and execute actions accordingly.
  * 
  */
-class SliderBar : public DataInterface {
+class SliderBar : public DataOutInterface {
 public:
     SliderBar()  = default;
     ~SliderBar() = default;
@@ -29,8 +29,6 @@ public:
     {
         decode();
     }
-
-    void setTransmitter(DataInterface* _transmitter);
 
 private:
     /**
@@ -62,8 +60,6 @@ private:
 private:
     Buffer<protocol::MAX_PACKET_SIZE> m_decodeBuffer;
     bool newData = false;
-
-    DataInterface* transmitter = nullptr;
 };
 
 #endif // __SLIDERBAR_H__
