@@ -4,6 +4,7 @@
 
 #include <pb_decode.h>
 #include <pb_encode.h>
+#include <protocol/messages/sliderbar.pb.h>
 #include <protocol/protocol_definition.h>
 
 #include <QDebug>
@@ -64,16 +65,16 @@ void SliderBar::receive(uint8_t* buf, uint16_t len)
     // - crc
 
     // Decode packet using nanopb:
-    Example decoded     = Example_init_zero;
+    Response decoded    = Response_init_zero;
     pb_istream_t stream = pb_istream_from_buffer(m_dataBuffer.data(), m_dataBuffer.size() - 4);
-    bool status         = pb_decode(&stream, Example_fields, &decoded);
-
-    qDebug() << "decoded: " << decoded.value;
+    bool status         = pb_decode(&stream, Response_fields, &decoded);
 
     if (!status) {
         m_dataBuffer.clear();
         return;
     }
+
+    process(decoded);
 
     m_dataBuffer.clear();
 }
@@ -83,12 +84,12 @@ bool SliderBar::transmit(uint8_t* buf, uint16_t len)
     return transmitter->transmit(buf, len);
 }
 
-void SliderBar::transmit(const Example& msg)
+void SliderBar::transmit(const Request& request)
 {
     uint8_t dataBuffer[64];
     pb_ostream_t stream = pb_ostream_from_buffer(dataBuffer, sizeof(dataBuffer));
 
-    bool status = pb_encode(&stream, Example_fields, &msg);
+    bool status = pb_encode(&stream, Request_fields, &request);
 
     if (!status)
         return;
@@ -114,4 +115,45 @@ void SliderBar::transmit(const Example& msg)
 
     // Send buffer
     transmit(buf, 6 + message_length);
+}
+
+void SliderBar::requestCalibration()
+{
+    // Creates calibration request
+    Request calibrationRequest       = Request_init_zero;
+    calibrationRequest.which_payload = Request_calibration_tag;
+    calibrationRequest.ack           = true;
+
+    // Send request
+    transmit(calibrationRequest);
+    qDebug() << "Sent calibration request";
+}
+
+void SliderBar::process(const Response& response)
+{
+    qDebug() << "Processing response";
+    switch (response.which_payload) {
+    case Response_calibrationData_tag:
+        process(response.payload.calibrationData);
+        break;
+
+    case Response_value_tag:
+        process(response.payload.value);
+        break;
+
+    default:
+        // Error: unknown payload
+        break;
+    }
+}
+
+void SliderBar::process(const Response_CalibrationData& value)
+{
+    qDebug() << "Received calibration data";
+    qDebug() << value.maxPosition;
+    emit calibrationData(value.minPosition, value.maxPosition, value.maxVelocity);
+}
+
+void SliderBar::process(const Response_Value& value)
+{
 }

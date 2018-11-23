@@ -51,7 +51,7 @@ private:
      * @return false If the transfer failed.
      */
     bool transmit(uint8_t* buf, uint16_t len) final;
-    void transmit(const Response& msg);
+    void transmit(const Response& response);
 
     void decode();
 

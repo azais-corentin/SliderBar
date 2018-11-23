@@ -21,6 +21,8 @@ public slots:
     void loadSettings();
     void saveSettings();
 
+    void displayCalibrationData(uint32_t minpos, uint32_t maxpos, float maxvel);
+
 private:
     void initialiseActions();
 

@@ -71,12 +71,12 @@ void SliderBar::decode()
     newData = false;
 }
 
-void SliderBar::transmit(const Response& msg)
+void SliderBar::transmit(const Response& response)
 {
     uint8_t dataBuffer[64];
     pb_ostream_t stream = pb_ostream_from_buffer(dataBuffer, sizeof(dataBuffer));
 
-    bool status = pb_encode(&stream, Response_fields, &msg);
+    bool status = pb_encode(&stream, Response_fields, &response);
 
     if (!status)
         return;
@@ -106,7 +106,6 @@ void SliderBar::transmit(const Response& msg)
 
 void SliderBar::process(const Request& request)
 {
-
     switch (request.which_payload) {
     case Request_setValue_tag:
         process(request.payload.setValue);

@@ -42,10 +42,18 @@ public slots:
 
     void receive(uint8_t* buf, uint16_t len) final;
     bool transmit(uint8_t* buf, uint16_t len) final;
-    void transmit(const Example& msg);
+    void transmit(const Request& request);
+
+    void requestCalibration();
 
 signals:
     void settingsChanged();
+    void calibrationData(uint32_t minpos, uint32_t maxpos, uint32_t maxvel);
+
+private:
+    void process(const Response& response);
+    void process(const Response_CalibrationData& value);
+    void process(const Response_Value& value);
 
 private:
     QWidget* m_parent;

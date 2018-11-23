@@ -45,6 +45,13 @@ void MainWindow::saveSettings()
     settings.setValue("sliderbar/autoconnect", ui->actionAutoconnect->isChecked());
 }
 
+void MainWindow::displayCalibrationData(uint32_t minpos, uint32_t maxpos, float maxvel)
+{
+    ui->eMinPos->setValue(minpos);
+    ui->eMaxPos->setValue(maxpos);
+    ui->eMaxVel->setValue(maxvel);
+}
+
 void MainWindow::initialiseActions()
 {
     connect(ui->actionExit, &QAction::triggered,
@@ -65,4 +72,10 @@ void MainWindow::initialiseActions()
     // Save settings when changed from quick settings
     connect(ui->actionAutoconnect, &QAction::triggered,
             this, &MainWindow::saveSettings);
+
+    connect(ui->bCalibrate, &QPushButton::clicked,
+            m_sliderbar, &SliderBar::requestCalibration);
+
+    connect(m_sliderbar, &SliderBar::calibrationData,
+            this, &MainWindow::displayCalibrationData);
 }
