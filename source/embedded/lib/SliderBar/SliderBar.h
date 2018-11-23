@@ -21,9 +21,8 @@ public:
     ~SliderBar() = default;
 
     /**
-     *  @brief Runs the main loop of the SliderBar.
-     *  It decodes the messages sent through USB, and moves the motor
-     *  accordingly.
+     * @brief Runs the main loop of the SliderBar.
+     * It decodes the messages sent through USB, and executes actions accordingly.
      */
     inline void run()
     {
@@ -52,9 +51,32 @@ private:
      * @return false If the transfer failed.
      */
     bool transmit(uint8_t* buf, uint16_t len) final;
-    void transmit(const Example& msg);
+    void transmit(const Response& msg);
 
     void decode();
+
+    void process(const Request& request);
+    void process(const Request_SetValue& value);
+    void process(const Request_GetValue& value);
+    void process(const Request_Vibrate& value);
+    void process(const Request_ResistAt& value);
+    void process(const Request_ResistClear& value);
+    void process(const Request_Calibration& value);
+
+    /**
+     * @brief Calibrates the SliderBar.
+     * Stores the minimum position, maximum position and the maximum
+     *
+     */
+    void calibrate();
+
+    // Actions
+    /**
+     * @brief Vibrates the SliderBar for duration ms.
+     * 
+     * @param duration 
+     */
+    void vibrate(uint32_t duration);
 
 private:
     Buffer<protocol::MAX_PACKET_SIZE> m_decodeBuffer;

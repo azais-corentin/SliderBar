@@ -28,10 +28,6 @@ void SliderBar::decode()
     if (!newData)
         return;
 
-    Example msg;
-    msg.value = 1255;
-    transmit(msg);
-
     // Makes sure buffer contains at least 1 startflag & 1 endflag
     if (!m_decodeBuffer.contains(protocol::startflag) || !m_decodeBuffer.contains(protocol::endflag)) {
         m_decodeBuffer.clear();
@@ -56,9 +52,9 @@ void SliderBar::decode()
     // - crc
 
     // Decode packet using nanopb:
-    Example decoded     = Example_init_zero;
+    Request decoded     = Request_init_zero;
     pb_istream_t stream = pb_istream_from_buffer(m_decodeBuffer.data(), m_decodeBuffer.size() - 4);
-    bool status         = pb_decode(&stream, Example_fields, &decoded);
+    bool status         = pb_decode(&stream, Request_fields, &decoded);
 
     if (!status) {
         m_decodeBuffer.clear();
@@ -66,30 +62,21 @@ void SliderBar::decode()
         return;
     }
 
-    // verify crc32
+    // Compute & compare CRC32 over m_decodeBuffer
 
-    //protocol::command received = protocol::decode(*m_decodeBuffer);
-
-    // Send Acknowledgement for command types other than position
-    // (avoids overhead)
-    //using command_type = protocol::command::command_type;
-
-    // TODO: Add the Ack to the queue.
-    /*if (received.type < FORC_POSITION && received.type != FORS_POSITION)
-        sendAck();*/
-
-    // TODO: Add the command to a queue; process the queue in the run() loop.
+    // Processes packet
+    process(decoded);
 
     m_decodeBuffer.clear();
     newData = false;
 }
 
-void SliderBar::transmit(const Example& msg)
+void SliderBar::transmit(const Response& msg)
 {
     uint8_t dataBuffer[64];
     pb_ostream_t stream = pb_ostream_from_buffer(dataBuffer, sizeof(dataBuffer));
 
-    bool status = pb_encode(&stream, Example_fields, &msg);
+    bool status = pb_encode(&stream, Response_fields, &msg);
 
     if (!status)
         return;
@@ -115,4 +102,111 @@ void SliderBar::transmit(const Example& msg)
 
     // Send buffer
     transmit(buf, 6 + message_length);
+}
+
+void SliderBar::process(const Request& request)
+{
+
+    switch (request.which_payload) {
+    case Request_setValue_tag:
+        process(request.payload.setValue);
+        break;
+
+    case Request_getValue_tag:
+        process(request.payload.getValue);
+        break;
+
+    case Request_vibrate_tag:
+        process(request.payload.vibrate);
+        break;
+
+    case Request_resistAt_tag:
+        process(request.payload.resistAt);
+        break;
+
+    case Request_resistClear_tag:
+        process(request.payload.resistClear);
+        break;
+
+    case Request_calibration_tag:
+        process(request.payload.calibration);
+        break;
+
+    default:
+        // Error: unknown payload
+        break;
+    }
+}
+
+void SliderBar::process(const Request_SetValue& value)
+{
+    switch (value.which_parameter) {
+    case Request_SetValue_position_tag:
+        break;
+
+    case Request_SetValue_velocity_tag:
+        break;
+
+    case Request_SetValue_P_tag:
+        break;
+
+    case Request_SetValue_I_tag:
+        break;
+
+    default:
+        // Error: Unknown value in setValue
+        break;
+    }
+}
+
+void SliderBar::process(const Request_GetValue& value)
+{
+    switch (value.which_period) {
+    case Request_GetValue_position_tag:
+        break;
+
+    case Request_GetValue_velocity_tag:
+        break;
+
+    default:
+        // Error: Unknown value in getValue
+        break;
+    }
+}
+
+void SliderBar::process(const Request_Vibrate& value)
+{
+    vibrate(value.duration);
+}
+
+void SliderBar::process(const Request_ResistAt& value)
+{
+}
+
+void SliderBar::process(const Request_ResistClear& value)
+{
+}
+
+void SliderBar::process(const Request_Calibration& value)
+{
+    // Computes calibration values
+    calibrate();
+
+    // Create response
+    Response calibrationData                            = Response_init_zero;
+    calibrationData.which_payload                       = Response_calibrationData_tag;
+    calibrationData.payload.calibrationData.minPosition = 0;
+    calibrationData.payload.calibrationData.maxPosition = 1023;
+    calibrationData.payload.calibrationData.maxVelocity = 2500;
+
+    // Send response
+    transmit(calibrationData);
+}
+
+void SliderBar::calibrate()
+{
+}
+
+void SliderBar::vibrate(uint32_t duration)
+{
 }

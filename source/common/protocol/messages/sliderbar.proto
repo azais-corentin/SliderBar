@@ -1,5 +1,64 @@
 syntax = "proto3";
 
-message Example {
-    int32 value = 1;
+// Computer requests from the SliderBar
+message Request {
+  message Calibration {}
+
+  message SetValue {
+    oneof parameter {
+      uint32 position = 1;
+      sint32 velocity = 2;
+
+      float P = 3;
+      float I = 4;
+    }
+  }
+
+  message GetValue {
+    oneof period {
+      uint32 position = 1;
+      uint32 velocity = 2;
+    }
+  }
+
+  message Vibrate { uint32 duration = 1; }
+
+  message ResistAt { uint32 position = 2; }
+
+  message ResistClear {}
+
+  bool ack = 1;
+  oneof payload {
+    SetValue setValue = 2;
+    GetValue getValue = 3;
+
+    Vibrate vibrate = 4;
+    ResistAt resistAt = 5;
+    ResistClear resistClear = 6;
+
+    Calibration calibration = 7;
+  }
+}
+
+// SliderBar replies to the Computer
+message Response {
+  message CalibrationData {
+    uint32 minPosition = 1;
+    uint32 maxPosition = 2;
+    uint32 maxVelocity = 3;
+  }
+
+  message Value {
+    oneof parameter {
+      uint32 position = 1;
+      sint32 velocity = 2;
+    }
+  }
+
+  message Ack {}
+
+  oneof payload {
+    CalibrationData calibrationData = 1;
+    Value value = 2;
+  }
 }
