@@ -52,6 +52,7 @@ private:
      */
     bool transmit(uint8_t* buf, uint16_t len) final;
     void transmit(const Response& response);
+    void transmitNack();
 
     void decode();
 

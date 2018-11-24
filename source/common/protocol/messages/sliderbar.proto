@@ -55,10 +55,11 @@ message Response {
     }
   }
 
-  message Ack {}
+  message Nack {}
 
   oneof payload {
     CalibrationData calibrationData = 1;
     Value value = 2;
+    Nack nack = 3;
   }
 }

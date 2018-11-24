@@ -126,12 +126,10 @@ void SliderBar::requestCalibration()
 
     // Send request
     transmit(calibrationRequest);
-    qDebug() << "Sent calibration request";
 }
 
 void SliderBar::process(const Response& response)
 {
-    qDebug() << "Processing response";
     switch (response.which_payload) {
     case Response_calibrationData_tag:
         process(response.payload.calibrationData);
@@ -149,7 +147,6 @@ void SliderBar::process(const Response& response)
 
 void SliderBar::process(const Response_CalibrationData& value)
 {
-    qDebug() << "Received calibration data";
     qDebug() << value.maxPosition;
     emit calibrationData(value.minPosition, value.maxPosition, value.maxVelocity);
 }

@@ -23,54 +23,6 @@ inline bool SliderBar::transmit(uint8_t* buf, uint16_t len)
     return transmitter->transmit(buf, len);
 }
 
-void SliderBar::decode()
-{
-    if (!newData)
-        return;
-
-    // Makes sure buffer contains at least 1 startflag & 1 endflag
-    if (!m_decodeBuffer.contains(protocol::startflag) || !m_decodeBuffer.contains(protocol::endflag)) {
-        m_decodeBuffer.clear();
-        newData = false;
-        return;
-    }
-
-    // Makes sure buffer starts with the first startflag
-    m_decodeBuffer.mid(m_decodeBuffer.indexOf(protocol::startflag));
-
-    // Makes sure buffer ends with the last endflag
-    m_decodeBuffer.resize(m_decodeBuffer.lastIndexOf(protocol::endflag) + 1);
-
-    // Packet is complete -- remove startflag and endflag
-    // TODO: Assume that there are multiple command packets in one buffer: split
-    // the buffer with start/end flags and process each buffer independantly.
-    m_decodeBuffer.mid(1);
-    m_decodeBuffer.chop(1);
-
-    // The buffer now contains:
-    // - message
-    // - crc
-
-    // Decode packet using nanopb:
-    Request decoded     = Request_init_zero;
-    pb_istream_t stream = pb_istream_from_buffer(m_decodeBuffer.data(), m_decodeBuffer.size() - 4);
-    bool status         = pb_decode(&stream, Request_fields, &decoded);
-
-    if (!status) {
-        m_decodeBuffer.clear();
-        newData = false;
-        return;
-    }
-
-    // Compute & compare CRC32 over m_decodeBuffer
-
-    // Processes packet
-    process(decoded);
-
-    m_decodeBuffer.clear();
-    newData = false;
-}
-
 void SliderBar::transmit(const Response& response)
 {
     uint8_t dataBuffer[64];
@@ -104,41 +56,97 @@ void SliderBar::transmit(const Response& response)
     transmit(buf, 6 + message_length);
 }
 
+void SliderBar::transmitNack()
+{
+    // Create NACK
+    Response nack      = Response_init_zero;
+    nack.which_payload = Response_nack_tag;
+
+    // Send NACK
+    transmit(nack);
+}
+
+void SliderBar::decode()
+{
+    if (!newData)
+        return;
+
+    // Makes sure buffer contains at least 1 startflag & 1 endflag
+    if (!m_decodeBuffer.contains(protocol::startflag) || !m_decodeBuffer.contains(protocol::endflag)) {
+        m_decodeBuffer.clear();
+        newData = false;
+        return;
+    }
+
+    // Makes sure buffer starts with the first startflag
+    m_decodeBuffer.mid(m_decodeBuffer.indexOf(protocol::startflag));
+
+    // Makes sure buffer ends with the last endflag
+    m_decodeBuffer.resize(m_decodeBuffer.lastIndexOf(protocol::endflag) + 1);
+
+    // Packet is complete -- remove startflag and endflag
+    // TODO: Assume that there are multiple command packets in one buffer: split
+    // the buffer with start/end flags and process each buffer independantly.
+    m_decodeBuffer.mid(1);
+    m_decodeBuffer.chop(1);
+    newData = false;
+
+    // The buffer now contains:
+    // - message
+    // - crc
+
+    // Decode request using Nanopb:
+    Request decoded     = Request_init_zero;
+    pb_istream_t stream = pb_istream_from_buffer(m_decodeBuffer.data(), m_decodeBuffer.size() - 4);
+    bool status         = pb_decode(&stream, Request_fields, &decoded);
+
+    if (!status) {
+        m_decodeBuffer.clear();
+        return;
+    }
+
+    // Compute & compare CRC32 over m_decodeBuffer
+    uint32_t CRC = 1;
+    if (CRC != 1) {
+        m_decodeBuffer.clear();
+        return;
+    }
+
+    // Processes packet
+    process(decoded);
+
+    m_decodeBuffer.clear();
+}
+
 void SliderBar::process(const Request& request)
 {
-    switch (request.which_payload) {
-    case Request_setValue_tag:
+    bool error = false;
+
+    if (request.which_payload == Request_setValue_tag)
         process(request.payload.setValue);
-        break;
-
-    case Request_getValue_tag:
+    else if (request.which_payload == Request_setValue_tag)
         process(request.payload.getValue);
-        break;
-
-    case Request_vibrate_tag:
+    else if (request.which_payload == Request_setValue_tag)
         process(request.payload.vibrate);
-        break;
-
-    case Request_resistAt_tag:
+    else if (request.which_payload == Request_setValue_tag)
         process(request.payload.resistAt);
-        break;
-
-    case Request_resistClear_tag:
+    else if (request.which_payload == Request_setValue_tag)
         process(request.payload.resistClear);
-        break;
-
-    case Request_calibration_tag:
+    else if (request.which_payload == Request_setValue_tag)
         process(request.payload.calibration);
-        break;
+    else {
+        error = true;
+    }
 
-    default:
-        // Error: unknown payload
-        break;
+    if (error) {
+        transmitNack();
     }
 }
 
 void SliderBar::process(const Request_SetValue& value)
 {
+    bool unknownValue = false;
+
     switch (value.which_parameter) {
     case Request_SetValue_position_tag:
         break;
@@ -153,8 +161,12 @@ void SliderBar::process(const Request_SetValue& value)
         break;
 
     default:
+        unknownValue = true;
         // Error: Unknown value in setValue
         break;
+    }
+
+    if (!unknownValue) {
     }
 }
 
@@ -204,6 +216,11 @@ void SliderBar::process(const Request_Calibration& value)
 
 void SliderBar::calibrate()
 {
+    // Find the mininmum velocity that causes a movement
+
+    // Go the the minmum then maximum positions at minimum speed
+
+    // Find the maximum velocity
 }
 
 void SliderBar::vibrate(uint32_t duration)
