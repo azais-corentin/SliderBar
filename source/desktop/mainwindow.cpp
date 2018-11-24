@@ -31,6 +31,8 @@ MainWindow::~MainWindow()
     delete ui;
 
     delete m_actionPlugins;
+    delete m_sliderbar;
+    delete m_dataInterface;
 }
 
 void MainWindow::loadSettings()
@@ -43,13 +45,6 @@ void MainWindow::saveSettings()
 {
     QSettings settings;
     settings.setValue("sliderbar/autoconnect", ui->actionAutoconnect->isChecked());
-}
-
-void MainWindow::displayCalibrationData(uint32_t minpos, uint32_t maxpos, float maxvel)
-{
-    ui->eMinPos->setValue(minpos);
-    ui->eMaxPos->setValue(maxpos);
-    ui->eMaxVel->setValue(maxvel);
 }
 
 void MainWindow::initialiseActions()
@@ -73,9 +68,6 @@ void MainWindow::initialiseActions()
     connect(ui->actionAutoconnect, &QAction::triggered,
             this, &MainWindow::saveSettings);
 
-    connect(ui->bCalibrate, &QPushButton::clicked,
-            m_sliderbar, &SliderBar::requestCalibration);
-
-    connect(m_sliderbar, &SliderBar::calibrationData,
-            this, &MainWindow::displayCalibrationData);
+    connect(m_sliderbar, &SliderBar::pingTime,
+            this, &MainWindow::displayPingTime);
 }

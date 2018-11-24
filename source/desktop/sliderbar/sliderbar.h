@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include <QTime>
+
 #include <Buffer/Buffer.hpp>
 #include <DataInterface/DataInterface.h>
 #include <protocol/messages/sliderbar.pb.h>
@@ -13,7 +15,7 @@ class SliderBar : public QObject, public DataOutInterface {
 
 public:
     SliderBar(QWidget* parent);
-    ~SliderBar() override;
+    ~SliderBar() override = default;
 
 public slots:
     /**
@@ -45,10 +47,12 @@ public slots:
     void transmit(const Request& request);
 
     void requestCalibration();
+    void requestPing();
 
 signals:
     void settingsChanged();
-    void calibrationData(uint32_t minpos, uint32_t maxpos, uint32_t maxvel);
+    void calibrationData(uint32_t minpos, uint32_t maxpos, uint32_t minvel, uint32_t maxvel);
+    void pingTime(uint32_t time);
 
 private:
     void process(const Response& response);
@@ -58,6 +62,8 @@ private:
 private:
     QWidget* m_parent;
     Buffer<protocol::MAX_PACKET_SIZE> m_dataBuffer;
+
+    QTime m_pingTime;
 };
 
 #endif // SLIDERBAR_H

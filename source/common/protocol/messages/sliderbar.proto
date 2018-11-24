@@ -2,6 +2,8 @@ syntax = "proto3";
 
 // Computer requests from the SliderBar
 message Request {
+  message Ping {}
+
   message Calibration {}
 
   message SetValue {
@@ -37,6 +39,8 @@ message Request {
     ResistClear resistClear = 6;
 
     Calibration calibration = 7;
+
+    Ping ping = 15;
   }
 }
 
@@ -45,7 +49,8 @@ message Response {
   message CalibrationData {
     uint32 minPosition = 1;
     uint32 maxPosition = 2;
-    uint32 maxVelocity = 3;
+    uint32 minVelocity = 3;
+    uint32 maxVelocity = 4;
   }
 
   message Value {
@@ -57,9 +62,14 @@ message Response {
 
   message Nack {}
 
+  message Ping {}
+
   oneof payload {
     CalibrationData calibrationData = 1;
     Value value = 2;
-    Nack nack = 3;
+
+
+    Nack nack = 14;
+    Ping ping = 15;
   }
 }

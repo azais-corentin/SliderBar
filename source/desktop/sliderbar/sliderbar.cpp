@@ -14,8 +14,6 @@ SliderBar::SliderBar(QWidget* parent)
 {
 }
 
-SliderBar::~SliderBar() = default;
-
 void SliderBar::connect()
 {
 }
@@ -23,6 +21,9 @@ void SliderBar::connect()
 void SliderBar::manageSettings()
 {
     SettingsDialog set(m_parent);
+    QObject::connect(&set, &SettingsDialog::requestCalibration, this, &SliderBar::requestCalibration);
+    QObject::connect(this, &SliderBar::calibrationData, &set, &SettingsDialog::receiveCalibrationData);
+
     if (set.execute() == QDialog::Accepted) {
         emit settingsChanged();
     }
@@ -119,7 +120,7 @@ void SliderBar::transmit(const Request& request)
 
 void SliderBar::requestCalibration()
 {
-    // Creates calibration request
+    // Create calibration request
     Request calibrationRequest       = Request_init_zero;
     calibrationRequest.which_payload = Request_calibration_tag;
     calibrationRequest.ack           = true;
@@ -128,27 +129,38 @@ void SliderBar::requestCalibration()
     transmit(calibrationRequest);
 }
 
+void SliderBar::requestPing()
+{
+    // Create ping request
+    Request pingRequest       = Request_init_zero;
+    pingRequest.which_payload = Request_ping_tag;
+
+    // Send request
+    m_pingTime.start();
+    transmit(pingRequest);
+}
+
 void SliderBar::process(const Response& response)
 {
     switch (response.which_payload) {
     case Response_calibrationData_tag:
         process(response.payload.calibrationData);
         break;
-
     case Response_value_tag:
         process(response.payload.value);
         break;
+    case Response_ping_tag: {
+        emit pingTime(m_pingTime.elapsed());
+    } break;
 
     default:
-        // Error: unknown payload
         break;
     }
 }
 
 void SliderBar::process(const Response_CalibrationData& value)
 {
-    qDebug() << value.maxPosition;
-    emit calibrationData(value.minPosition, value.maxPosition, value.maxVelocity);
+    emit calibrationData(value.minPosition, value.maxPosition, value.minVelocity, value.maxVelocity);
 }
 
 void SliderBar::process(const Response_Value& value)

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += widgets gui serialport
+QT       += widgets gui serialport charts
 
 CONFIG += c++14
 
@@ -55,3 +55,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    ../common/protocol/messages/sliderbar.proto

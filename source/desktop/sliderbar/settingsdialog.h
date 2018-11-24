@@ -25,6 +25,10 @@ public:
 
 public slots:
     int execute();
+    void receiveCalibrationData(uint32_t minpos, uint32_t maxpos, uint32_t minvel, uint32_t maxvel);
+
+signals:
+    void requestCalibration();
 
 private slots:
     void on_listCategories_currentRowChanged(int currentRow);

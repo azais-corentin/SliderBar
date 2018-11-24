@@ -124,17 +124,21 @@ void SliderBar::process(const Request& request)
 
     if (request.which_payload == Request_setValue_tag)
         process(request.payload.setValue);
-    else if (request.which_payload == Request_setValue_tag)
+    else if (request.which_payload == Request_getValue_tag)
         process(request.payload.getValue);
-    else if (request.which_payload == Request_setValue_tag)
+    else if (request.which_payload == Request_vibrate_tag)
         process(request.payload.vibrate);
-    else if (request.which_payload == Request_setValue_tag)
+    else if (request.which_payload == Request_resistAt_tag)
         process(request.payload.resistAt);
-    else if (request.which_payload == Request_setValue_tag)
+    else if (request.which_payload == Request_resistClear_tag)
         process(request.payload.resistClear);
-    else if (request.which_payload == Request_setValue_tag)
+    else if (request.which_payload == Request_calibration_tag)
         process(request.payload.calibration);
-    else {
+    else if (request.which_payload == Request_ping_tag) {
+        Response ping      = Response_init_zero;
+        ping.which_payload = Response_ping_tag;
+        transmit(ping);
+    } else {
         error = true;
     }
 
@@ -208,6 +212,7 @@ void SliderBar::process(const Request_Calibration& value)
     calibrationData.which_payload                       = Response_calibrationData_tag;
     calibrationData.payload.calibrationData.minPosition = 0;
     calibrationData.payload.calibrationData.maxPosition = 1023;
+    calibrationData.payload.calibrationData.minVelocity = 120;
     calibrationData.payload.calibrationData.maxVelocity = 2500;
 
     // Send response
