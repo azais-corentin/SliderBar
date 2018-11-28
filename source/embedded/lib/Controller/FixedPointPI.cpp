@@ -1,17 +1,20 @@
 #include "FixedPointPI.h"
 
-FixedPointPI::FixedPointPI(
-    const int16_t& Kp, const int16_t& Ki,
-    const uint16_t& delta_us = 0, const int16_t& Uinit = 0)
+FixedPointPI::FixedPointPI(const uint16_t& Kp, const uint16_t& Ki, const int16_t& n,
+                           const uint16_t& delta_us, const int16_t& Uinit)
     : m_Kp(Kp)
     , m_Ki(Ki)
+    , FixedPointController(Uinit)
 {
     setDeltaUs(delta_us);
-    m_U = Uinit;
+    setN(n);
 }
 
 void FixedPointPI::setLimits(int16_t min, int16_t max)
 {
+    m_UMin16 = min;
+    m_UMax16 = max;
+
     m_UMin32 = ((int32_t)min) << 16;
     m_UMax32 = ((int32_t)max) << 16;
 }
@@ -30,7 +33,9 @@ int16_t FixedPointPI::calculate(const int16_t& U)
     // Updates the saturation & integral fields
     satLimit();
 
-    //int32_t p_term = limit(static_cast<int32_t>(m_scaledKp)*e, )
+    int32_t p_term = limit(static_cast<int32_t>(m_scaledKp) * e, m_nMin, m_nMax);
+
+    return limit((p_term >> m_N) + (m_Uintegral.integral >> 16), m_UMin16, m_UMax16);
 }
 
 void FixedPointPI::satLimit()

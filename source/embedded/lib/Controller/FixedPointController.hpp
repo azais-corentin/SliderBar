@@ -5,7 +5,12 @@
 
 class FixedPointController {
 public:
-    FixedPointController(const uint16_t& deltaUs = 0, const int16_t& Uinit = 0)
+    FixedPointController(const int16_t& Uinit = 0)
+        : m_U(Uinit)
+    {
+    }
+
+    FixedPointController(const int16_t& Uinit, const uint16_t& deltaUs)
         : m_deltaUs(deltaUs)
         , m_U(Uinit)
     {
@@ -15,11 +20,11 @@ public:
     virtual int16_t calculate(const int16_t& U) = 0;
 
     // Getters
-    inline int16_t getTarget() { return m_Uc; }
-    inline uint16_t getDeltaUs() { return m_deltaUs; }
+    inline virtual int16_t getTarget() const { return m_Uc; }
+    inline virtual uint16_t getDeltaUs() const { return m_deltaUs; }
 
     // Setters
-    inline void setTarget(const uint16_t& target)
+    inline virtual void setTarget(const uint16_t& target)
     {
         m_Uc = target;
     }
@@ -28,6 +33,7 @@ public:
 protected:
     int16_t m_U        = 0;
     int16_t m_Uc       = 0;
+    int16_t m_Uout     = 0;
     uint16_t m_deltaUs = 0;
 };
 
