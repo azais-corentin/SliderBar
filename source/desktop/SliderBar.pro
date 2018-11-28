@@ -45,7 +45,8 @@ HEADERS += \
     ../common/protocol/messages/sliderbar.pb.h \
     ../common/DataInterface/DataInterface.h \
     sliderbar/serialinterface.h \
-    ../common/protocol/messages/sliderbar.pb.h
+    ../common/protocol/messages/sliderbar.pb.h \
+    ../common/protocol/protocol_structures.h
 
 FORMS += \
         mainwindow.ui \

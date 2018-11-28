@@ -9,6 +9,8 @@
 #include <messages/sliderbar.pb.h>
 #include <protocol_definition.h>
 
+#include "FixedPointPI.h"
+
 /**
  * @brief The SliderBar class.
  * Serves as the main loop of the SliderBar system.
@@ -82,6 +84,13 @@ private:
 private:
     Buffer<protocol::MAX_PACKET_SIZE> m_decodeBuffer;
     bool newData = false;
+
+    FixedPointPI* m_controller;
+
+    uint16_t m_position = 0;
+    uint16_t m_velocity = 0;
+    uint16_t m_gainP    = 10;
+    uint16_t m_gainI    = 1;
 };
 
 #endif // __SLIDERBAR_H__

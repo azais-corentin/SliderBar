@@ -153,15 +153,19 @@ void SliderBar::process(const Request_SetValue& value)
 
     switch (value.which_parameter) {
     case Request_SetValue_position_tag:
+        m_position = value.parameter.position;
         break;
 
     case Request_SetValue_velocity_tag:
+        m_velocity = value.parameter.velocity;
         break;
 
     case Request_SetValue_P_tag:
+        m_gainP = value.parameter.P;
         break;
 
     case Request_SetValue_I_tag:
+        m_gainI = value.parameter.I;
         break;
 
     default:

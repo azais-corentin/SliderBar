@@ -118,15 +118,36 @@ void SliderBar::transmit(const Request& request)
     transmit(buf, 6 + message_length);
 }
 
+void SliderBar::setCalibration(const protocol::calibrationData& data)
+{
+    // Create calibration request
+    Request calReq       = Request_init_zero;
+    calReq.which_payload = Request_calibration_tag;
+    calReq.ack           = true;
+
+    // Set SetCalibration request
+    calReq.payload.calibration.which_request           = Request_Calibration_set_tag;
+    calReq.payload.calibration.request.set.minPosition = data.minimumPosition;
+    calReq.payload.calibration.request.set.maxPosition = data.maximumPosition;
+    calReq.payload.calibration.request.set.minVelocity = data.minimumVelocity;
+    calReq.payload.calibration.request.set.maxVelocity = data.maximumVeloicty;
+
+    // Send request
+    transmit(calReq);
+}
+
 void SliderBar::requestCalibration()
 {
     // Create calibration request
-    Request calibrationRequest       = Request_init_zero;
-    calibrationRequest.which_payload = Request_calibration_tag;
-    calibrationRequest.ack           = true;
+    Request calReq       = Request_init_zero;
+    calReq.which_payload = Request_calibration_tag;
+    calReq.ack           = true;
+
+    // Set GetCalibration request
+    calReq.payload.calibration.which_request = Request_Calibration_get_tag;
 
     // Send request
-    transmit(calibrationRequest);
+    transmit(calReq);
 }
 
 void SliderBar::requestPing()
@@ -149,6 +170,9 @@ void SliderBar::process(const Response& response)
     case Response_value_tag:
         process(response.payload.value);
         break;
+
+    case Response_nack_tag: {
+    } break;
     case Response_ping_tag: {
         emit pingTime(m_pingTime.elapsed());
     } break;
@@ -160,9 +184,21 @@ void SliderBar::process(const Response& response)
 
 void SliderBar::process(const Response_CalibrationData& value)
 {
-    emit calibrationData(value.minPosition, value.maxPosition, value.minVelocity, value.maxVelocity);
+    protocol::calibrationData data;
+    data.minimumPosition = value.minPosition;
+    data.maximumPosition = value.maxPosition;
+    data.minimumVelocity = value.minVelocity;
+    data.maximumVeloicty = value.maxVelocity;
+
+    emit calibrationData(data);
 }
 
 void SliderBar::process(const Response_Value& value)
 {
+    switch (value.which_parameter) {
+    case Response_Value_position_tag:
+        break;
+    case Response_Value_velocity_tag:
+        break;
+    }
 }

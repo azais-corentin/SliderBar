@@ -4,7 +4,20 @@ syntax = "proto3";
 message Request {
   message Ping {}
 
-  message Calibration {}
+  message Calibration {
+    message Get {}
+    message Set {
+        uint32 minPosition = 1;
+        uint32 maxPosition = 2;
+        uint32 minVelocity = 3;
+        uint32 maxVelocity = 4;
+    }
+
+    oneof request {
+        Get get = 1;
+        Set set = 2;
+    }
+  }
 
   message SetValue {
     oneof parameter {

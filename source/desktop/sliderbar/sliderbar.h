@@ -9,6 +9,7 @@
 #include <DataInterface/DataInterface.h>
 #include <protocol/messages/sliderbar.pb.h>
 #include <protocol/protocol_definition.h>
+#include <protocol/protocol_structures.h>
 
 class SliderBar : public QObject, public DataOutInterface {
     Q_OBJECT
@@ -46,12 +47,13 @@ public slots:
     bool transmit(uint8_t* buf, uint16_t len) final;
     void transmit(const Request& request);
 
+    void setCalibration(const protocol::calibrationData& data);
     void requestCalibration();
     void requestPing();
 
 signals:
     void settingsChanged();
-    void calibrationData(uint32_t minpos, uint32_t maxpos, uint32_t minvel, uint32_t maxvel);
+    void calibrationData(const protocol::calibrationData& data);
     void pingTime(uint32_t time);
 
 private:
