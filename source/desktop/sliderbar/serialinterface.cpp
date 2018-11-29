@@ -4,41 +4,47 @@
 
 SerialInterface::SerialInterface()
 {
+    QObject::connect(&m_serialPort, &QSerialPort::readyRead,
+                     this, &SerialInterface::handleRead);
+    QObject::connect(&m_serialPort, &QSerialPort::errorOccurred,
+                     this, &SerialInterface::handleError);
+}
+
+void SerialInterface::connect()
+{
+    if (m_serialPort.isOpen())
+        return;
+
     auto ports = QSerialPortInfo::availablePorts();
     for (const auto& port : ports) {
         if (port.productIdentifier() == 0x5740)
-            m_port.setPort(port);
+            m_serialPort.setPort(port);
     }
 
-    m_port.open(QIODevice::ReadWrite);
-
-    m_timer = new QTimer();
-    QObject::connect(m_timer, &QTimer::timeout, [this] {
-        update();
-    });
-
-    m_timer->start(10);
+    if (m_serialPort.open(QIODevice::ReadWrite)) {
+        emit connected();
+        qDebug() << "Emit SerialInterface::connected";
+    } else
+        disconnect();
 }
 
-void SerialInterface::receive(uint8_t* buf, uint16_t len)
+void SerialInterface::disconnect()
 {
-    if (receiver)
-        receiver->receive(buf, len);
+    m_serialPort.close();
+    emit disconnected();
 }
 
-bool SerialInterface::transmit(uint8_t* buf, uint16_t len)
+void SerialInterface::handleRead()
 {
-    char datachar[len];
-    memcpy(datachar, buf, len);
-    return m_port.write(datachar, len) != -1;
+    auto data = m_serialPort.readAll();
+    uint8_t dataui8[data.size()];
+    memcpy(dataui8, data.data(), data.size());
+    receive(dataui8, data.size());
 }
 
-void SerialInterface::update()
+void SerialInterface::handleError(QSerialPort::SerialPortError error)
 {
-    if (m_port.bytesAvailable() > 0) {
-        auto data = m_port.readAll();
-        uint8_t dataui8[data.size()];
-        memcpy(dataui8, data.data(), data.size());
-        receive(dataui8, data.size());
+    if (error == QSerialPort::ReadError) {
+        disconnect();
     }
 }

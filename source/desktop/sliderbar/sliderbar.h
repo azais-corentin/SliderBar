@@ -11,6 +11,9 @@
 #include <protocol/protocol_definition.h>
 #include <protocol/protocol_structures.h>
 
+#include "serialinterface.h"
+#include "sliderbarsettings.h"
+
 class SliderBar : public QObject, public DataOutInterface {
     Q_OBJECT
 
@@ -18,18 +21,26 @@ public:
     SliderBar(QWidget* parent);
     ~SliderBar() override = default;
 
+    void initialiseConnections();
+    QWidget* getParent();
+    bool isConnected();
+
 public slots:
     /**
      * @brief Connects the SliderBar.
      */
-    void connect();
+    void connect() final;
 
     /**
-     * @brief Show the settings window.
-     * @note Blocking function.
-     *
+     * @brief Disconnects the SliderBar.
      */
-    void manageSettings();
+    void disconnect() final;
+
+    /**
+     * @brief Returns an access to settings.
+     * @return The settings class.
+     */
+    SliderBarSettings* settings();
 
     /**
      * @brief Show the plugin management window.
@@ -37,23 +48,23 @@ public slots:
      */
     void managePlugins();
 
-    /**
-     * @brief Sets the autoconnect setting.
-     * @param enabled True if autoconnect should be enabled.
-     */
-    void autoconnect(bool enabled);
-
-    void receive(uint8_t* buf, uint16_t len) final;
-    bool transmit(uint8_t* buf, uint16_t len) final;
+    void receive(uint8_t* buf, const uint16_t& len) final;
+    bool transmit(uint8_t* buf, const uint16_t& len) final;
     void transmit(const Request& request);
 
-    void setCalibration(const protocol::calibrationData& data);
+    void setCalibration(const protocol::CalibrationData& data);
     void requestCalibration();
     void requestPing();
 
+private slots:
+    void handleConnected();
+    void handleDisconnected();
+
 signals:
-    void settingsChanged();
-    void calibrationData(const protocol::calibrationData& data);
+    void connected();
+    void disconnected();
+
+    void calibrationData(const protocol::CalibrationData& data);
     void pingTime(uint32_t time);
 
 private:
@@ -63,9 +74,15 @@ private:
 
 private:
     QWidget* m_parent;
+    SliderBarSettings* m_settings;
+
     Buffer<protocol::MAX_PACKET_SIZE> m_dataBuffer;
 
     QTime m_pingTime;
+
+    SerialInterface* m_dataInterface = nullptr;
+
+    bool m_connected = false;
 };
 
 #endif // SLIDERBAR_H

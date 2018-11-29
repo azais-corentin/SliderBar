@@ -15,15 +15,12 @@ MainWindow::MainWindow(QWidget* parent)
     m_actionPlugins = new QAction("Plugins");
     ui->menuBar->addAction(m_actionPlugins);
 
-    m_sliderbar     = new SliderBar(this);
-    m_dataInterface = new SerialInterface();
+    m_sliderbar = new SliderBar(this);
 
-    m_sliderbar->setTransmitter(m_dataInterface);
-    m_dataInterface->setReceiver(m_sliderbar);
+    loadQuickSettings();
+    initialiseConnections();
 
-    loadSettings();
-
-    initialiseActions();
+    m_sliderbar->initialiseConnections();
 }
 
 MainWindow::~MainWindow()
@@ -35,39 +32,57 @@ MainWindow::~MainWindow()
     delete m_dataInterface;
 }
 
-void MainWindow::loadSettings()
+void MainWindow::loadQuickSettings()
 {
-    QSettings settings;
-    ui->actionAutoconnect->setChecked(settings.value("sliderbar/autoconnect", false).toBool());
+    ui->actionAutoconnect->setChecked(m_sliderbar->settings()->autoconnect());
 }
 
-void MainWindow::saveSettings()
+void MainWindow::saveQuickSettings()
 {
-    QSettings settings;
-    settings.setValue("sliderbar/autoconnect", ui->actionAutoconnect->isChecked());
+    m_sliderbar->settings()->autoconnect(ui->actionAutoconnect->isChecked());
 }
 
-void MainWindow::initialiseActions()
+void MainWindow::handleActionConnect()
+{
+    if (m_connected)
+        m_sliderbar->disconnect();
+    else
+        m_sliderbar->connect();
+}
+
+void MainWindow::connected()
+{
+    m_connected = true;
+    ui->actionConnect->setText("Disconnect");
+}
+
+void MainWindow::disconnected()
+{
+    m_connected = false;
+    ui->actionConnect->setText("Connect");
+}
+
+void MainWindow::initialiseConnections()
 {
     connect(ui->actionExit, &QAction::triggered,
             this, &MainWindow::close);
 
-    // Connect SliderBar
+    // SliderBar actions
     connect(ui->actionConnect, &QAction::triggered,
-            m_sliderbar, &SliderBar::connect);
-    connect(ui->actionAutoconnect, &QAction::triggered,
-            m_sliderbar, &SliderBar::autoconnect);
-    connect(ui->actionSettings, &QAction::triggered,
-            m_sliderbar, &SliderBar::manageSettings);
+            this, &MainWindow::handleActionConnect);
     connect(m_actionPlugins, &QAction::triggered,
             m_sliderbar, &SliderBar::managePlugins);
-    connect(m_sliderbar, &SliderBar::settingsChanged,
-            this, &MainWindow::loadSettings);
 
-    // Save settings when changed from quick settings
+    connect(m_sliderbar, &SliderBar::connected, this, &MainWindow::connected);
+    connect(m_sliderbar, &SliderBar::disconnected, this, &MainWindow::disconnected);
+
+    // Settings
+    connect(ui->actionSettings, &QAction::triggered,
+            m_sliderbar->settings(), &SliderBarSettings::showSettings);
+
+    // Quick settings
+    connect(m_sliderbar->settings(), &SliderBarSettings::settingsChanged,
+            this, &MainWindow::loadQuickSettings);
     connect(ui->actionAutoconnect, &QAction::triggered,
-            this, &MainWindow::saveSettings);
-
-    connect(m_sliderbar, &SliderBar::pingTime,
-            this, &MainWindow::displayPingTime);
+            this, &MainWindow::saveQuickSettings);
 }

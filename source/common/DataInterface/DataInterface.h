@@ -17,6 +17,12 @@ public:
     //virtual ~DataInterface();
 
     /**
+     * @brief The connect & disconnect functions
+     */
+    virtual void connect()    = 0;
+    virtual void disconnect() = 0;
+
+    /**
      * @brief The receive method.
      * The receive method should be implemented by child classes.
      * It will be called everytime new data is available from the physical layer.
@@ -24,7 +30,7 @@ public:
      * @param buf The data bytes.
      * @param len The length of the data (in bytes).
      */
-    virtual void receive(uint8_t* buf, uint16_t len) = 0;
+    virtual void receive(uint8_t* buf, const uint16_t& len) = 0;
 
     /**
      * @brief The transmit method.
@@ -37,7 +43,7 @@ public:
      * @return true If the transfer was successful.
      * @return false If the transfer failed.
      */
-    virtual bool transmit(uint8_t* buf, uint16_t len) = 0;
+    virtual bool transmit(uint8_t* buf, const uint16_t& len) = 0;
 };
 
 class DataInInterface;

@@ -11,17 +11,13 @@ extern uint8_t startflag;
 extern uint8_t endflag;
 extern uint8_t escapeflag;
 extern uint8_t xorflag;
-extern uint8_t ackflag;
-extern uint8_t nackflag;
 
 static inline bool isFlag(const uint8_t& ch)
 {
     return ch == startflag
            || ch == endflag
            || ch == escapeflag
-           || ch == xorflag
-           || ch == ackflag
-           || ch == nackflag;
+           || ch == xorflag;
 }
 
 static inline bool isEscape(const uint8_t& ch)

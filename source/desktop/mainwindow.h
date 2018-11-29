@@ -18,16 +18,23 @@ public:
     ~MainWindow() override;
 
 public slots:
-    void loadSettings();
-    void saveSettings();
+    void loadQuickSettings();
+    void saveQuickSettings();
+
+    void handleActionConnect();
+
+    void connected();
+    void disconnected();
 
 private:
-    void initialiseActions();
+    void initialiseConnections();
 
     Ui::MainWindow* ui       = nullptr;
     QAction* m_actionPlugins = nullptr;
 
     SliderBar* m_sliderbar;
+    bool m_connected = false;
+
     SerialInterface* m_dataInterface;
 };
 

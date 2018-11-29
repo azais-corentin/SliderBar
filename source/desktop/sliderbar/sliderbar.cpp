@@ -7,39 +7,49 @@
 #include <protocol/messages/sliderbar.pb.h>
 #include <protocol/protocol_definition.h>
 
+#include "serialinterface.h"
+
 #include <QDebug>
 
 SliderBar::SliderBar(QWidget* parent)
     : m_parent(parent)
 {
+    m_settings      = new SliderBarSettings(this);
+    m_dataInterface = new SerialInterface();
+
+    setTransmitter(m_dataInterface);
+    m_dataInterface->setReceiver(this);
+}
+
+void SliderBar::initialiseConnections()
+{
+    QObject::connect(m_dataInterface, &SerialInterface::connected, this, &SliderBar::handleConnected);
+    QObject::connect(m_dataInterface, &SerialInterface::disconnected, this, &SliderBar::handleDisconnected);
+
+    if (m_settings->autoconnect())
+        connect();
 }
 
 void SliderBar::connect()
 {
+    m_dataInterface->connect();
 }
 
-void SliderBar::manageSettings()
+void SliderBar::disconnect()
 {
-    SettingsDialog set(m_parent);
-    QObject::connect(&set, &SettingsDialog::requestCalibration, this, &SliderBar::requestCalibration);
-    QObject::connect(this, &SliderBar::calibrationData, &set, &SettingsDialog::receiveCalibrationData);
+    m_dataInterface->disconnect();
+}
 
-    if (set.execute() == QDialog::Accepted) {
-        emit settingsChanged();
-    }
+SliderBarSettings* SliderBar::settings()
+{
+    return m_settings;
 }
 
 void SliderBar::managePlugins()
 {
 }
 
-void SliderBar::autoconnect(bool enabled)
-{
-    QSettings set;
-    set.setValue("sliderbar/autoconnect", enabled);
-}
-
-void SliderBar::receive(uint8_t* buf, uint16_t len)
+void SliderBar::receive(uint8_t* buf, const uint16_t& len)
 {
     m_dataBuffer.append(buf, len);
 
@@ -80,8 +90,10 @@ void SliderBar::receive(uint8_t* buf, uint16_t len)
     m_dataBuffer.clear();
 }
 
-bool SliderBar::transmit(uint8_t* buf, uint16_t len)
+bool SliderBar::transmit(uint8_t* buf, const uint16_t& len)
 {
+    if (!m_connected)
+        connect();
     return transmitter->transmit(buf, len);
 }
 
@@ -118,7 +130,7 @@ void SliderBar::transmit(const Request& request)
     transmit(buf, 6 + message_length);
 }
 
-void SliderBar::setCalibration(const protocol::calibrationData& data)
+void SliderBar::setCalibration(const protocol::CalibrationData& data)
 {
     // Create calibration request
     Request calReq       = Request_init_zero;
@@ -161,6 +173,28 @@ void SliderBar::requestPing()
     transmit(pingRequest);
 }
 
+void SliderBar::handleConnected()
+{
+    emit connected();
+    m_connected = true;
+}
+
+void SliderBar::handleDisconnected()
+{
+    emit disconnected();
+    m_connected = false;
+}
+
+QWidget* SliderBar::getParent()
+{
+    return m_parent;
+}
+
+bool SliderBar::isConnected()
+{
+    return m_connected;
+}
+
 void SliderBar::process(const Response& response)
 {
     switch (response.which_payload) {
@@ -184,7 +218,7 @@ void SliderBar::process(const Response& response)
 
 void SliderBar::process(const Response_CalibrationData& value)
 {
-    protocol::calibrationData data;
+    protocol::CalibrationData data;
     data.minimumPosition = value.minPosition;
     data.maximumPosition = value.maxPosition;
     data.minimumVelocity = value.minVelocity;

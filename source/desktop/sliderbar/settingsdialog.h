@@ -4,15 +4,18 @@
 #include <QDialog>
 #include <QSettings>
 
+#include "protocol/protocol_structures.h"
+
 QT_USE_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 
+class QAbstractButton;
+class SliderBarSettings;
+
 namespace Ui {
 class SettingsDialog;
 }
-
-class QIntValidator;
 
 QT_END_NAMESPACE
 
@@ -20,12 +23,14 @@ class SettingsDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(QWidget* parent = nullptr);
+    explicit SettingsDialog(SliderBarSettings* settings, QWidget* parent = nullptr);
     ~SettingsDialog() override;
 
 public slots:
     int execute();
-    void receiveCalibrationData(uint32_t minpos, uint32_t maxpos, uint32_t minvel, uint32_t maxvel);
+    void receiveCalibrationData(const protocol::CalibrationData& data);
+
+    void handleClicked(QAbstractButton* button);
 
 signals:
     void requestCalibration();
@@ -38,7 +43,7 @@ private:
     void loadSettings();
 
     Ui::SettingsDialog* ui;
-    QSettings m_settings;
+    SliderBarSettings* m_settings;
 };
 
 #endif // SETTINGSDIALOG_H
