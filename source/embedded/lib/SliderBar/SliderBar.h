@@ -8,6 +8,7 @@
 
 #include <messages/sliderbar.pb.h>
 #include <protocol_definition.h>
+#include <protocol_structures.h>
 
 #include "FixedPointPI.h"
 
@@ -21,6 +22,9 @@ class SliderBar : public DataOutInterface {
 public:
     SliderBar()  = default;
     ~SliderBar() = default;
+
+    void connect() final {};
+    void disconnect() final {};
 
     /**
      * @brief Runs the main loop of the SliderBar.
@@ -41,7 +45,7 @@ private:
      * @param buf Pointer to the data.
      * @param len Length of the data.
      */
-    void receive(uint8_t* buf, uint16_t len) final;
+    void receive(uint8_t* buf, const uint16_t& len) final;
 
     /**
      * @brief Transmits data.
@@ -52,7 +56,7 @@ private:
      * @return true If the transfer was successful.
      * @return false If the transfer failed.
      */
-    bool transmit(uint8_t* buf, uint16_t len) final;
+    bool transmit(uint8_t* buf, const uint16_t& len) final;
     void transmit(const Response& response);
     void transmitNack();
 
@@ -87,10 +91,8 @@ private:
 
     FixedPointPI* m_controller;
 
-    uint16_t m_position = 0;
-    uint16_t m_velocity = 0;
-    uint16_t m_gainP    = 10;
-    uint16_t m_gainI    = 1;
+    protocol::CalibrationData m_calibrationData;
+    protocol::Values m_values;
 };
 
 #endif // __SLIDERBAR_H__

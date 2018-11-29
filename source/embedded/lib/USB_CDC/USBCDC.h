@@ -26,6 +26,20 @@ public:
     void initialise();
 
     /**
+     * @brief Connects the USB CDC.
+     * @note This function does nothing as it must be connected on powerup.
+     * 
+     */
+    void connect() final {};
+
+    /**
+     * @brief Disconnects the USB CDC.
+     * @note This function does nothing (for now) as it cannot be disconnected.
+     * 
+     */
+    void disconnect() final {};
+
+    /**
      * @brief Data received over USB OUT endpoint are sent over CDC interface
      * through this function.
      *
@@ -40,7 +54,7 @@ public:
      * @retval Result of the operation: USBD_OK if all operations are OK else
      * USBD_FAIL
       */
-    void receive(uint8_t* buf, uint16_t len) final;
+    void receive(uint8_t* buf, const uint16_t& len) final;
 
     /** @brief Sends buf over USB IN endpoint.
      *  Sends buf over USB IN endpoint
@@ -50,7 +64,7 @@ public:
      * 
      *  @retval USBD_OK if all operations are OK else USBD_FAIL or USBD_BUSY
      */
-    bool transmit(uint8_t* buf, uint16_t len) final;
+    bool transmit(uint8_t* buf, const uint16_t& len) final;
 };
 
 extern USB_CDC* g_usb_cdc_ptr;

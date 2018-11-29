@@ -31,10 +31,10 @@ public:
     inline virtual void setDeltaUs(const uint16_t& deltaUs) = 0;
 
 protected:
+    uint16_t m_deltaUs = 0;
     int16_t m_U        = 0;
     int16_t m_Uc       = 0;
     int16_t m_Uout     = 0;
-    uint16_t m_deltaUs = 0;
 };
 
 #endif // __FIXEDPOINTCONTROLLER_HPP__

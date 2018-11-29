@@ -68,7 +68,8 @@ private:
     }
 
 private:
-    uint16_t m_Kp = 0, m_Ki = 0;
+    uint16_t m_Kp       = 0;
+    uint16_t m_Ki       = 0;
     uint16_t m_scaledKp = 0, m_scaledKi = 0;
 
     int32_t m_UMin32 = INT32_MIN;

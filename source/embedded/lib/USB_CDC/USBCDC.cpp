@@ -171,7 +171,7 @@ void USB_CDC::initialise()
     USBD_Start(&hUsbDeviceFS);
 }
 
-bool USB_CDC::transmit(uint8_t* buf, uint16_t len)
+bool USB_CDC::transmit(uint8_t* buf, const uint16_t& len)
 {
     uint8_t result = USBD_OK;
 
@@ -186,7 +186,7 @@ bool USB_CDC::transmit(uint8_t* buf, uint16_t len)
     return result == USBD_OK;
 }
 
-void USB_CDC::receive(uint8_t* buf, uint16_t len)
+void USB_CDC::receive(uint8_t* buf, const uint16_t& len)
 {
     if (receiver)
         receiver->receive(buf, len);

@@ -2,9 +2,9 @@
 
 FixedPointPI::FixedPointPI(const uint16_t& Kp, const uint16_t& Ki, const int16_t& n,
                            const uint16_t& delta_us, const int16_t& Uinit)
-    : m_Kp(Kp)
+    : FixedPointController(Uinit)
+    , m_Kp(Kp)
     , m_Ki(Ki)
-    , FixedPointController(Uinit)
 {
     setDeltaUs(delta_us);
     setN(n);

@@ -7,7 +7,7 @@
 #include <pb_decode.h>
 #include <pb_encode.h>
 
-void SliderBar::receive(uint8_t* buf, uint16_t len)
+void SliderBar::receive(uint8_t* buf, const uint16_t& len)
 {
     if (m_decodeBuffer.full())
         m_decodeBuffer.clear();
@@ -16,7 +16,7 @@ void SliderBar::receive(uint8_t* buf, uint16_t len)
     newData = true;
 }
 
-inline bool SliderBar::transmit(uint8_t* buf, uint16_t len)
+inline bool SliderBar::transmit(uint8_t* buf, const uint16_t& len)
 {
     if (!transmitter)
         return false;
@@ -34,6 +34,8 @@ void SliderBar::transmit(const Response& response)
         return;
 
     const size_t message_length = stream.bytes_written;
+
+    // TODO: Implement escaping/unescaping of a buffer
 
     // Create the data packet
     uint8_t buf[6 + message_length];
@@ -95,6 +97,8 @@ void SliderBar::decode()
     // - message
     // - crc
 
+    // TODO: Unescape the data before decoding, calculate CRC before unescaping
+
     // Decode request using Nanopb:
     Request decoded     = Request_init_zero;
     pb_istream_t stream = pb_istream_from_buffer(m_decodeBuffer.data(), m_decodeBuffer.size() - 4);
@@ -120,61 +124,59 @@ void SliderBar::decode()
 
 void SliderBar::process(const Request& request)
 {
-    bool error = false;
-
-    if (request.which_payload == Request_setValue_tag)
+    switch (request.which_payload) {
+    case Request_setValue_tag:
         process(request.payload.setValue);
-    else if (request.which_payload == Request_getValue_tag)
+        break;
+    case Request_getValue_tag:
         process(request.payload.getValue);
-    else if (request.which_payload == Request_vibrate_tag)
+        break;
+    case Request_vibrate_tag:
         process(request.payload.vibrate);
-    else if (request.which_payload == Request_resistAt_tag)
+        break;
+    case Request_resistAt_tag:
         process(request.payload.resistAt);
-    else if (request.which_payload == Request_resistClear_tag)
+        break;
+    case Request_resistClear_tag:
         process(request.payload.resistClear);
-    else if (request.which_payload == Request_calibration_tag)
+        break;
+    case Request_calibration_tag:
         process(request.payload.calibration);
-    else if (request.which_payload == Request_ping_tag) {
+        break;
+    case Request_ping_tag: {
         Response ping      = Response_init_zero;
         ping.which_payload = Response_ping_tag;
         transmit(ping);
-    } else {
-        error = true;
-    }
+    } break;
 
-    if (error) {
+    default:
         transmitNack();
+        break;
     }
 }
 
 void SliderBar::process(const Request_SetValue& value)
 {
-    bool unknownValue = false;
-
     switch (value.which_parameter) {
     case Request_SetValue_position_tag:
-        m_position = value.parameter.position;
+        m_values.position = value.parameter.position;
         break;
 
     case Request_SetValue_velocity_tag:
-        m_velocity = value.parameter.velocity;
+        m_values.velocity = value.parameter.velocity;
         break;
 
     case Request_SetValue_P_tag:
-        m_gainP = value.parameter.P;
+        m_values.gainP = value.parameter.P;
         break;
 
     case Request_SetValue_I_tag:
-        m_gainI = value.parameter.I;
+        m_values.gainI = value.parameter.I;
         break;
 
-    default:
-        unknownValue = true;
+    default: {
         // Error: Unknown value in setValue
-        break;
-    }
-
-    if (!unknownValue) {
+    } break;
     }
 }
 
@@ -214,10 +216,10 @@ void SliderBar::process(const Request_Calibration& value)
     // Create response
     Response calibrationData                            = Response_init_zero;
     calibrationData.which_payload                       = Response_calibrationData_tag;
-    calibrationData.payload.calibrationData.minPosition = 0;
-    calibrationData.payload.calibrationData.maxPosition = 1023;
-    calibrationData.payload.calibrationData.minVelocity = 120;
-    calibrationData.payload.calibrationData.maxVelocity = 2500;
+    calibrationData.payload.calibrationData.minPosition = m_calibrationData.minimumPosition;
+    calibrationData.payload.calibrationData.maxPosition = m_calibrationData.maximumPosition;
+    calibrationData.payload.calibrationData.minVelocity = m_calibrationData.minimumVelocity;
+    calibrationData.payload.calibrationData.maxVelocity = m_calibrationData.maximumVeloicty;
 
     // Send response
     transmit(calibrationData);
