@@ -1,3 +1,6 @@
 [submodule "embedded/hardware/NeliCadLibs"]
 	path = embedded/hardware/NeliCadLibs
 	url = https://github.com/Haellsigh/NeliCadLibs.git
+[submodule "source/common/nanopb"]
+	path = source/common/nanopb
+	url = https://github.com/nanopb/nanopb.git
