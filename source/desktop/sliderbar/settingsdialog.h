@@ -30,7 +30,7 @@ public slots:
     int execute();
     void receiveCalibrationData(const protocol::CalibrationData& data);
 
-    void handleClicked(QAbstractButton* button);
+    void resetSettings();
 
 signals:
     void requestCalibration();

@@ -11,6 +11,9 @@ MainWindow::MainWindow(QWidget* parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->statusBar->addPermanentWidget(ui->lStatus);
+    // Removes the separators
+    ui->statusBar->setStyleSheet("QStatusBar::item {border: none;}");
 
     m_actionPlugins = new QAction("Plugins");
     ui->menuBar->addAction(m_actionPlugins);

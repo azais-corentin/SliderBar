@@ -1,10 +1,12 @@
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
 
-#include <QDebug>
+#include <QMessageBox>
 #include <QPushButton>
 
 #include "sliderbarsettings.h"
+
+#include <QDebug>
 
 static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
 
@@ -15,10 +17,13 @@ SettingsDialog::SettingsDialog(SliderBarSettings* settings, QWidget* parent)
 {
     ui->setupUi(this);
 
-    //ui->buttonBox->button(QDialogButtonBox::Reset)->setText(" Reset current page ");
+    connect(this, &SettingsDialog::accepted,
+            this, &SettingsDialog::saveSettings);
 
-    connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &SettingsDialog::handleClicked);
-    connect(ui->bCalibrate, &QPushButton::clicked, this, &SettingsDialog::requestCalibration);
+    connect(ui->bRestoreDefaults, &QPushButton::clicked,
+            this, &SettingsDialog::resetSettings);
+    connect(ui->bCalibrate, &QPushButton::clicked,
+            this, &SettingsDialog::requestCalibration);
 
     loadSettings();
 }
@@ -42,20 +47,19 @@ void SettingsDialog::receiveCalibrationData(const protocol::CalibrationData& dat
     ui->eMaxVel->setValue(data.maximumVeloicty);
 }
 
-void SettingsDialog::handleClicked(QAbstractButton* button)
+void SettingsDialog::resetSettings()
 {
-    switch (ui->buttonBox->buttonRole(button)) {
-    case QDialogButtonBox::ResetRole:
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.setWindowTitle("Restore default settings?");
+    msgBox.setText("<b>Are you sure you want to restore default settings?</b>");
+    msgBox.setInformativeText("All your current settings will be lost.");
+    msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::RestoreDefaults);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+
+    if (msgBox.exec() == QMessageBox::RestoreDefaults) {
         m_settings->clear();
         loadSettings();
-        break;
-
-    case QDialogButtonBox::AcceptRole:
-        saveSettings();
-        break;
-
-    default:
-        break;
     }
 }
 
