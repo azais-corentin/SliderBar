@@ -31,6 +31,12 @@ Here are some examples:
 
 ## Quick start
 
+### Get started as a user
+
+Too early in the development for that.
+
+### Get started with development
+
 Follow this short guide:
 
 - Clone the repo: `git clone --recursive https://github.com/haellsigh/SliderBar.git`
