@@ -11,7 +11,6 @@ QT_USE_NAMESPACE
 QT_BEGIN_NAMESPACE
 
 class QAbstractButton;
-class SliderBarSettings;
 
 namespace Ui {
 class SettingsDialog;
@@ -19,11 +18,14 @@ class SettingsDialog;
 
 QT_END_NAMESPACE
 
+namespace SliderBar {
+class Settings;
+
 class SettingsDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(SliderBarSettings* settings, QWidget* parent = nullptr);
+    explicit SettingsDialog(Settings* settings, QWidget* parent = nullptr);
     ~SettingsDialog() override;
 
 public slots:
@@ -43,7 +45,9 @@ private:
     void loadSettings();
 
     Ui::SettingsDialog* ui;
-    SliderBarSettings* m_settings;
+    Settings* m_settings;
 };
+
+}
 
 #endif // SETTINGSDIALOG_H

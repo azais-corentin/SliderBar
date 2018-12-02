@@ -8,6 +8,8 @@
 
 #include <DataInterface/DataInterface.h>
 
+namespace SliderBar {
+
 class SerialInterface : public QObject, public DataInInterface {
     Q_OBJECT
 
@@ -41,5 +43,7 @@ private slots:
 private:
     QSerialPort m_serialPort;
 };
+
+}
 
 #endif // SERIALINTERFACE_H

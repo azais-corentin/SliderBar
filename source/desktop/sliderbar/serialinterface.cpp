@@ -2,6 +2,8 @@
 
 #include <QDebug>
 
+namespace SliderBar {
+
 SerialInterface::SerialInterface()
 {
     QObject::connect(&m_serialPort, &QSerialPort::readyRead,
@@ -48,3 +50,5 @@ void SerialInterface::handleError(QSerialPort::SerialPortError error)
         disconnect();
     }
 }
+
+} // namespace SliderBar

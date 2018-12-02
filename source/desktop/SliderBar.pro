@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += widgets gui serialport charts
+QT       += widgets gui serialport
 
 CONFIG += c++14
 
@@ -17,12 +17,11 @@ TEMPLATE = app
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
-INCLUDEPATH += $$PWD/../common $$PWD/../common/nanopb
+INCLUDEPATH += $$PWD/../common $$PWD/../common/nanopb $$PWD/libs
 
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    sliderbar/sliderbar.cpp \
     sliderbar/settingsdialog.cpp \
     ../common/Buffer/Buffer.tpp \
     ../common/nanopb/pb_common.c \
@@ -31,11 +30,11 @@ SOURCES += \
     ../common/protocol/protocol_definition.cpp \
     sliderbar/serialinterface.cpp \
     ../common/protocol/messages/sliderbar.pb.c \
-    sliderbar/sliderbarsettings.cpp
+    sliderbar/manager.cpp \
+    sliderbar/settings.cpp
 
 HEADERS += \
     mainwindow.h \
-    sliderbar/sliderbar.h \
     sliderbar/settingsdialog.h \
     ../common/Buffer/Buffer.hpp \
     ../common/nanopb/pb.h \
@@ -48,7 +47,8 @@ HEADERS += \
     sliderbar/serialinterface.h \
     ../common/protocol/messages/sliderbar.pb.h \
     ../common/protocol/protocol_structures.h \
-    sliderbar/sliderbarsettings.h
+    sliderbar/manager.h \
+    sliderbar/settings.h
 
 FORMS += \
         mainwindow.ui \

@@ -5,7 +5,9 @@
 
 #include "protocol/protocol_structures.h"
 
-class SliderBar;
+namespace SliderBar {
+
+class Manager;
 
 /**
  * @brief The SliderBar settings class
@@ -15,12 +17,12 @@ class SliderBar;
  *
  * @note This is simply a wrapper around QSettings.
  */
-class SliderBarSettings : public QObject {
+class Settings : public QObject {
     Q_OBJECT
 
 public:
-    SliderBarSettings(SliderBar* parent);
-    ~SliderBarSettings() = default;
+    Settings(Manager* parent);
+    ~Settings() = default;
 
     void clear();
 
@@ -65,8 +67,10 @@ signals:
     void settingsChanged();
 
 private:
-    SliderBar* m_parent;
+    Manager* m_parent;
     QSettings m_settings;
 };
+
+}
 
 #endif // SLIDERBARSETTINGS_H

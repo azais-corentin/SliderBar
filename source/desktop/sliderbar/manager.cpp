@@ -1,4 +1,4 @@
-#include "sliderbar.h"
+#include "manager.h"
 
 #include "settingsdialog.h"
 
@@ -11,45 +11,49 @@
 
 #include <QDebug>
 
-SliderBar::SliderBar(QWidget* parent)
+namespace SliderBar {
+
+Manager::Manager(QWidget* parent)
     : m_parent(parent)
 {
-    m_settings      = new SliderBarSettings(this);
+    m_settings      = new Settings(this);
     m_dataInterface = new SerialInterface();
 
     setTransmitter(m_dataInterface);
     m_dataInterface->setReceiver(this);
 }
 
-void SliderBar::initialiseConnections()
+void Manager::initialiseConnections()
 {
-    QObject::connect(m_dataInterface, &SerialInterface::connected, this, &SliderBar::handleConnected);
-    QObject::connect(m_dataInterface, &SerialInterface::disconnected, this, &SliderBar::handleDisconnected);
+    QObject::connect(m_dataInterface, &SerialInterface::connected,
+                     this, &Manager::handleConnected);
+    QObject::connect(m_dataInterface, &SerialInterface::disconnected,
+                     this, &Manager::handleDisconnected);
 
     if (m_settings->autoconnect())
         connect();
 }
 
-void SliderBar::connect()
+void Manager::connect()
 {
     m_dataInterface->connect();
 }
 
-void SliderBar::disconnect()
+void Manager::disconnect()
 {
     m_dataInterface->disconnect();
 }
 
-SliderBarSettings* SliderBar::settings()
+Settings* Manager::settings()
 {
     return m_settings;
 }
 
-void SliderBar::managePlugins()
+void Manager::managePlugins()
 {
 }
 
-void SliderBar::receive(uint8_t* buf, const uint16_t& len)
+void Manager::receive(uint8_t* buf, const uint16_t& len)
 {
     m_dataBuffer.append(buf, len);
 
@@ -90,14 +94,14 @@ void SliderBar::receive(uint8_t* buf, const uint16_t& len)
     m_dataBuffer.clear();
 }
 
-bool SliderBar::transmit(uint8_t* buf, const uint16_t& len)
+bool Manager::transmit(uint8_t* buf, const uint16_t& len)
 {
     if (!m_connected)
         connect();
     return transmitter->transmit(buf, len);
 }
 
-void SliderBar::transmit(const Request& request)
+void Manager::transmit(const Request& request)
 {
     uint8_t dataBuffer[64];
     pb_ostream_t stream = pb_ostream_from_buffer(dataBuffer, sizeof(dataBuffer));
@@ -130,7 +134,7 @@ void SliderBar::transmit(const Request& request)
     transmit(buf, 6 + message_length);
 }
 
-void SliderBar::setCalibration(const protocol::CalibrationData& data)
+void Manager::setCalibration(const protocol::CalibrationData& data)
 {
     // Create calibration request
     Request calReq       = Request_init_zero;
@@ -148,7 +152,7 @@ void SliderBar::setCalibration(const protocol::CalibrationData& data)
     transmit(calReq);
 }
 
-void SliderBar::requestCalibration()
+void Manager::requestCalibration()
 {
     // Create calibration request
     Request calReq       = Request_init_zero;
@@ -162,7 +166,7 @@ void SliderBar::requestCalibration()
     transmit(calReq);
 }
 
-void SliderBar::requestPing()
+void Manager::requestPing()
 {
     // Create ping request
     Request pingRequest       = Request_init_zero;
@@ -173,29 +177,29 @@ void SliderBar::requestPing()
     transmit(pingRequest);
 }
 
-void SliderBar::handleConnected()
+void Manager::handleConnected()
 {
     emit connected();
     m_connected = true;
 }
 
-void SliderBar::handleDisconnected()
+void Manager::handleDisconnected()
 {
     emit disconnected();
     m_connected = false;
 }
 
-QWidget* SliderBar::getParent()
+QWidget* Manager::getParent()
 {
     return m_parent;
 }
 
-bool SliderBar::isConnected()
+bool Manager::isConnected()
 {
     return m_connected;
 }
 
-void SliderBar::process(const Response& response)
+void Manager::process(const Response& response)
 {
     switch (response.which_payload) {
     case Response_calibrationData_tag:
@@ -216,7 +220,7 @@ void SliderBar::process(const Response& response)
     }
 }
 
-void SliderBar::process(const Response_CalibrationData& value)
+void Manager::process(const Response_CalibrationData& value)
 {
     protocol::CalibrationData data;
     data.minimumPosition = value.minPosition;
@@ -227,7 +231,7 @@ void SliderBar::process(const Response_CalibrationData& value)
     emit calibrationData(data);
 }
 
-void SliderBar::process(const Response_Value& value)
+void Manager::process(const Response_Value& value)
 {
     switch (value.which_parameter) {
     case Response_Value_position_tag:
@@ -236,3 +240,5 @@ void SliderBar::process(const Response_Value& value)
         break;
     }
 }
+
+} // namespace SliderBar

@@ -4,13 +4,15 @@
 #include <QMessageBox>
 #include <QPushButton>
 
-#include "sliderbarsettings.h"
+#include "settings.h"
 
 #include <QDebug>
 
+namespace SliderBar {
+
 static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
 
-SettingsDialog::SettingsDialog(SliderBarSettings* settings, QWidget* parent)
+SettingsDialog::SettingsDialog(Settings* settings, QWidget* parent)
     : m_settings(settings)
     , QDialog(parent)
     , ui(new Ui::SettingsDialog)
@@ -109,3 +111,5 @@ void SettingsDialog::loadSettings()
     ui->eMinVel->setValue(calibrationData.minimumVelocity);
     ui->eMaxVel->setValue(calibrationData.maximumVeloicty);
 }
+
+} // namespace SliderBar

@@ -12,14 +12,16 @@
 #include <protocol/protocol_structures.h>
 
 #include "serialinterface.h"
-#include "sliderbarsettings.h"
+#include "settings.h"
 
-class SliderBar : public QObject, public DataOutInterface {
+namespace SliderBar {
+
+class Manager : public QObject, public DataOutInterface {
     Q_OBJECT
 
 public:
-    SliderBar(QWidget* parent);
-    ~SliderBar() override = default;
+    Manager(QWidget* parent);
+    ~Manager() override = default;
 
     void initialiseConnections();
     QWidget* getParent();
@@ -40,7 +42,7 @@ public slots:
      * @brief Returns an access to settings.
      * @return The settings class.
      */
-    SliderBarSettings* settings();
+    Settings* settings();
 
     /**
      * @brief Show the plugin management window.
@@ -74,7 +76,7 @@ private:
 
 private:
     QWidget* m_parent;
-    SliderBarSettings* m_settings;
+    Settings* m_settings;
 
     Buffer<protocol::MAX_PACKET_SIZE> m_dataBuffer;
 
@@ -84,5 +86,7 @@ private:
 
     bool m_connected = false;
 };
+
+}
 
 #endif // SLIDERBAR_H

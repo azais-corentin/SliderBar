@@ -3,8 +3,10 @@
 
 #include <QMainWindow>
 
-class SliderBar;
+namespace SliderBar {
+class Manager;
 class SerialInterface;
+}
 
 namespace Ui {
 class MainWindow;
@@ -32,10 +34,10 @@ private:
     Ui::MainWindow* ui       = nullptr;
     QAction* m_actionPlugins = nullptr;
 
-    SliderBar* m_sliderbar;
+    SliderBar::Manager* m_sliderbar;
     bool m_connected = false;
 
-    SerialInterface* m_dataInterface;
+    SliderBar::SerialInterface* m_dataInterface;
 };
 
 #endif // MAINWINDOW_H
