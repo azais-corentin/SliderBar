@@ -8,14 +8,14 @@
 
 #include <QDebug>
 
-namespace SliderBar {
+namespace sliderbar {
 
 static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
 
 SettingsDialog::SettingsDialog(Settings* settings, QWidget* parent)
-    : m_settings(settings)
-    , QDialog(parent)
+    : QDialog(parent)
     , ui(new Ui::SettingsDialog)
+    , m_settings(settings)
 {
     ui->setupUi(this);
 

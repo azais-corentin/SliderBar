@@ -8,7 +8,7 @@
 
 #include <DataInterface/DataInterface.h>
 
-namespace SliderBar {
+namespace sliderbar {
 
 class SerialInterface : public QObject, public DataInInterface {
     Q_OBJECT

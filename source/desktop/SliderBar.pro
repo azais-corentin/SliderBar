@@ -31,7 +31,8 @@ SOURCES += \
     sliderbar/serialinterface.cpp \
     ../common/protocol/messages/sliderbar.pb.c \
     sliderbar/manager.cpp \
-    sliderbar/settings.cpp
+    sliderbar/settings.cpp \
+    sliderbar/pluginmanager.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -48,7 +49,8 @@ HEADERS += \
     ../common/protocol/messages/sliderbar.pb.h \
     ../common/protocol/protocol_structures.h \
     sliderbar/manager.h \
-    sliderbar/settings.h
+    sliderbar/settings.h \
+    sliderbar/pluginmanager.h
 
 FORMS += \
         mainwindow.ui \

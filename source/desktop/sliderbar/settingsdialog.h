@@ -18,7 +18,7 @@ class SettingsDialog;
 
 QT_END_NAMESPACE
 
-namespace SliderBar {
+namespace sliderbar {
 class Settings;
 
 class SettingsDialog : public QDialog {

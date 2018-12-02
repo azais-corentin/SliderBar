@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-namespace SliderBar {
+namespace sliderbar {
 
 SerialInterface::SerialInterface()
 {

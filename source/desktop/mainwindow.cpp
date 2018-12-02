@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget* parent)
     m_actionPlugins = new QAction("Plugins");
     ui->menuBar->addAction(m_actionPlugins);
 
-    m_sliderbar = new SliderBar::Manager(this);
+    m_sliderbar = new sliderbar::Manager(this);
 
     loadQuickSettings();
     initialiseConnections();
@@ -74,19 +74,19 @@ void MainWindow::initialiseConnections()
     connect(ui->actionConnect, &QAction::triggered,
             this, &MainWindow::handleActionConnect);
     connect(m_actionPlugins, &QAction::triggered,
-            m_sliderbar, &SliderBar::Manager::managePlugins);
+            m_sliderbar, &sliderbar::Manager::managePlugins);
 
-    connect(m_sliderbar, &SliderBar::Manager::connected,
+    connect(m_sliderbar, &sliderbar::Manager::connected,
             this, &MainWindow::connected);
-    connect(m_sliderbar, &SliderBar::Manager::disconnected,
+    connect(m_sliderbar, &sliderbar::Manager::disconnected,
             this, &MainWindow::disconnected);
 
     // Settings
     connect(ui->actionSettings, &QAction::triggered,
-            m_sliderbar->settings(), &SliderBar::Settings::showSettings);
+            m_sliderbar->settings(), &sliderbar::Settings::showSettings);
 
     // Quick settings
-    connect(m_sliderbar->settings(), &SliderBar::Settings::settingsChanged,
+    connect(m_sliderbar->settings(), &sliderbar::Settings::settingsChanged,
             this, &MainWindow::loadQuickSettings);
     connect(ui->actionAutoconnect, &QAction::triggered,
             this, &MainWindow::saveQuickSettings);

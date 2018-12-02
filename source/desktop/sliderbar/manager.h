@@ -14,7 +14,7 @@
 #include "serialinterface.h"
 #include "settings.h"
 
-namespace SliderBar {
+namespace sliderbar {
 
 class Manager : public QObject, public DataOutInterface {
     Q_OBJECT

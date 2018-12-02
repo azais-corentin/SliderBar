@@ -11,7 +11,7 @@
 
 #include <QDebug>
 
-namespace SliderBar {
+namespace sliderbar {
 
 Manager::Manager(QWidget* parent)
     : m_parent(parent)

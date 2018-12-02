@@ -5,7 +5,7 @@
 
 #include "protocol/protocol_structures.h"
 
-namespace SliderBar {
+namespace sliderbar {
 
 class Manager;
 

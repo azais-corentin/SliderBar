@@ -3,7 +3,7 @@
 #include "settingsdialog.h"
 #include "manager.h"
 
-namespace SliderBar {
+namespace sliderbar {
 
 Settings::Settings(Manager* parent)
     : m_parent(parent)
