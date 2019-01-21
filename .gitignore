@@ -56,4 +56,5 @@ _templates
 *.pb.h
 
 # VsCode
-.vscode
+*.vscode
+*.code-workspace
