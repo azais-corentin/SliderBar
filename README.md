@@ -6,7 +6,7 @@
   <h3 align="center">SliderBar</h3>
 
   <p align="center">
-    Motorized fader-based keyboard slider with an advanced controller.
+    Motorized keyboard slider with an advanced controller.
   </p>
 </p>
 
