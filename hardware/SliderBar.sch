@@ -15,81 +15,59 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L Connector_Generic:Conn_01x05 J4
+L Connector_Generic:Conn_01x05 J5
 U 1 1 5BB23A1B
-P 4150 4250
-F 0 "J4" H 4230 4292 50  0000 L CNN
-F 1 "DEBUG" H 4230 4201 50  0000 L CNN
-F 2 "Connector_Molex:Molex_PicoBlade_53047-0510_1x05_P1.25mm_Vertical" H 4150 4250 50  0001 C CNN
-F 3 "~" H 4150 4250 50  0001 C CNN
-	1    4150 4250
+P 4200 4750
+F 0 "J5" H 4280 4792 50  0000 L CNN
+F 1 "DEBUG" H 4280 4701 50  0000 L CNN
+F 2 "Connector_Molex:Molex_PicoBlade_53047-0510_1x05_P1.25mm_Vertical" H 4200 4750 50  0001 C CNN
+F 3 "~" H 4200 4750 50  0001 C CNN
+	1    4200 4750
 	1    0    0    -1  
 $EndComp
-$Comp
-L Connector_Generic:Conn_01x02 J2
-U 1 1 5BB23B62
-P 4150 3100
-F 0 "J2" H 4230 3092 50  0000 L CNN
-F 1 "MOTOR_OUT" H 4230 3001 50  0000 L CNN
-F 2 "Connector_Molex:Molex_PicoBlade_53048-0210_1x02_P1.25mm_Horizontal" H 4150 3100 50  0001 C CNN
-F 3 "~" H 4150 3100 50  0001 C CNN
-	1    4150 3100
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x03 J3
-U 1 1 5BB23BB9
-P 4150 3625
-F 0 "J3" H 4230 3667 50  0000 L CNN
-F 1 "POT_IN" H 4230 3576 50  0000 L CNN
-F 2 "Connector_Molex:Molex_PicoBlade_53048-0310_1x03_P1.25mm_Horizontal" H 4150 3625 50  0001 C CNN
-F 3 "~" H 4150 3625 50  0001 C CNN
-	1    4150 3625
-	1    0    0    -1  
-$EndComp
-Text GLabel 3950 4050 0    50   Input ~ 0
+Text GLabel 4000 4550 0    50   Input ~ 0
 SWDIO
-Text GLabel 3950 4250 0    50   Input ~ 0
+Text GLabel 4000 4750 0    50   Input ~ 0
 SWCLK
-Text GLabel 3950 4450 0    50   Input ~ 0
+Text GLabel 4000 4950 0    50   Input ~ 0
 NRST
 $Comp
 L power:GND #PWR?
 U 1 1 5BB23C60
-P 3950 4150
-F 0 "#PWR?" H 3950 3900 50  0001 C CNN
-F 1 "GND" V 3950 4000 50  0000 R CNN
-F 2 "" H 3950 4150 50  0001 C CNN
-F 3 "" H 3950 4150 50  0001 C CNN
-	1    3950 4150
+P 4000 4650
+F 0 "#PWR?" H 4000 4400 50  0001 C CNN
+F 1 "GND" V 4000 4500 50  0000 R CNN
+F 2 "" H 4000 4650 50  0001 C CNN
+F 3 "" H 4000 4650 50  0001 C CNN
+	1    4000 4650
 	0    1    1    0   
 $EndComp
-Text GLabel 3950 3100 0    50   Input ~ 0
+Text GLabel 4000 3100 0    50   Input ~ 0
 MOT_OUT_1
-Text GLabel 3950 3200 0    50   Input ~ 0
+Text GLabel 4000 3200 0    50   Input ~ 0
 MOT_OUT_2
-Text GLabel 3950 3625 0    50   Input ~ 0
+Text GLabel 4000 3650 0    50   Input ~ 0
 POT
 $Comp
 L power:GND #PWR?
 U 1 1 5BB24025
-P 3950 3725
-F 0 "#PWR?" H 3950 3475 50  0001 C CNN
-F 1 "GND" H 3955 3552 50  0000 C CNN
-F 2 "" H 3950 3725 50  0001 C CNN
-F 3 "" H 3950 3725 50  0001 C CNN
-	1    3950 3725
+P 4000 4100
+F 0 "#PWR?" H 4000 3850 50  0001 C CNN
+F 1 "GND" H 4005 3927 50  0000 C CNN
+F 2 "" H 4000 4100 50  0001 C CNN
+F 3 "" H 4000 4100 50  0001 C CNN
+	1    4000 4100
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:+3.3V #PWR?
 U 1 1 5BB24078
-P 3950 3525
-F 0 "#PWR?" H 3950 3375 50  0001 C CNN
-F 1 "+3.3V" H 3965 3698 50  0000 C CNN
-F 2 "" H 3950 3525 50  0001 C CNN
-F 3 "" H 3950 3525 50  0001 C CNN
-	1    3950 3525
+P 4000 3550
+F 0 "#PWR?" H 4000 3400 50  0001 C CNN
+F 1 "+3.3V" H 4015 3723 50  0000 C CNN
+F 2 "" H 4000 3550 50  0001 C CNN
+F 3 "" H 4000 3550 50  0001 C CNN
+	1    4000 3550
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -437,7 +415,7 @@ F 3 "" H 1500 2000 50  0001 C CNN
 	1    1500 2000
 	1    0    0    -1  
 $EndComp
-Text Notes 2300 3700 0    50   ~ 0
+Text Notes 2575 4125 0    50   ~ 0
 ~~47k
 Wire Wire Line
 	2200 3350 2100 3350
@@ -538,17 +516,6 @@ F 3 "~" H 900 3600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:D_Schottky D1
-U 1 1 5BC3AFD7
-P 2350 3350
-F 0 "D1" H 2350 3134 50  0000 C CNN
-F 1 "1N4001" H 2350 3225 50  0000 C CNN
-F 2 "Diode_SMD:D_SMA_Handsoldering" H 2350 3350 50  0001 C CNN
-F 3 "~" H 2350 3350 50  0001 C CNN
-	1    2350 3350
-	-1   0    0    1   
-$EndComp
-$Comp
 L Device:L L1
 U 1 1 5BC3AD82
 P 1650 3350
@@ -623,7 +590,7 @@ U 1 1 5BD914EE
 P 10200 3900
 F 0 "C13" V 10425 3900 50  0000 C CNN
 F 1 "10µ" V 10334 3900 50  0000 C CNN
-F 2 "Capacitor_Tantalum_SMD:CP_EIA-7343-15_Kemet-W" H 10200 3900 50  0001 C CNN
+F 2 "Capacitor_Tantalum_SMD:CP_EIA-6032-28_Kemet-C_Pad2.25x2.35mm_HandSolder" H 10200 3900 50  0001 C CNN
 F 3 "~" H 10200 3900 50  0001 C CNN
 	1    10200 3900
 	0    -1   -1   0   
@@ -824,12 +791,12 @@ Connection ~ 10400 3900
 $Comp
 L power:VPP #PWR?
 U 1 1 5BD8AB17
-P 3950 4350
-F 0 "#PWR?" H 3950 4200 50  0001 C CNN
-F 1 "VPP" V 3950 4650 50  0000 R CNN
-F 2 "" H 3950 4350 50  0001 C CNN
-F 3 "" H 3950 4350 50  0001 C CNN
-	1    3950 4350
+P 4000 4850
+F 0 "#PWR?" H 4000 4700 50  0001 C CNN
+F 1 "VPP" V 4000 5150 50  0000 R CNN
+F 2 "" H 4000 4850 50  0001 C CNN
+F 3 "" H 4000 4850 50  0001 C CNN
+	1    4000 4850
 	0    -1   -1   0   
 $EndComp
 $Comp
@@ -854,15 +821,7 @@ Wire Notes Line width 12 style solid
 Wire Notes Line width 12 style solid
 	4500 700  2650 700 
 Text Notes 3450 2900 0    118  ~ 0
-HEADERS
-Wire Notes Line width 12 style solid
-	3400 2700 3400 4600
-Wire Notes Line width 12 style solid
-	3400 4600 4750 4600
-Wire Notes Line width 12 style solid
-	4750 4600 4750 2700
-Wire Notes Line width 12 style solid
-	4750 2700 3400 2700
+CONNECTORS
 $Comp
 L power:VBUS #PWR?
 U 1 1 5BE0AEED
@@ -1163,58 +1122,10 @@ NoConn ~ 5900 3850
 NoConn ~ 5900 4050
 NoConn ~ 5900 4150
 NoConn ~ 5900 4250
-$Comp
-L Device:D_Schottky D2
-U 1 1 5BD988B7
-P 3300 1300
-F 0 "D2" H 3300 1084 50  0000 C CNN
-F 1 "1N4001" H 3300 1175 50  0000 C CNN
-F 2 "Diode_SMD:D_SMA_Handsoldering" H 3300 1300 50  0001 C CNN
-F 3 "~" H 3300 1300 50  0001 C CNN
-	1    3300 1300
-	-1   0    0    1   
-$EndComp
-$Comp
-L Device:D_Schottky D3
-U 1 1 5BD9896F
-P 3300 1650
-F 0 "D3" H 3300 1434 50  0000 C CNN
-F 1 "1N4001" H 3300 1525 50  0000 C CNN
-F 2 "Diode_SMD:D_SMA_Handsoldering" H 3300 1650 50  0001 C CNN
-F 3 "~" H 3300 1650 50  0001 C CNN
-	1    3300 1650
-	-1   0    0    1   
-$EndComp
 Wire Wire Line
 	3000 1650 3150 1650
 Wire Wire Line
 	3000 1300 3150 1300
-$Comp
-L Device:R_POT_TRIM RV1
-U 1 1 5BDA4ED9
-P 2400 3950
-F 0 "RV1" V 2193 3950 50  0000 C CNN
-F 1 "100k" V 2284 3950 50  0000 C CNN
-F 2 "ab2_passive:AB2_POT_TRIM" H 2400 3950 50  0001 C CNN
-F 3 "~" H 2400 3950 50  0001 C CNN
-	1    2400 3950
-	0    1    1    0   
-$EndComp
-NoConn ~ 2400 4100
-Wire Wire Line
-	2500 3350 2650 3350
-Wire Wire Line
-	2550 3950 2650 3950
-Wire Wire Line
-	2650 3950 2650 3350
-Wire Wire Line
-	2650 3350 2850 3350
-Wire Wire Line
-	2850 3350 2850 3250
-Connection ~ 2650 3350
-Wire Wire Line
-	2850 3350 2850 3450
-Connection ~ 2850 3350
 Wire Wire Line
 	2850 3750 2850 3850
 Wire Wire Line
@@ -1224,8 +1135,6 @@ Wire Wire Line
 Wire Wire Line
 	2150 4050 2150 3950
 Connection ~ 2150 3950
-Wire Wire Line
-	2150 3950 2250 3950
 Text Label 1350 5800 0    50   ~ 0
 D+
 Text Label 1350 5900 0    50   ~ 0
@@ -1233,35 +1142,35 @@ D-
 $Comp
 L Mechanical:MountingHole H2
 U 1 1 5BDC0899
-P 2750 5550
-F 0 "H2" H 2850 5596 50  0000 L CNN
-F 1 "MountingHole" H 2850 5505 50  0000 L CNN
-F 2 "MountingHole:MountingHole_3.2mm_M3_ISO14580" H 2750 5550 50  0001 C CNN
-F 3 "~" H 2750 5550 50  0001 C CNN
-	1    2750 5550
+P 2750 6850
+F 0 "H2" H 2850 6896 50  0000 L CNN
+F 1 "MountingHole" H 2850 6805 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.2mm_M2_Pad" H 2750 6850 50  0001 C CNN
+F 3 "~" H 2750 6850 50  0001 C CNN
+	1    2750 6850
 	1    0    0    -1  
 $EndComp
 $Comp
 L Mechanical:MountingHole H1
 U 1 1 5BDC03AF
-P 2750 5350
-F 0 "H1" H 2850 5396 50  0000 L CNN
-F 1 "MountingHole" H 2850 5305 50  0000 L CNN
-F 2 "MountingHole:MountingHole_3.2mm_M3_ISO14580" H 2750 5350 50  0001 C CNN
-F 3 "~" H 2750 5350 50  0001 C CNN
-	1    2750 5350
+P 2750 6650
+F 0 "H1" H 2850 6696 50  0000 L CNN
+F 1 "MountingHole" H 2850 6605 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.2mm_M2_Pad" H 2750 6650 50  0001 C CNN
+F 3 "~" H 2750 6650 50  0001 C CNN
+	1    2750 6650
 	1    0    0    -1  
 $EndComp
-Text Notes 2600 5100 0    118  ~ 0
+Text Notes 2600 6400 0    118  ~ 0
 MECHANICAL
 Wire Notes Line width 12 style solid
-	2550 4900 3750 4900
+	2550 6200 3750 6200
 Wire Notes Line width 12 style solid
-	3750 4900 3750 5750
+	3750 6200 3750 7050
 Wire Notes Line width 12 style solid
-	3750 5750 2550 5750
+	3750 7050 2550 7050
 Wire Notes Line width 12 style solid
-	2550 5750 2550 4900
+	2550 7050 2550 6200
 Text Notes 4750 900  0    118  ~ 0
 DECOUPLING
 Wire Notes Line width 12 style solid
@@ -1272,4 +1181,103 @@ Wire Notes Line width 12 style solid
 	7100 2100 4700 2100
 Wire Notes Line width 12 style solid
 	4700 2100 4700 700 
+$Comp
+L Connector_Generic:Conn_01x02 J3
+U 1 1 5C4B71BA
+P 4200 3550
+F 0 "J3" H 4280 3542 50  0000 L CNN
+F 1 "TAPER_RIGHT" H 4280 3451 50  0000 L CNN
+F 2 "Connector_Molex:Molex_PicoBlade_53048-0210_1x02_P1.25mm_Horizontal" H 4200 3550 50  0001 C CNN
+F 3 "~" H 4200 3550 50  0001 C CNN
+	1    4200 3550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x02 J4
+U 1 1 5C4B92E9
+P 4200 4000
+F 0 "J4" H 4280 3992 50  0000 L CNN
+F 1 "TAPER_LEFT" H 4280 3901 50  0000 L CNN
+F 2 "Connector_Molex:Molex_PicoBlade_53048-0210_1x02_P1.25mm_Horizontal" H 4200 4000 50  0001 C CNN
+F 3 "~" H 4200 4000 50  0001 C CNN
+	1    4200 4000
+	1    0    0    -1  
+$EndComp
+Text GLabel 4000 4000 0    50   Input ~ 0
+TOUCH_SENSE
+$Comp
+L Connector_Generic:Conn_01x02 J2
+U 1 1 5C4C8209
+P 4200 3100
+F 0 "J2" H 4280 3092 50  0000 L CNN
+F 1 "MOTOR" H 4280 3001 50  0000 L CNN
+F 2 "Connector_Molex:Molex_PicoBlade_53048-0210_1x02_P1.25mm_Horizontal" H 4200 3100 50  0001 C CNN
+F 3 "~" H 4200 3100 50  0001 C CNN
+	1    4200 3100
+	1    0    0    -1  
+$EndComp
+Wire Notes Line width 12 style solid
+	3400 2700 4800 2700
+Wire Notes Line width 12 style solid
+	4800 2700 4800 5100
+Wire Notes Line width 12 style solid
+	3400 2700 3400 5100
+Wire Notes Line width 12 style solid
+	3400 5100 4800 5100
+$Comp
+L nelib:STPS1L40 D?
+U 1 1 5C4BAB9A
+P 3300 1300
+F 0 "D?" H 3300 1085 50  0000 C CNN
+F 1 "STPS1L40" H 3300 1176 50  0000 C CNN
+F 2 "Diode_SMD:D_SMA" H 3300 1125 50  0001 C CNN
+F 3 "" H 3300 1300 50  0001 C CNN
+	1    3300 1300
+	-1   0    0    1   
+$EndComp
+$Comp
+L nelib:STPS1L40 D?
+U 1 1 5C4C2FBE
+P 3300 1650
+F 0 "D?" H 3300 1434 50  0000 C CNN
+F 1 "STPS1L40" H 3300 1525 50  0000 C CNN
+F 2 "Diode_SMD:D_SMA" H 3300 1475 50  0001 C CNN
+F 3 "" H 3300 1650 50  0001 C CNN
+	1    3300 1650
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R_POT_TRIM RV1
+U 1 1 5BDA4ED9
+P 2500 3950
+F 0 "RV1" H 2430 3904 50  0000 R CNN
+F 1 "100k" H 2430 3995 50  0000 R CNN
+F 2 "ab2_passive:AB2_POT_TRIM" H 2500 3950 50  0001 C CNN
+F 3 "~" H 2500 3950 50  0001 C CNN
+	1    2500 3950
+	-1   0    0    1   
+$EndComp
+$Comp
+L nelib:STPS1L40 D?
+U 1 1 5C4C4325
+P 2350 3350
+F 0 "D?" H 2350 3134 50  0000 C CNN
+F 1 "STPS1L40" H 2350 3225 50  0000 C CNN
+F 2 "Diode_SMD:D_SMA" H 2350 3175 50  0001 C CNN
+F 3 "" H 2350 3350 50  0001 C CNN
+	1    2350 3350
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	2850 3250 2850 3350
+Wire Wire Line
+	2500 3350 2500 3800
+Wire Wire Line
+	2500 3350 2850 3350
+Connection ~ 2500 3350
+Connection ~ 2850 3350
+Wire Wire Line
+	2850 3350 2850 3450
+Wire Wire Line
+	2150 3950 2350 3950
 $EndSCHEMATC

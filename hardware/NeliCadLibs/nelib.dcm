@@ -1,9 +1,0 @@
-EESchema-DOCLIB  Version 2.0
-#
-$CMP AD8066
-D The AD8066 is a high performance, high speed, FET input amplifiers available in small packages.
-K opamp amp ad8066 bandwith
-F http://www.analog.com/media/en/technical-documentation/data-sheets/AD8065_8066.pdf
-$ENDCMP
-#
-#End Doc Library
