@@ -494,12 +494,12 @@ F 3 "" H 2150 4450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R5
+L Device:R R3
 U 1 1 5BC47906
 P 2150 4200
-F 0 "R5" V 2265 4200 50  0000 C CNN
+F 0 "R3" V 2265 4200 50  0000 C CNN
 F 1 "3k" V 2356 4200 50  0000 C CNN
-F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 2080 4200 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 2080 4200 50  0001 C CNN
 F 3 "~" H 2150 4200 50  0001 C CNN
 	1    2150 4200
 	-1   0    0    1   
@@ -682,12 +682,12 @@ Wire Wire Line
 Wire Wire Line
 	3750 1300 3750 1200
 $Comp
-L Device:R R6
+L Device:R R4
 U 1 1 5BDBEFF0
 P 3750 1550
-F 0 "R6" H 3820 1596 50  0000 L CNN
+F 0 "R4" H 3820 1596 50  0000 L CNN
 F 1 "1k" H 3820 1505 50  0000 L CNN
-F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" V 3680 1550 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" V 3680 1550 50  0001 C CNN
 F 3 "~" H 3750 1550 50  0001 C CNN
 	1    3750 1550
 	1    0    0    -1  
@@ -727,12 +727,12 @@ USB_DN
 Text GLabel 7200 5650 2    50   Input ~ 0
 USB_DP
 $Comp
-L Device:R_Small R4
+L Device:R_Small R2
 U 1 1 5BDD3A19
 P 1750 5600
-F 0 "R4" H 1809 5646 50  0000 L CNN
+F 0 "R2" H 1809 5646 50  0000 L CNN
 F 1 "1.5k" H 1809 5555 50  0000 L CNN
-F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 1750 5600 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 1750 5600 50  0001 C CNN
 F 3 "~" H 1750 5600 50  0001 C CNN
 	1    1750 5600
 	1    0    0    -1  
@@ -758,7 +758,7 @@ U 1 1 5BDF23B7
 P 1250 6300
 F 0 "R1" V 1354 6300 50  0000 C CNN
 F 1 "100k" V 1445 6300 50  0000 C CNN
-F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 1250 6300 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 1250 6300 50  0001 C CNN
 F 3 "~" H 1250 6300 50  0001 C CNN
 	1    1250 6300
 	0    1    1    0   
@@ -1043,12 +1043,12 @@ F 3 "" H 5700 3950 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R_Small R7
+L Device:R_Small R5
 U 1 1 5BEDBA2D
 P 5700 3750
-F 0 "R7" H 5641 3796 50  0000 R CNN
+F 0 "R5" H 5641 3796 50  0000 R CNN
 F 1 "10k" H 5641 3705 50  0000 R CNN
-F 2 "Resistor_SMD:R_1206_3216Metric_Pad1.42x1.75mm_HandSolder" H 5700 3750 50  0001 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.15x1.40mm_HandSolder" H 5700 3750 50  0001 C CNN
 F 3 "~" H 5700 3750 50  0001 C CNN
 	1    5700 3750
 	1    0    0    -1  
