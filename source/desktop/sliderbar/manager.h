@@ -11,11 +11,19 @@
 #include <protocol/protocol_definition.h>
 #include <protocol/protocol_structures.h>
 
+#include "plugins/pluginmanager.h"
 #include "serialinterface.h"
 #include "settings.h"
 
 namespace sliderbar {
 
+/**
+ * @brief The Manager class is the link between the SliderBar and this app
+ *
+ * It transfers data back and forth from the SliderBar.
+ * The `process` functions handles the received and decoded packets and execute
+ * some predefined actions.
+ */
 class Manager : public QObject, public DataOutInterface {
     Q_OBJECT
 
@@ -83,6 +91,9 @@ private:
     QTime m_pingTime;
 
     SerialInterface* m_dataInterface = nullptr;
+
+    protocol::CalibrationData m_calibrationData;
+    PluginManager* m_pluginManager = nullptr;
 
     bool m_connected = false;
 };

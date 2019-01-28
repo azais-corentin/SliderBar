@@ -29,8 +29,10 @@ public:
 
     void loadPlugins();
 
+    void processPosition(float position);
+
 private:
-    std::vector<PluginContainer> m_plugins;
+    std::vector<Plugin> m_plugins;
 };
 
 }

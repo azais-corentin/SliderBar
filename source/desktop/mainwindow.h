@@ -36,8 +36,6 @@ private:
 
     sliderbar::Manager* m_sliderbar;
     bool m_connected = false;
-
-    sliderbar::SerialInterface* m_dataInterface;
 };
 
 #endif // MAINWINDOW_H

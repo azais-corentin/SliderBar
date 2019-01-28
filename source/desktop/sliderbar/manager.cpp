@@ -17,10 +17,15 @@ Manager::Manager(QWidget* parent)
     : m_parent(parent)
 {
     m_settings      = new Settings(this);
-    m_dataInterface = new SerialInterface();
+    m_dataInterface = new SerialInterface;
 
     setTransmitter(m_dataInterface);
     m_dataInterface->setReceiver(this);
+
+    m_pluginManager = new PluginManager;
+
+    for (int i = 0; i < 100; i++)
+        m_pluginManager->processPosition(50);
 }
 
 void Manager::initialiseConnections()
@@ -222,21 +227,25 @@ void Manager::process(const Response& response)
 
 void Manager::process(const Response_CalibrationData& value)
 {
-    protocol::CalibrationData data;
-    data.minimumPosition = value.minPosition;
-    data.maximumPosition = value.maxPosition;
-    data.minimumVelocity = value.minVelocity;
-    data.maximumVeloicty = value.maxVelocity;
+    m_calibrationData.minimumPosition = value.minPosition;
+    m_calibrationData.maximumPosition = value.maxPosition;
+    m_calibrationData.minimumVelocity = value.minVelocity;
+    m_calibrationData.maximumVeloicty = value.maxVelocity;
 
-    emit calibrationData(data);
+    emit calibrationData(m_calibrationData);
 }
 
 void Manager::process(const Response_Value& value)
 {
     switch (value.which_parameter) {
-    case Response_Value_position_tag:
-        break;
+    case Response_Value_position_tag: {
+        // Got a new position
+        // Send the new position to the plugins
+        float position = 100.f * value.parameter.position / m_calibrationData.maximumPosition;
+        m_pluginManager->processPosition(position);
+    } break;
     case Response_Value_velocity_tag:
+        // Got a new velocity
         break;
     }
 }

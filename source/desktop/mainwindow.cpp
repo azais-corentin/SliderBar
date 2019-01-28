@@ -18,11 +18,11 @@ MainWindow::MainWindow(QWidget* parent)
     m_actionPlugins = new QAction("Plugins");
     ui->menuBar->addAction(m_actionPlugins);
 
+    // The order is important
     m_sliderbar = new sliderbar::Manager(this);
 
     loadQuickSettings();
     initialiseConnections();
-
     m_sliderbar->initialiseConnections();
 }
 
@@ -32,7 +32,6 @@ MainWindow::~MainWindow()
 
     delete m_actionPlugins;
     delete m_sliderbar;
-    delete m_dataInterface;
 }
 
 void MainWindow::loadQuickSettings()
