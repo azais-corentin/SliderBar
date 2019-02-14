@@ -23,9 +23,6 @@ Manager::Manager(QWidget* parent)
     m_dataInterface->setReceiver(this);
 
     m_pluginManager = new PluginManager;
-
-    for (int i = 0; i < 100; i++)
-        m_pluginManager->processPosition(50);
 }
 
 void Manager::initialiseConnections()
@@ -202,6 +199,11 @@ QWidget* Manager::getParent()
 bool Manager::isConnected()
 {
     return m_connected;
+}
+
+std::vector<Plugin*> Manager::getPlugins()
+{
+    return m_pluginManager->getPlugins();
 }
 
 void Manager::process(const Response& response)

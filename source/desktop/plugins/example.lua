@@ -1,7 +1,19 @@
 -- Called at the first plugin loading.
--- Describes the key(s) pressed to activate this plugin
+-- Describes the key(s) pressed to activate this plugin.
 function activator()
-    return 'shift' -- The key(s) that activates the plugin
+    return 'Shift', Hold -- The key(s) that activates the plugin & the type of activation:
+    -- Hold for holding the key to keep it activated
+    -- Toggle for toggling the activation
+end
+
+-- This function allows your plugins to be configured at runtime.
+-- Return a table with the name of the setting (which must be a predefined
+-- global variable) associated with a short text describing the variable.
+function settings()
+    return {
+        maxDelta = 'Maximum delta value',
+        maxPosDelta = 'Maximum position delta from the middle position'
+    }
 end
 
 -- Called each time the plugin is activated.
@@ -16,8 +28,17 @@ end
 
 -- You can create your own global variables, they won't interfere with other
 -- scripts.
+maxDelta = 0
+maxPosDelta = 10
+
 delta = 0
 lastPosition = 0
+
+-- You can manipulate the keyboard and mouse using these functions:
+-- keyDown('key')
+-- keyUp('key')
+-- keyPress('key1+key2+...')
+-- mouseScroll(delta)
 
 -- There are several functions which are called everytime something happens, 
 -- and the plugin is activated (the activator key is pressed)
@@ -27,26 +48,31 @@ lastPosition = 0
 -- Some global variables you can use:
 -- position, in percent (0 - 100)
 -- velocity, in percent/s (0 - 100) [Only use if requestVelocity() was called in init()]
-
+-- isAutoMoving, is true if the sliderbar is moved by the motor
 function onPosition()
+    if isAutoMoving then
+        return
+    end
+
     -- Increments the delta
     delta = delta + lastPosition - position
+    lastPostion = position
 
-    if delta >= 5 then
+    if delta >= maxDelta then
         -- do something
+        delta = 0
+    elseif delta <= -maxDelta then
+        -- do something else
         delta = 0
     end
 
     -- You can access some global values already set:
     -- position, in percent (0 - 100)
     -- velocity, in percent/s (0 - 100)
-    if position >= 60 then
-        keys('ctrl+pgup')
+    -- isAutoMoving, tells if the slider is still moving from a setPosition call
+    if position >= 50 + maxPosDelta then
+        keyPress('Ctrl+PgUp')
+    elseif position <= 50 - maxPosDelta then
+        keyPress('Ctrl+PgDown')
     end
-
-    if position <= 50 then
-        keys('ctrl+pgdown')
-    end
-
-    lastPosition = position
 end

@@ -8,11 +8,6 @@
 
 namespace sliderbar {
 
-struct PluginContainer {
-    std::string name;
-    Plugin plugin;
-};
-
 /**
  * @brief The PluginManager class
  * The PluginManager class acts as an interface between the SliderBar Manager
@@ -28,11 +23,12 @@ public:
     ~PluginManager();
 
     void loadPlugins();
+    std::vector<Plugin*> getPlugins();
 
     void processPosition(float position);
 
 private:
-    std::vector<Plugin> m_plugins;
+    std::vector<Plugin*> m_plugins;
 };
 
 }

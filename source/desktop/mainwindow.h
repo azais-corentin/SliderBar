@@ -31,8 +31,7 @@ public slots:
 private:
     void initialiseConnections();
 
-    Ui::MainWindow* ui       = nullptr;
-    QAction* m_actionPlugins = nullptr;
+    Ui::MainWindow* ui = nullptr;
 
     sliderbar::Manager* m_sliderbar;
     bool m_connected = false;

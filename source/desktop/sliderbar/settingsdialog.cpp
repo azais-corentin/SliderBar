@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 
+#include "plugins/pluginsettings.h"
 #include "settings.h"
 
 #include <QDebug>
@@ -27,6 +28,10 @@ SettingsDialog::SettingsDialog(Settings* settings, QWidget* parent)
     connect(ui->bCalibrate, &QPushButton::clicked,
             this, &SettingsDialog::requestCalibration);
 
+    // Add loaded plugins to the tabWidget
+    createPluginSettings();
+
+    // Load current settings into the UI
     loadSettings();
 }
 
@@ -68,6 +73,16 @@ void SettingsDialog::resetSettings()
 void SettingsDialog::on_listCategories_currentRowChanged(int currentRow)
 {
     ui->stackedWidget->setCurrentIndex(currentRow);
+}
+
+void SettingsDialog::createPluginSettings()
+{
+    auto plugins = m_settings->getPlugins();
+    int i        = 0;
+    for (auto const& plugin : plugins) {
+        ui->tabPlugins->addTab(new PluginSettings(plugin, this), QString::fromStdString(plugin->getName()));
+        i++;
+    }
 }
 
 void SettingsDialog::saveSettings()

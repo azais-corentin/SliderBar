@@ -1,5 +1,6 @@
 #include "pluginmanager.h"
 
+#include <QDebug>
 #include <QDir>
 
 namespace sliderbar {
@@ -11,6 +12,8 @@ PluginManager::PluginManager()
 
 PluginManager::~PluginManager()
 {
+    for (auto plugin : m_plugins)
+        delete plugin;
 }
 
 void PluginManager::loadPlugins()
@@ -28,24 +31,31 @@ void PluginManager::loadPlugins()
 
         auto name = QFileInfo(dir.absoluteFilePath(filename)).completeBaseName().toStdString();
 
-        m_plugins.emplace_back(name, file.readAll().toStdString());
+        Plugin* loadedPlugin = new Plugin(name, file.readAll().toStdString());
+        m_plugins.push_back(loadedPlugin);
     }
 
     // Verify all plugins are valid (Sol2's lua.script(blabla).valid())
     auto it = m_plugins.begin();
     while (it != m_plugins.end()) {
-        if (!(*it).isValid())
+        if (!(*it)->isValid()) {
+            delete (*it);
             it = m_plugins.erase(it);
-        else
+        } else
             it++;
     }
+}
+
+std::vector<Plugin*> PluginManager::getPlugins()
+{
+    return m_plugins;
 }
 
 void PluginManager::processPosition(float position)
 {
     auto it = m_plugins.begin();
     while (it != m_plugins.end()) {
-        (*it).processPosition(position);
+        (*it)->processPosition(position);
         it++;
     }
 }

@@ -7,6 +7,7 @@
 
 namespace sliderbar {
 
+class Plugin;
 class Manager;
 
 /**
@@ -55,6 +56,8 @@ public:
 
     void calibration(const protocol::CalibrationData& data);
     protocol::CalibrationData calibration();
+
+    std::vector<Plugin*> getPlugins();
 public slots:
     /**
      * @brief Show the settings in a modal widows.
@@ -67,7 +70,7 @@ signals:
     void settingsChanged();
 
 private:
-    Manager* m_parent;
+    Manager* m_manager;
     QSettings m_settings;
 };
 

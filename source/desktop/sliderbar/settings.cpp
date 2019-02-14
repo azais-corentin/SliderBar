@@ -1,12 +1,12 @@
 #include "settings.h"
 
-#include "settingsdialog.h"
 #include "manager.h"
+#include "settingsdialog.h"
 
 namespace sliderbar {
 
 Settings::Settings(Manager* parent)
-    : m_parent(parent)
+    : m_manager(parent)
 {
 }
 
@@ -84,13 +84,18 @@ protocol::CalibrationData Settings::calibration()
     return data;
 }
 
+std::vector<Plugin*> Settings::getPlugins()
+{
+    return m_manager->getPlugins();
+}
+
 void Settings::showSettings()
 {
-    SettingsDialog settingsDialog(this, m_parent->getParent());
+    SettingsDialog settingsDialog(this, m_manager->getParent());
 
     // Connect signals
-    QObject::connect(&settingsDialog, &SettingsDialog::requestCalibration, m_parent, &Manager::requestCalibration);
-    QObject::connect(m_parent, &Manager::calibrationData, &settingsDialog, &SettingsDialog::receiveCalibrationData);
+    QObject::connect(&settingsDialog, &SettingsDialog::requestCalibration, m_manager, &Manager::requestCalibration);
+    QObject::connect(m_manager, &Manager::calibrationData, &settingsDialog, &SettingsDialog::receiveCalibrationData);
 
     if (settingsDialog.execute() == QDialog::Accepted) {
         emit settingsChanged();

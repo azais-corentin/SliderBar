@@ -35,6 +35,8 @@ public:
     QWidget* getParent();
     bool isConnected();
 
+    std::vector<Plugin*> getPlugins();
+
 public slots:
     /**
      * @brief Connects the SliderBar.
@@ -57,6 +59,7 @@ public slots:
      * @note Blocking function.
      */
     void managePlugins();
+    //void managePlugin(int index);
 
     void receive(uint8_t* buf, const uint16_t& len) final;
     bool transmit(uint8_t* buf, const uint16_t& len) final;

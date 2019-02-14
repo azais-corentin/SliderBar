@@ -41,6 +41,8 @@ private slots:
     void on_listCategories_currentRowChanged(int currentRow);
 
 private:
+    void createPluginSettings();
+
     void saveSettings();
     void loadSettings();
 

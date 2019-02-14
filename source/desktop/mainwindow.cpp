@@ -15,9 +15,6 @@ MainWindow::MainWindow(QWidget* parent)
     // Removes the separators
     ui->statusBar->setStyleSheet("QStatusBar::item {border: none;}");
 
-    m_actionPlugins = new QAction("Plugins");
-    ui->menuBar->addAction(m_actionPlugins);
-
     // The order is important
     m_sliderbar = new sliderbar::Manager(this);
 
@@ -30,7 +27,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 
-    delete m_actionPlugins;
     delete m_sliderbar;
 }
 
@@ -72,8 +68,6 @@ void MainWindow::initialiseConnections()
     // SliderBar actions
     connect(ui->actionConnect, &QAction::triggered,
             this, &MainWindow::handleActionConnect);
-    connect(m_actionPlugins, &QAction::triggered,
-            m_sliderbar, &sliderbar::Manager::managePlugins);
 
     connect(m_sliderbar, &sliderbar::Manager::connected,
             this, &MainWindow::connected);

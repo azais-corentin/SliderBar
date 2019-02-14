@@ -33,7 +33,10 @@ SOURCES += \
                 sliderbar/manager.cpp \
                 sliderbar/settings.cpp \
                 sliderbar/plugins/pluginmanager.cpp \
-                sliderbar/plugins/plugin.cpp
+                sliderbar/plugins/plugin.cpp \
+                sliderbar/hardwareio/keyboard.cpp \
+                sliderbar/hardwareio/mouse.cpp \
+    sliderbar/plugins/pluginsettings.cpp
 
 HEADERS += \
                 mainwindow.h \
@@ -52,7 +55,10 @@ HEADERS += \
                 sliderbar/manager.h \
                 sliderbar/settings.h \
                 sliderbar/plugins/pluginmanager.h \
-                sliderbar/plugins/plugin.h
+                sliderbar/plugins/plugin.h \
+                sliderbar/hardwareio/keyboard.h \
+                sliderbar/hardwareio/mouse.h \
+    sliderbar/plugins/pluginsettings.h
 
 FORMS += \
                 mainwindow.ui \
@@ -63,9 +69,17 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+# Protocol
 DISTFILES += \
                 ../common/protocol/messages/sliderbar.proto \
-    plugins/scrolltab.lua
+
+# Plugins
+DISTFILES += \
+                plugins/scrolltab.lua \
+                plugins/appswitch.lua \
+                plugins/example.lua \
+                plugins/mousescroll.lua \
+                plugins/scrolltab.lua
 
 # Lua
 INCLUDEPATH +=  C:\lua\include\sol
