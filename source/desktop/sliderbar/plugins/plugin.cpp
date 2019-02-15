@@ -23,6 +23,8 @@ Plugin::Plugin(std::string name, std::string text)
 
     m_lua.set_function("setPosition", &Plugin::setPosition, this);
 
+    m_lua.set_function("debug", &Plugin::debug, this);
+
     // Setup activation
     m_lua["Hold"]   = Activation::Hold;
     m_lua["Toggle"] = Activation::Toggle;
@@ -49,13 +51,20 @@ Plugin::Plugin(std::string name, std::string text)
     // Get plugin settings
     sol::table settings = m_lua["settings"]();
     settings.for_each([&](std::pair<sol::object, sol::object> kvp) {
-        std::string name, desc;
-        name = kvp.first.as<std::string>();
-        desc = kvp.second.as<std::string>();
-        m_settings.insert(std::make_pair(name, desc));
+        Setting set;
+        set.name        = kvp.first.as<std::string>();
+        set.description = kvp.second.as<std::string>();
+        set.type        = m_lua[set.name].get_type();
+
+        m_settings.push_back(set);
     });
 
     qDebug() << "Plugin" << QString::fromStdString(name) << "successfully loaded";
+}
+
+void Plugin::init()
+{
+    m_lua["init"]();
 }
 
 void Plugin::processPosition(float position)
@@ -77,5 +86,17 @@ void Plugin::setPosition(float x)
     // Here, request for the sliderbar position to be set to x
     qDebug() << "setPosition(" << x << ") called!";
 }
+
+void Plugin::debug(std::string msg)
+{
+    qDebug() << "Debug from plugin" << QString::fromStdString(m_name);
+    qDebug() << QString::fromStdString(msg);
+}
+
+/* For the implementation of
+ * template <class T>
+ * void Plugin::setSetting(std::string name, T value)
+ * See plugin_impl.h
+ */
 
 }

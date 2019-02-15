@@ -5,19 +5,26 @@
 #include <QLineEdit>
 #include <QWidget>
 
-#include "plugin.h"
-
 namespace sliderbar {
+class Settings;
+class Plugin;
 
 class PluginSettings : public QWidget {
     Q_OBJECT
 
 public:
-    explicit PluginSettings(Plugin* plugin, QWidget* parent = nullptr);
+    explicit PluginSettings(Settings* settings, Plugin* plugin, QWidget* parent = nullptr);
     ~PluginSettings() override;
+
+    void saveSettings();
+    void loadSettings();
 
 private:
     QFormLayout* m_layout;
+    Settings* m_settings;
+    Plugin* m_plugin;
+
+    std::vector<QLineEdit*> m_fields;
 };
 
 }

@@ -58,7 +58,9 @@ HEADERS += \
                 sliderbar/plugins/plugin.h \
                 sliderbar/hardwareio/keyboard.h \
                 sliderbar/hardwareio/mouse.h \
-    sliderbar/plugins/pluginsettings.h
+    sliderbar/plugins/pluginsettings.h \
+    sliderbar/settings_impl.tpp \
+    sliderbar/plugins/plugin_impl.tpp
 
 FORMS += \
                 mainwindow.ui \

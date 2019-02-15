@@ -8,6 +8,11 @@ namespace sliderbar {
 Settings::Settings(Manager* parent)
     : m_manager(parent)
 {
+    m_settingsDialog = new SettingsDialog(this, m_manager->getParent());
+
+    // Connect signals
+    QObject::connect(m_settingsDialog, &SettingsDialog::requestCalibration, m_manager, &Manager::requestCalibration);
+    QObject::connect(m_manager, &Manager::calibrationData, m_settingsDialog, &SettingsDialog::receiveCalibrationData);
 }
 
 void Settings::clear()
@@ -84,6 +89,36 @@ protocol::CalibrationData Settings::calibration()
     return data;
 }
 
+/* For the implementation of
+ * template <class T>
+ * void Settings::pluginSetting(const std::string plugin, const std::string setting, const T value)
+ * See settings_impl.h
+ */
+
+bool Settings::pluginSetting_exists(const std::string plugin, const std::string setting) const
+{
+    return m_settings.contains(QString("sliderbar/plugin/%1/%2")
+                                   .arg(QString::fromStdString(plugin))
+                                   .arg(QString::fromStdString(setting)));
+}
+
+std::string Settings::pluginSetting_string(const std::string plugin, const std::string setting) const
+{
+    return m_settings.value(QString("sliderbar/plugin/%1/%2")
+                                .arg(QString::fromStdString(plugin))
+                                .arg(QString::fromStdString(setting)))
+        .toString()
+        .toStdString();
+}
+
+double Settings::pluginSetting_double(const std::string plugin, const std::string setting) const
+{
+    return m_settings.value(QString("sliderbar/plugin/%1/%2")
+                                .arg(QString::fromStdString(plugin))
+                                .arg(QString::fromStdString(setting)))
+        .toDouble();
+}
+
 std::vector<Plugin*> Settings::getPlugins()
 {
     return m_manager->getPlugins();
@@ -91,13 +126,7 @@ std::vector<Plugin*> Settings::getPlugins()
 
 void Settings::showSettings()
 {
-    SettingsDialog settingsDialog(this, m_manager->getParent());
-
-    // Connect signals
-    QObject::connect(&settingsDialog, &SettingsDialog::requestCalibration, m_manager, &Manager::requestCalibration);
-    QObject::connect(m_manager, &Manager::calibrationData, &settingsDialog, &SettingsDialog::receiveCalibrationData);
-
-    if (settingsDialog.execute() == QDialog::Accepted) {
+    if (m_settingsDialog->execute() == QDialog::Accepted) {
         emit settingsChanged();
     }
 }

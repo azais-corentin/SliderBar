@@ -16,13 +16,12 @@ namespace sliderbar {
 Manager::Manager(QWidget* parent)
     : m_parent(parent)
 {
+    m_pluginManager = new PluginManager;
     m_settings      = new Settings(this);
     m_dataInterface = new SerialInterface;
 
     setTransmitter(m_dataInterface);
     m_dataInterface->setReceiver(this);
-
-    m_pluginManager = new PluginManager;
 }
 
 void Manager::initialiseConnections()

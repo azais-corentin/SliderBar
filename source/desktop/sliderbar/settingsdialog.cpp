@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 
+#include "plugins/plugin.h"
 #include "plugins/pluginsettings.h"
 #include "settings.h"
 
@@ -80,30 +81,35 @@ void SettingsDialog::createPluginSettings()
     auto plugins = m_settings->getPlugins();
     int i        = 0;
     for (auto const& plugin : plugins) {
-        ui->tabPlugins->addTab(new PluginSettings(plugin, this), QString::fromStdString(plugin->getName()));
+        ui->tabPlugins->addTab(new PluginSettings(m_settings, plugin, this), QString::fromStdString(plugin->getName()));
         i++;
     }
 }
 
 void SettingsDialog::saveSettings()
 {
-    // Save serial port configuration
+    // Autoconnect
     m_settings->autoconnect(ui->eAutoconnect->isChecked());
 
-    // Save serial protocol configuration
+    // Protocol configuration
     m_settings->protocolStartFlag(ui->eStartFlag->text().mid(2).toInt(nullptr, 16));
     m_settings->protocolEndFlag(ui->eEndFlag->text().mid(2).toInt(nullptr, 16));
     m_settings->protocolEscapeFlag(ui->eEscapeFlag->text().mid(2).toInt(nullptr, 16));
     m_settings->protocolXORFlag(ui->eXORFlag->text().mid(2).toInt(nullptr, 16));
     m_settings->protocolACKTimeout(ui->eAckTimeOut->value());
 
-    // Save SliderBar calibration configuration
+    // SliderBar calibration
     protocol::CalibrationData calibrationData;
     calibrationData.minimumPosition = ui->eMinPos->value();
     calibrationData.maximumPosition = ui->eMaxPos->value();
     calibrationData.minimumVelocity = ui->eMinVel->value();
     calibrationData.maximumVeloicty = ui->eMaxVel->value();
     m_settings->calibration(calibrationData);
+
+    // Plugin settings
+    int nPlugins = ui->tabPlugins->count();
+    for (int iPlugin = 0; iPlugin < nPlugins; iPlugin++)
+        qobject_cast<PluginSettings*>(ui->tabPlugins->widget(iPlugin))->saveSettings();
 }
 
 void SettingsDialog::loadSettings()
@@ -120,11 +126,15 @@ void SettingsDialog::loadSettings()
 
     // SliderBar calibration
     protocol::CalibrationData calibrationData = m_settings->calibration();
-
     ui->eMinPos->setValue(calibrationData.minimumPosition);
     ui->eMaxPos->setValue(calibrationData.maximumPosition);
     ui->eMinVel->setValue(calibrationData.minimumVelocity);
     ui->eMaxVel->setValue(calibrationData.maximumVeloicty);
+
+    // Plugin settings
+    int nPlugins = ui->tabPlugins->count();
+    for (int iPlugin = 0; iPlugin < nPlugins; iPlugin++)
+        qobject_cast<PluginSettings*>(ui->tabPlugins->widget(iPlugin))->loadSettings();
 }
 
 } // namespace SliderBar

@@ -17,12 +17,23 @@ public:
         Toggle
     };
 
+    struct Setting {
+        std::string name;
+        std::string description;
+        sol::type type;
+    };
+
     Plugin(std::string name, std::string text);
+    void init();
 
     bool isValid() { return m_valid; }
     std::string getName() { return m_name; }
 
-    std::map<std::string, std::string> getSettings() { return m_settings; }
+    std::vector<Setting> getSettings() { return m_settings; }
+    template <class T>
+    void setSetting(std::string name, T value);
+    template <class T>
+    T getSetting(std::string name);
 
     void processPosition(float position);
 
@@ -31,8 +42,10 @@ private:
     void setPosition(float x);
     void resetDelta(sol::this_state s);
 
+    void debug(std::string msg);
+
     std::string m_name;
-    std::map<std::string, std::string> m_settings;
+    std::vector<Setting> m_settings;
 
     QKeySequence m_activator;
     Activation m_activationMode;
@@ -42,5 +55,7 @@ private:
 };
 
 }
+
+#include "plugin_impl.tpp"
 
 #endif // PLUGIN_H

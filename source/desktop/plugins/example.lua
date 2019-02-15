@@ -24,6 +24,9 @@ function init()
     -- This will request the SliderBar to calculate and send velocity values
     -- everytime it can. It will then call the onVelocity() callback.
     -- requestVelocity()
+
+    debug('maxDelta: ' .. maxDelta)
+    debug('maxPosDelta: ' .. maxPosDelta)
 end
 
 -- You can create your own global variables, they won't interfere with other

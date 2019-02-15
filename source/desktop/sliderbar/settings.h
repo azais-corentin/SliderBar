@@ -7,6 +7,7 @@
 
 namespace sliderbar {
 
+class SettingsDialog;
 class Plugin;
 class Manager;
 
@@ -57,6 +58,12 @@ public:
     void calibration(const protocol::CalibrationData& data);
     protocol::CalibrationData calibration();
 
+    template <class T>
+    void pluginSetting(const std::string plugin, const std::string setting, const T value);
+    bool pluginSetting_exists(const std::string plugin, const std::string setting) const;
+    std::string pluginSetting_string(const std::string plugin, const std::string setting) const;
+    double pluginSetting_double(const std::string plugin, const std::string setting) const;
+
     std::vector<Plugin*> getPlugins();
 public slots:
     /**
@@ -70,10 +77,13 @@ signals:
     void settingsChanged();
 
 private:
+    SettingsDialog* m_settingsDialog;
     Manager* m_manager;
     QSettings m_settings;
 };
 
 }
+
+#include "settings_impl.tpp"
 
 #endif // SLIDERBARSETTINGS_H
