@@ -36,7 +36,7 @@ SOURCES += \
                 sliderbar/plugins/plugin.cpp \
                 sliderbar/hardwareio/keyboard.cpp \
                 sliderbar/hardwareio/mouse.cpp \
-    sliderbar/plugins/pluginsettings.cpp
+                sliderbar/plugins/pluginsettings.cpp
 
 HEADERS += \
                 mainwindow.h \
@@ -58,9 +58,9 @@ HEADERS += \
                 sliderbar/plugins/plugin.h \
                 sliderbar/hardwareio/keyboard.h \
                 sliderbar/hardwareio/mouse.h \
-    sliderbar/plugins/pluginsettings.h \
-    sliderbar/settings_impl.tpp \
-    sliderbar/plugins/plugin_impl.tpp
+                sliderbar/plugins/pluginsettings.h \
+                sliderbar/settings_impl.tpp \
+                sliderbar/plugins/plugin_impl.tpp
 
 FORMS += \
                 mainwindow.ui \
