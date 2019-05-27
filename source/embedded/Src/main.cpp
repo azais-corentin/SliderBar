@@ -20,10 +20,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "USB/usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <USB/CDC.h>
+#include <cstring>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -74,7 +75,7 @@ static void MX_TIM2_Init(void);
 int main(void)
 {
     /* USER CODE BEGIN 1 */
-
+    usb::CDC cdc;
     /* USER CODE END 1 */
 
     /* MCU Configuration--------------------------------------------------------*/
@@ -98,18 +99,18 @@ int main(void)
     MX_ADC_Init();
     MX_CRC_Init();
     MX_TIM2_Init();
-    MX_USB_DEVICE_Init();
     /* USER CODE BEGIN 2 */
-
-    uint8_t buf[] = "This is a message from the microcontroller\r";
-    uint16_t len  = strlen(buf);
+    cdc.initialize();
     /* USER CODE END 2 */
+
+    uint8_t buf[] = "lol what\r";
+    uint16_t len  = 9;
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     while (1) {
         /* USER CODE END WHILE */
-
+        cdc.transmit(buf, len);
         /* USER CODE BEGIN 3 */
     }
     /* USER CODE END 3 */

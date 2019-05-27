@@ -6,7 +6,7 @@
 
 QT +=           widgets gui serialport
 
-CONFIG +=       c++14
+CONFIG +=       c++17
 
 TARGET =        SliderBar
 TEMPLATE =      app
