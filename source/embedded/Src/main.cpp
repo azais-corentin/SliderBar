@@ -78,7 +78,7 @@ int main(void)
     usb::CDC cdc;
     /* USER CODE END 1 */
 
-    /* MCU Configuration--------------------------------------------------------*/
+    /* MCU Configuration------------------------------------------------------*/
 
     /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
     HAL_Init();
@@ -100,17 +100,14 @@ int main(void)
     MX_CRC_Init();
     MX_TIM2_Init();
     /* USER CODE BEGIN 2 */
+    // This replaces the MX_USB initialization
     cdc.initialize();
     /* USER CODE END 2 */
-
-    uint8_t buf[] = "lol what\r";
-    uint16_t len  = 9;
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     while (1) {
         /* USER CODE END WHILE */
-        cdc.transmit(buf, len);
         /* USER CODE BEGIN 3 */
     }
     /* USER CODE END 3 */

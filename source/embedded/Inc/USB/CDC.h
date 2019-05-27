@@ -62,7 +62,7 @@ public:
      * @param len Number of data to be sent (in bytes)
      * @return USBD_OK if all operations are OK else USBD_FAIL or USBD_BUSY
      */
-    bool transmit(uint8_t* buf, const uint16_t& len) final;
+    bool transmit(uint8_t* buf, const uint16_t& len) const final;
 };
 
 } // namespace usb

@@ -207,14 +207,14 @@ void CDC::initialize()
 
 void CDC::receive(uint8_t* buf, const uint16_t& len)
 {
-    if (receiver)
-        receiver->receive(buf, len);
+    if (m_receiver)
+        m_receiver->receive(buf, len);
 
     USBD_CDC_SetRxBuffer(&hUsbDeviceFS, buf);
     USBD_CDC_ReceivePacket(&hUsbDeviceFS);
 }
 
-bool CDC::transmit(uint8_t* buf, const uint16_t& len)
+bool CDC::transmit(uint8_t* buf, const uint16_t& len) const
 {
     uint8_t result = USBD_OK;
 
