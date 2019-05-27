@@ -34,9 +34,9 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "usbd_conf.h"
+#include "USB/usbd_conf.h"
 
-/** @addtogroup STM32_USBD_DEVICE_LIBRARY
+ /** @addtogroup STM32_USBD_DEVICE_LIBRARY
   * @{
   */
   

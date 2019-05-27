@@ -20,7 +20,7 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "usbd_cdc_if.h"
+#include "USB/usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
 

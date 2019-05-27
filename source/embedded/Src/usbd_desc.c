@@ -20,9 +20,9 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include "USB/usbd_desc.h"
+#include "USB/usbd_conf.h"
 #include "usbd_core.h"
-#include "usbd_desc.h"
-#include "usbd_conf.h"
 
 /* USER CODE BEGIN INCLUDE */
 
