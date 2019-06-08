@@ -2,6 +2,9 @@
 #define __PROTODEF_H__
 
 #include <cstdint>
+#include <tuple>
+
+#include <Buffer/Buffer.hpp>
 
 namespace protocol {
 
@@ -23,6 +26,13 @@ static inline bool isFlag(const uint8_t& ch)
 static inline bool isEscape(const uint8_t& ch)
 {
     return ch == escapeflag;
+}
+
+static inline std::tuple<uint8_t*, uint16_t> escape(const uint8_t* data,
+                                                    const uint16_t len)
+{
+    Buffer<255> bufData;
+    bufData.append(data, len);
 }
 
 } // namespace protocol

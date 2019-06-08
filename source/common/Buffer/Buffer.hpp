@@ -83,12 +83,23 @@ public:
     uint8_t count(uint8_t ch);
 
     /**
-     *  @brief Returns whether or no ch is contained in the buffer.
+     *  @brief Returns whether or not ch is contained in the buffer.
      *  
      *  @param ch: The value to search.
      *  @retval true if ch is in the buffer, false otherwise.
      */
     bool contains(uint8_t ch);
+
+    /**
+     * @brief Returns true if the given comparison returns true for the data.
+     *
+     * @tparam T A comparison functor that takes a const uint8_t& as input and
+     * returns true if the comparison matches
+     * @param comparison
+     * @return
+     */
+    template <class T>
+    bool contains(T comparison);
 
     /**
      *  @brief Returns the index of the first x.

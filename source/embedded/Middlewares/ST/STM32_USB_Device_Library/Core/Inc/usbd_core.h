@@ -34,12 +34,12 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "USB/usbd_conf.h"
-#include "usbd_ctlreq.h"
+#include "usbd_conf.h"
 #include "usbd_def.h"
 #include "usbd_ioreq.h"
+#include "usbd_ctlreq.h"
 
- /** @addtogroup STM32_USB_DEVICE_LIBRARY
+/** @addtogroup STM32_USB_DEVICE_LIBRARY
   * @{
   */
   

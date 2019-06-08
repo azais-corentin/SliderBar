@@ -189,6 +189,16 @@ bool Buffer<N>::contains(uint8_t ch)
 }
 
 template <uint8_t N>
+template <class T>
+bool Buffer<N>::contains(T comparison)
+{
+    for (uint8_t i = 0; i < index; i++)
+        if (T(buffer[i]))
+            return true;
+    return false;
+}
+
+template <uint8_t N>
 int Buffer<N>::indexOf(uint8_t ch)
 {
     for (uint8_t i = 0; i < index; i++)
