@@ -376,11 +376,11 @@ X OUT 5 300 100 100 L 50 50 1 1 w
 ENDDRAW
 ENDDEF
 #
-# nelib_MT3608
+# SliderBar-rescue_MT3608-nelib
 #
-DEF nelib_MT3608 U 0 40 Y Y 1 F N
+DEF SliderBar-rescue_MT3608-nelib U 0 40 Y Y 1 F N
 F0 "U" 0 -200 50 H V C CNN
-F1 "nelib_MT3608" 0 200 50 H V C CNN
+F1 "SliderBar-rescue_MT3608-nelib" 0 200 50 H V C CNN
 F2 "" -100 -650 50 H I C CNN
 F3 "https://prom-electric.ru/media/MT3608.pdf" 0 -300 50 H I C CNN
 DRAW
@@ -393,11 +393,11 @@ X VIN 5 -400 100 200 R 50 50 1 1 W
 ENDDRAW
 ENDDEF
 #
-# nelib_STPS1L40
+# SliderBar-rescue_STPS1L40-nelib
 #
-DEF nelib_STPS1L40 D 0 40 N N 1 F N
+DEF SliderBar-rescue_STPS1L40-nelib D 0 40 N N 1 F N
 F0 "D" 0 100 50 H V C CNN
-F1 "nelib_STPS1L40" 0 -100 50 H V C CNN
+F1 "SliderBar-rescue_STPS1L40-nelib" 0 -100 50 H V C CNN
 F2 "Diode_SMD:D_SMA" 0 -175 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW

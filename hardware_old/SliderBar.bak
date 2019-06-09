@@ -1067,7 +1067,6 @@ Connection ~ 5350 3350
 NoConn ~ 5900 4650
 NoConn ~ 5900 4750
 NoConn ~ 5900 4850
-NoConn ~ 5900 4950
 NoConn ~ 5900 5050
 NoConn ~ 5900 5150
 NoConn ~ 5900 5250
@@ -1250,10 +1249,11 @@ Wire Wire Line
 Wire Wire Line
 	2150 3950 2350 3950
 NoConn ~ 2500 4100
-Text GLabel 5900 4550 0    50   Input ~ 0
+Text GLabel 5900 4950 0    50   Input ~ 0
 TOUCH_SENSE
 Wire Wire Line
 	1350 5800 1750 5800
 Wire Wire Line
 	1350 5900 1850 5900
+NoConn ~ 5900 4550
 $EndSCHEMATC

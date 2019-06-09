@@ -1,0 +1,201 @@
+EESchema Schematic File Version 4
+LIBS:SliderBar-cache
+EELAYER 29 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev "A"
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L MCU_ST_STM32F0:STM32F072C8Tx U?
+U 1 1 5CFC9790
+P 5750 3850
+F 0 "U?" H 6200 2300 50  0000 C CNN
+F 1 "STM32F072C8Tx" H 6350 2225 50  0000 C CNN
+F 2 "Package_QFP:LQFP-48_7x7mm_P0.5mm" H 5150 2450 50  0001 R CNN
+F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00090510.pdf" H 5750 3850 50  0001 C CNN
+	1    5750 3850
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5CFD928A
+P 5550 2250
+F 0 "#PWR?" H 5550 2100 50  0001 C CNN
+F 1 "+3V3" H 5565 2423 50  0000 C CNN
+F 2 "" H 5550 2250 50  0001 C CNN
+F 3 "" H 5550 2250 50  0001 C CNN
+	1    5550 2250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5550 2250 5550 2300
+Wire Wire Line
+	5650 2350 5650 2300
+Connection ~ 5550 2300
+Wire Wire Line
+	5550 2300 5550 2350
+Wire Wire Line
+	5650 2300 5550 2300
+Wire Wire Line
+	5750 2350 5750 2300
+Wire Wire Line
+	5750 2300 5650 2300
+Connection ~ 5650 2300
+Wire Wire Line
+	5850 2350 5850 2300
+Wire Wire Line
+	5850 2300 5750 2300
+Connection ~ 5750 2300
+Wire Wire Line
+	5950 2350 5950 2300
+Wire Wire Line
+	5950 2300 5850 2300
+Connection ~ 5850 2300
+$Comp
+L power:GND #PWR?
+U 1 1 5CFDB5ED
+P 5550 5450
+F 0 "#PWR?" H 5550 5200 50  0001 C CNN
+F 1 "GND" H 5555 5277 50  0000 C CNN
+F 2 "" H 5550 5450 50  0001 C CNN
+F 3 "" H 5550 5450 50  0001 C CNN
+	1    5550 5450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5550 5450 5550 5400
+Wire Wire Line
+	5650 5350 5650 5400
+Wire Wire Line
+	5650 5400 5550 5400
+Connection ~ 5550 5400
+Wire Wire Line
+	5550 5400 5550 5350
+Wire Wire Line
+	5750 5350 5750 5400
+Wire Wire Line
+	5750 5400 5650 5400
+Connection ~ 5650 5400
+Wire Wire Line
+	5850 5350 5850 5400
+Wire Wire Line
+	5850 5400 5750 5400
+Connection ~ 5750 5400
+$Comp
+L Device:C C?
+U 1 1 5CFDB8A1
+P 4400 2950
+F 0 "C?" H 4515 2996 50  0000 L CNN
+F 1 "100nf" H 4515 2905 50  0000 L CNN
+F 2 "" H 4438 2800 50  0001 C CNN
+F 3 "~" H 4400 2950 50  0001 C CNN
+	1    4400 2950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5CFDCB5A
+P 4800 2950
+F 0 "R?" H 4870 2996 50  0000 L CNN
+F 1 "10k" H 4870 2905 50  0000 L CNN
+F 2 "" V 4730 2950 50  0001 C CNN
+F 3 "~" H 4800 2950 50  0001 C CNN
+	1    4800 2950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4800 2800 4800 2750
+Wire Wire Line
+	4800 2750 5050 2750
+Wire Wire Line
+	5050 2550 4400 2550
+Wire Wire Line
+	4400 2550 4400 2800
+$Comp
+L power:GND #PWR?
+U 1 1 5CFD7281
+P 4400 3250
+F 0 "#PWR?" H 4400 3000 50  0001 C CNN
+F 1 "GND" H 4405 3077 50  0000 C CNN
+F 2 "" H 4400 3250 50  0001 C CNN
+F 3 "" H 4400 3250 50  0001 C CNN
+	1    4400 3250
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5CFE18E3
+P 4800 3150
+F 0 "#PWR?" H 4800 2900 50  0001 C CNN
+F 1 "GND" H 4805 2977 50  0000 C CNN
+F 2 "" H 4800 3150 50  0001 C CNN
+F 3 "" H 4800 3150 50  0001 C CNN
+	1    4800 3150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4800 3100 4800 3150
+$Comp
+L Switch:SW_Push SW?
+U 1 1 5CFE2A8B
+P 3925 2950
+F 0 "SW?" V 3971 2902 50  0000 R CNN
+F 1 "SW_Push" V 3880 2902 50  0000 R CNN
+F 2 "" H 3925 3150 50  0001 C CNN
+F 3 "~" H 3925 3150 50  0001 C CNN
+	1    3925 2950
+	0    -1   -1   0   
+$EndComp
+Connection ~ 4400 2550
+Wire Wire Line
+	3925 2550 4400 2550
+Wire Wire Line
+	4400 3100 4400 3200
+Wire Wire Line
+	3925 3150 3925 3200
+Wire Wire Line
+	3925 3200 4400 3200
+Connection ~ 4400 3200
+Wire Wire Line
+	4400 3200 4400 3250
+Wire Wire Line
+	3925 2750 3925 2550
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5CFE81C4
+P 3925 2150
+F 0 "#PWR?" H 3925 2000 50  0001 C CNN
+F 1 "+3V3" H 3940 2323 50  0000 C CNN
+F 2 "" H 3925 2150 50  0001 C CNN
+F 3 "" H 3925 2150 50  0001 C CNN
+	1    3925 2150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5CFE8D0A
+P 3925 2350
+F 0 "R?" H 3995 2396 50  0000 L CNN
+F 1 "47" H 3995 2305 50  0000 L CNN
+F 2 "" V 3855 2350 50  0001 C CNN
+F 3 "~" H 3925 2350 50  0001 C CNN
+	1    3925 2350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3925 2200 3925 2150
+Wire Wire Line
+	3925 2500 3925 2550
+Connection ~ 3925 2550
+Text Notes 4150 2525 1    50   ~ 0
+Low value
+$EndSCHEMATC
