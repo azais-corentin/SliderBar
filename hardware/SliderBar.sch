@@ -394,4 +394,153 @@ Wire Wire Line
 Connection ~ 4800 1525
 Text Notes 3600 1175 0    118  ~ 0
 POWER PROTECTION
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5CFE80E6
+P 6175 1200
+F 0 "#PWR?" H 6175 1050 50  0001 C CNN
+F 1 "+3V3" H 6190 1373 50  0000 C CNN
+F 2 "" H 6175 1200 50  0001 C CNN
+F 3 "" H 6175 1200 50  0001 C CNN
+	1    6175 1200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5CFE87EA
+P 6175 1700
+F 0 "#PWR?" H 6175 1450 50  0001 C CNN
+F 1 "GND" H 6180 1527 50  0000 C CNN
+F 2 "" H 6175 1700 50  0001 C CNN
+F 3 "" H 6175 1700 50  0001 C CNN
+	1    6175 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 5CFE8FF3
+P 7950 1200
+F 0 "#PWR?" H 7950 1050 50  0001 C CNN
+F 1 "+5V" H 7965 1373 50  0000 C CNN
+F 2 "" H 7950 1200 50  0001 C CNN
+F 3 "" H 7950 1200 50  0001 C CNN
+	1    7950 1200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5CFE94C3
+P 7950 1700
+F 0 "#PWR?" H 7950 1450 50  0001 C CNN
+F 1 "GND" H 7955 1527 50  0000 C CNN
+F 2 "" H 7950 1700 50  0001 C CNN
+F 3 "" H 7950 1700 50  0001 C CNN
+	1    7950 1700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5CFE9B17
+P 6175 1450
+F 0 "C?" H 6290 1496 50  0000 L CNN
+F 1 "100nF" H 6290 1405 50  0000 L CNN
+F 2 "" H 6213 1300 50  0001 C CNN
+F 3 "~" H 6175 1450 50  0001 C CNN
+	1    6175 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5CFEA76C
+P 6625 1450
+F 0 "C?" H 6740 1496 50  0000 L CNN
+F 1 "100nF" H 6740 1405 50  0000 L CNN
+F 2 "" H 6663 1300 50  0001 C CNN
+F 3 "~" H 6625 1450 50  0001 C CNN
+	1    6625 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5CFEAB56
+P 7075 1450
+F 0 "C?" H 7190 1496 50  0000 L CNN
+F 1 "1uF" H 7190 1405 50  0000 L CNN
+F 2 "" H 7113 1300 50  0001 C CNN
+F 3 "~" H 7075 1450 50  0001 C CNN
+	1    7075 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5CFEAFB3
+P 7425 1450
+F 0 "C?" H 7540 1496 50  0000 L CNN
+F 1 "4.7uF" H 7540 1405 50  0000 L CNN
+F 2 "" H 7463 1300 50  0001 C CNN
+F 3 "~" H 7425 1450 50  0001 C CNN
+	1    7425 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C?
+U 1 1 5CFEB2FD
+P 7950 1450
+F 0 "C?" H 8065 1496 50  0000 L CNN
+F 1 "100nF" H 8065 1405 50  0000 L CNN
+F 2 "" H 7988 1300 50  0001 C CNN
+F 3 "~" H 7950 1450 50  0001 C CNN
+	1    7950 1450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6175 1200 6175 1250
+Wire Wire Line
+	6625 1300 6625 1250
+Wire Wire Line
+	6625 1250 6175 1250
+Connection ~ 6175 1250
+Wire Wire Line
+	6175 1250 6175 1300
+Wire Wire Line
+	7075 1300 7075 1250
+Wire Wire Line
+	7075 1250 6625 1250
+Connection ~ 6625 1250
+Wire Wire Line
+	7425 1250 7075 1250
+Connection ~ 7075 1250
+Wire Wire Line
+	6175 1600 6175 1650
+Wire Wire Line
+	6625 1600 6625 1650
+Wire Wire Line
+	6625 1650 6175 1650
+Connection ~ 6175 1650
+Wire Wire Line
+	6175 1650 6175 1700
+Wire Wire Line
+	7075 1600 7075 1650
+Wire Wire Line
+	7075 1650 6625 1650
+Connection ~ 6625 1650
+Wire Wire Line
+	7425 1600 7425 1650
+Wire Wire Line
+	7425 1650 7075 1650
+Connection ~ 7075 1650
+Wire Wire Line
+	7425 1250 7425 1300
+Wire Wire Line
+	7950 1300 7950 1200
+Wire Wire Line
+	7950 1700 7950 1600
+Wire Notes Line width 12 style solid
+	6125 1650 6125 1700
+Wire Notes Line width 12 style solid
+	6125 1700 7475 1700
+Wire Notes Line width 12 style solid
+	7475 1700 7475 1650
+Text Notes 6625 1775 0    39   ~ 0
+CLOSE TO MCU
 $EndSCHEMATC
