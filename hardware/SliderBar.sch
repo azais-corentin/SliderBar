@@ -18,8 +18,8 @@ $Comp
 L MCU_ST_STM32F0:STM32F072C8Tx U?
 U 1 1 5CFC9790
 P 8500 6175
-F 0 "U?" H 8950 4625 50  0000 C CNN
-F 1 "STM32F072C8Tx" H 9100 4550 50  0000 C CNN
+F 0 "U?" H 9000 4725 50  0000 C CNN
+F 1 "STM32F072C8Tx" H 9000 4650 50  0000 C CNN
 F 2 "Package_QFP:LQFP-48_7x7mm_P0.5mm" H 7900 4775 50  0001 R CNN
 F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00090510.pdf" H 8500 6175 50  0001 C CNN
 	1    8500 6175
@@ -686,4 +686,6 @@ Wire Wire Line
 	13875 7700 13875 7600
 Wire Wire Line
 	13875 7600 13775 7600
+Text Notes 13950 7700 0    59   ~ 0
+Imax = 64 kV / Rlim\n0.53 A < Imax  < 0.8 A
 $EndSCHEMATC
