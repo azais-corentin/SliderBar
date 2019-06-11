@@ -543,4 +543,78 @@ Wire Notes Line width 12 style solid
 	7475 1700 7475 1650
 Text Notes 6625 1775 0    39   ~ 0
 CLOSE TO MCU
+Text GLabel 2075 7575 2    59   Input ~ 0
+USB_DP
+Text GLabel 2075 7675 2    59   Input ~ 0
+USB_DM
+$Comp
+L power:VBUS #PWR?
+U 1 1 5D00D8E3
+P 2075 7275
+F 0 "#PWR?" H 2075 7125 50  0001 C CNN
+F 1 "VBUS" H 2090 7448 50  0000 C CNN
+F 2 "" H 2075 7275 50  0001 C CNN
+F 3 "" H 2075 7275 50  0001 C CNN
+	1    2075 7275
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:USB_B_Mini J?
+U 1 1 5D010FF8
+P 1675 7575
+F 0 "J?" H 1732 8042 50  0000 C CNN
+F 1 "USB_B_Mini" H 1732 7951 50  0000 C CNN
+F 2 "" H 1825 7525 50  0001 C CNN
+F 3 "~" H 1825 7525 50  0001 C CNN
+	1    1675 7575
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5D01368F
+P 1925 8075
+F 0 "R?" V 2132 8075 50  0000 C CNN
+F 1 "100k" V 2041 8075 50  0000 C CNN
+F 2 "" V 1855 8075 50  0001 C CNN
+F 3 "~" H 1925 8075 50  0001 C CNN
+	1    1925 8075
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	1975 7675 2075 7675
+Wire Wire Line
+	2075 7575 1975 7575
+Wire Wire Line
+	1975 7375 2075 7375
+Wire Wire Line
+	2075 7375 2075 7275
+$Comp
+L power:GND #PWR?
+U 1 1 5D01A8DC
+P 1575 8175
+F 0 "#PWR?" H 1575 7925 50  0001 C CNN
+F 1 "GND" H 1580 8002 50  0000 C CNN
+F 2 "" H 1575 8175 50  0001 C CNN
+F 3 "" H 1575 8175 50  0001 C CNN
+	1    1575 8175
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1975 7775 2175 7775
+Wire Wire Line
+	2175 7775 2175 8075
+Wire Wire Line
+	2175 8075 2075 8075
+Wire Wire Line
+	1775 8075 1675 8075
+Wire Wire Line
+	1575 8075 1575 8175
+Wire Wire Line
+	1575 7975 1575 8075
+Connection ~ 1575 8075
+Wire Wire Line
+	1675 7975 1675 8075
+Connection ~ 1675 8075
+Wire Wire Line
+	1675 8075 1575 8075
 $EndSCHEMATC
