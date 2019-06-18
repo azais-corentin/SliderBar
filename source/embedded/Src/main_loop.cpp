@@ -1,26 +1,23 @@
-//
-// Created by Nelieru on 06/06/2019.
-//
-
-#include <cstring>
-
-#include "stm32f0xx_hal.h"
-
 #include "main_loop.h"
+
 #include <SliderBar/sliderbar.h>
 #include <USB/CDC.h>
 
-static usb::CDC cdc;
-static SliderBar sliderbar;
+// Initializes global instances
+void* cdc       = CDC::self();
+void* sliderbar = SliderBar::self();
 
 void main_loop()
 {
-    cdc.initialize();
+    auto&& cdcInstance       = static_cast<CDC*>(cdc);
+    auto&& sliderbarInstance = static_cast<SliderBar*>(sliderbar);
 
-    cdc.setReceiver(&sliderbar);
-    sliderbar.setTransmitter(&cdc);
+    cdcInstance->initialize();
+
+    cdcInstance->setReceiver(sliderbarInstance);
+    sliderbarInstance->setTransmitter(cdcInstance);
 
     while (true) {
-        sliderbar.decode();
+        sliderbarInstance->decode();
     }
 }

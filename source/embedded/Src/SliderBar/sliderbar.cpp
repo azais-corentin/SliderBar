@@ -23,7 +23,8 @@ void SliderBar::send(const Response& response) const
 {
     // TODO Size the dataBuffer properly
     uint8_t dataBuffer[sizeof(Response)];
-    pb_ostream_t stream = pb_ostream_from_buffer(dataBuffer, sizeof(dataBuffer));
+    pb_ostream_t stream
+        = pb_ostream_from_buffer(dataBuffer, sizeof(dataBuffer));
 
     bool status = pb_encode(&stream, Response_fields, &response);
 
@@ -98,7 +99,8 @@ void SliderBar::decode()
 
     // Decode request using Nanopb:
     Request decoded     = Request_init_zero;
-    pb_istream_t stream = pb_istream_from_buffer(m_decodeBuffer.data(), m_decodeBuffer.size() - 4);
+    pb_istream_t stream = pb_istream_from_buffer(m_decodeBuffer.data(),
+                                                 m_decodeBuffer.size() - 4);
     bool status         = pb_decode(&stream, Request_fields, &decoded);
 
     if (!status) {
@@ -198,13 +200,9 @@ void SliderBar::process(const Request_Vibrate& value)
     vibrate(value.duration);
 }
 
-void SliderBar::process(const Request_ResistAt& value)
-{
-}
+void SliderBar::process(const Request_ResistAt& value) {}
 
-void SliderBar::process(const Request_ResistClear& value)
-{
-}
+void SliderBar::process(const Request_ResistClear& value) {}
 
 void SliderBar::process(const Request_Calibration& value)
 {
@@ -238,6 +236,10 @@ protocol::CalibrationData SliderBar::calibrate() const
     return protocol::CalibrationData {};
 }
 
-void SliderBar::vibrate(uint8_t duration)
+void SliderBar::vibrate(uint8_t duration) {}
+
+SliderBar* SliderBar::self()
 {
+    static SliderBar instance;
+    return &instance;
 }

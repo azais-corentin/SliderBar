@@ -11,10 +11,14 @@
 extern "C" {
 #endif
 
+// Global instances
+extern void* cdc;
+extern void* sliderbar;
+
 void main_loop(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //EMBEDDED_INIT_SLIDERBAR_H
+#endif // EMBEDDED_INIT_SLIDERBAR_H

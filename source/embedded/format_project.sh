@@ -1,2 +1,2 @@
 #!/bin/bash
-clang-format -i -style=.clang-format Src/**/*.cpp Src/**/*.c Inc/**/*.h Inc/**/*.hpp
+clang-format -verbose -i -style=file Src/**/*.cpp Src/*.cpp Src/**/*.c Src/*.c Inc/**/*.h Inc/*.h Inc/**/*.hpp Inc/*.hpp

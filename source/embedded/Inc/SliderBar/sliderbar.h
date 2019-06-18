@@ -22,6 +22,7 @@
  */
 class SliderBar : public DataOutInterface {
 public:
+    static SliderBar* self();
     SliderBar()  = default;
     ~SliderBar() = default;
 

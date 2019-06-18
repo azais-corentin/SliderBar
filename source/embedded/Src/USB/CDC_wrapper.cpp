@@ -1,15 +1,14 @@
 #include "CDC_wrapper.h"
 #include "CDC.h"
 
-void* CDC_create()
-{
-    return new CDC();
-}
+void* CDC_instance() { return CDC::self(); }
 
+/*
 void CDC_destroy(void* thisCDC)
 {
     delete static_cast<CDC*>(thisCDC);
 }
+*/
 
 void CDC_receive(void* thisCDC, uint8_t* buf, const uint16_t len)
 {

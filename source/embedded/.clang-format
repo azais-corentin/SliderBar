@@ -4,3 +4,4 @@ AlignConsecutiveAssignments: true
 AlignOperands: true
 AlignTrailingComments: true
 BinPackParameters: true
+ColumnLimit: 80
