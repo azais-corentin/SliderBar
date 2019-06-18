@@ -3,19 +3,8 @@
 
 #include <cstdint>
 
+//#include <usbd_cdc.h>
 #include <DataInterface/DataInterface.h>
-
-#include <usbd_cdc.h>
-
-extern "C" {
-// USB device core handle
-extern USBD_HandleTypeDef hUsbDeviceFS;
-
-// CDC Interface callback
-extern USBD_CDC_ItfTypeDef USBD_Interface_fops_FS;
-}
-
-namespace usb {
 
 class CDC;
 
@@ -64,7 +53,5 @@ public:
      */
     bool transmit(uint8_t* buf, const uint16_t& len) const final;
 };
-
-} // namespace usb
 
 #endif //EMBEDDED_CDC_H

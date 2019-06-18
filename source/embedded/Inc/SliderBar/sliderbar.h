@@ -20,11 +20,12 @@
  * - Read the SliderBar's position
  * - Capacitive Touch Sensing (not yet implemented)
  */
-class SliderBar : public DataOutInterface
-{
+class SliderBar : public DataOutInterface {
 public:
     SliderBar()  = default;
     ~SliderBar() = default;
+
+    void decode();
 
     void connect() final {};
     void disconnect() final {};
@@ -40,7 +41,7 @@ private:
      * @param buf Pointer to the data.
      * @param len Length of the data.
      */
-    void receive(uint8_t *buf, const uint16_t& len) final;
+    void receive(uint8_t* buf, const uint16_t& len) final;
 
     /**
      * @brief Transmits data.
@@ -55,8 +56,6 @@ private:
     void send(const Response& response) const;
     void sendNack() const;
 
-    void decode();
-
     // Process a request
     void process(const Request& request);
     void process(const Request_SetValue& value);
@@ -70,7 +69,6 @@ private:
      * @brief Calibrates the SliderBar min and max positions, velocities.
      */
     protocol::CalibrationData calibrate() const;
-
 
     /**
      * @brief Vibrates the SliderBar for a specified duration

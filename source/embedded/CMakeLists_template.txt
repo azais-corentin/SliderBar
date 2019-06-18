@@ -40,7 +40,7 @@ add_definitions(${defines})
 set(PRJ_SOURCES "../common/protocol/protocol_definition.cpp" "../common/protocol/messages/sliderbar.pb.c" "../common/nanopb/pb_common.c" "../common/nanopb/pb_decode.c" "../common/nanopb/pb_encode.c")
 file(GLOB_RECURSE SOURCES ${sources})
 
-include_directories(${includes} ../common ../common/nanopb)
+include_directories(${includes} Inc/USB ../common ../common/nanopb)
 
 add_executable($${PROJECT_NAME}.elf $${SOURCES} $${PRJ_SOURCES} $${LINKER_SCRIPT})
 
