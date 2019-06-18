@@ -1,7 +1,1 @@
-BasedOnStyle: WebKit
-AlignAfterOpenBracket: Align
-AlignConsecutiveAssignments: true
-AlignOperands: true
-AlignTrailingComments: true
-BinPackParameters: true
-ColumnLimit: 80
+BasedOnStyle: Chromium

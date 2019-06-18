@@ -21,4 +21,4 @@ void main_loop(void);
 }
 #endif
 
-#endif // EMBEDDED_INIT_SLIDERBAR_H
+#endif  // EMBEDDED_INIT_SLIDERBAR_H

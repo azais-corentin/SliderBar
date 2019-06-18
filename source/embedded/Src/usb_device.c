@@ -28,7 +28,7 @@
 #include "usbd_desc.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "USB/CDC_wrapper.h"
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN PV */
@@ -62,30 +62,31 @@ USBD_HandleTypeDef hUsbDeviceFS;
  * Init USB device Library, add supported class and start the library
  * @retval None
  */
-void MX_USB_DEVICE_Init(void)
-{
-    /* USER CODE BEGIN USB_DEVICE_Init_PreTreatment */
+void MX_USB_DEVICE_Init(void) {
+  /* USER CODE BEGIN USB_DEVICE_Init_PreTreatment */
 
-    /* USER CODE END USB_DEVICE_Init_PreTreatment */
+  /* USER CODE END USB_DEVICE_Init_PreTreatment */
 
-    /* Init Device Library, add supported class and start the library. */
-    if (USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS) != USBD_OK) {
-        Error_Handler();
-    }
-    if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC) != USBD_OK) {
-        Error_Handler();
-    }
-    if (USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS)
-        != USBD_OK) {
-        Error_Handler();
-    }
-    if (USBD_Start(&hUsbDeviceFS) != USBD_OK) {
-        Error_Handler();
-    }
+  /* Init Device Library, add supported class and start the library. */
+  if (USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS) != USBD_OK) {
+    Error_Handler();
+  }
+  if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC) != USBD_OK) {
+    Error_Handler();
+  }
+  if (USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS) !=
+      USBD_OK) {
+    Error_Handler();
+  }
+  if (USBD_Start(&hUsbDeviceFS) != USBD_OK) {
+    Error_Handler();
+  }
 
-    /* USER CODE BEGIN USB_DEVICE_Init_PostTreatment */
-
-    /* USER CODE END USB_DEVICE_Init_PostTreatment */
+  /* USER CODE BEGIN USB_DEVICE_Init_PostTreatment */
+  // Pass USB device to CDC class
+  void* cdc = CDC_instance();
+  CDC_setUSBDevice(cdc, &hUsbDeviceFS);
+  /* USER CODE END USB_DEVICE_Init_PostTreatment */
 }
 
 /**

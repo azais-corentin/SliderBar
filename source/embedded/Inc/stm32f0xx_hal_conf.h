@@ -90,18 +90,18 @@ extern "C" {
  * PLL).
  */
 #if !defined(HSE_VALUE)
-#define HSE_VALUE                                                              \
-    ((uint32_t)8000000) /*!< Value of the External oscillator in Hz */
-#endif                  /* HSE_VALUE */
+#define HSE_VALUE \
+  ((uint32_t)8000000) /*!< Value of the External oscillator in Hz */
+#endif                /* HSE_VALUE */
 
 /**
  * @brief In the following line adjust the External High Speed oscillator (HSE)
  * Startup Timeout value
  */
 #if !defined(HSE_STARTUP_TIMEOUT)
-#define HSE_STARTUP_TIMEOUT                                                    \
-    ((uint32_t)100) /*!< Time out for HSE start up, in ms */
-#endif              /* HSE_STARTUP_TIMEOUT */
+#define HSE_STARTUP_TIMEOUT \
+  ((uint32_t)100) /*!< Time out for HSE start up, in ms */
+#endif            /* HSE_STARTUP_TIMEOUT */
 
 /**
  * @brief Internal High Speed oscillator (HSI) value.
@@ -110,9 +110,9 @@ extern "C" {
  * PLL).
  */
 #if !defined(HSI_VALUE)
-#define HSI_VALUE                                                              \
-    ((uint32_t)8000000) /*!< Value of the Internal oscillator in Hz*/
-#endif                  /* HSI_VALUE */
+#define HSI_VALUE \
+  ((uint32_t)8000000) /*!< Value of the Internal oscillator in Hz*/
+#endif                /* HSI_VALUE */
 
 /**
  * @brief In the following line adjust the Internal High Speed oscillator (HSI)
@@ -127,41 +127,41 @@ extern "C" {
  */
 #if !defined(HSI14_VALUE)
 #define HSI14_VALUE                                                            \
-    ((uint32_t)14000000) /*!< Value of the Internal High Speed oscillator for  \
-                            ADC in Hz. The real value may vary depending on                                          \
-                            the variations in voltage and temperature.  */
-#endif                   /* HSI14_VALUE */
+  ((uint32_t)14000000) /*!< Value of the Internal High Speed oscillator for  \ \
+                          ADC in Hz. The real value may vary depending on \                                                                             \
+                          the variations in voltage and temperature.  */
+#endif                 /* HSI14_VALUE */
 
 /**
  * @brief Internal High Speed oscillator for USB (HSI48) value.
  */
 #if !defined(HSI48_VALUE)
 #define HSI48_VALUE                                                            \
-    ((uint32_t)48000000) /*!< Value of the Internal High Speed oscillator for  \
-                            USB in Hz. The real value may vary depending on                                          \
-                            the variations in voltage and temperature.  */
-#endif                   /* HSI48_VALUE */
+  ((uint32_t)48000000) /*!< Value of the Internal High Speed oscillator for  \ \
+                          USB in Hz. The real value may vary depending on \                                                                             \
+                          the variations in voltage and temperature.  */
+#endif                 /* HSI48_VALUE */
 
 /**
  * @brief Internal Low Speed oscillator (LSI) value.
  */
 #if !defined(LSI_VALUE)
 #define LSI_VALUE ((uint32_t)40000)
-#endif /* LSI_VALUE */ /*!< Value of the Internal Low Speed oscillator in Hz   \
-                        The real value may vary depending on the variations    \
+#endif /* LSI_VALUE */ /*!< Value of the Internal Low Speed oscillator in Hz \ \
+                        The real value may vary depending on the variations \ \
                         in voltage and temperature.  */
 /**
  * @brief External Low Speed oscillator (LSI) value.
  */
 #if !defined(LSE_VALUE)
-#define LSE_VALUE                                                              \
-    ((uint32_t)32768) /*!< Value of the External Low Speed oscillator in Hz */
-#endif                /* LSE_VALUE */
+#define LSE_VALUE \
+  ((uint32_t)32768) /*!< Value of the External Low Speed oscillator in Hz */
+#endif              /* LSE_VALUE */
 
 #if !defined(LSE_STARTUP_TIMEOUT)
-#define LSE_STARTUP_TIMEOUT                                                    \
-    ((uint32_t)5000) /*!< Time out for LSE start up, in ms */
-#endif               /* LSE_STARTUP_TIMEOUT */
+#define LSE_STARTUP_TIMEOUT \
+  ((uint32_t)5000) /*!< Time out for LSE start up, in ms */
+#endif             /* LSE_STARTUP_TIMEOUT */
 
 /* Tip: To avoid modifying this file each time you need to use different HSE,
    ===  you can define the HSE value in your toolchain compiler preprocessor. */
@@ -171,8 +171,8 @@ extern "C" {
  * @brief This is the HAL system configuration section
  */
 #define VDD_VALUE ((uint32_t)3300) /*!< Value of VDD in mv */
-#define TICK_INT_PRIORITY                                                      \
-    ((uint32_t)0) /*!< tick interrupt priority (lowest by default)  */
+#define TICK_INT_PRIORITY \
+  ((uint32_t)0) /*!< tick interrupt priority (lowest by default)  */
 /*  Warning: Must be set to higher priority for HAL_Delay()  */
 /*  and HAL_GetTick() usage under interrupt context          */
 #define USE_RTOS 0
@@ -318,8 +318,8 @@ extern "C" {
  *         If expr is true, it returns no value.
  * @retval None
  */
-#define assert_param(expr)                                                     \
-    ((expr) ? (void)0U : assert_failed((char*)__FILE__, __LINE__))
+#define assert_param(expr) \
+  ((expr) ? (void)0U : assert_failed((char*)__FILE__, __LINE__))
 /* Exported functions ------------------------------------------------------- */
 void assert_failed(char* file, uint32_t line);
 #else

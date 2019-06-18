@@ -1,7 +1,9 @@
 #include "CDC_wrapper.h"
 #include "CDC.h"
 
-void* CDC_instance() { return CDC::self(); }
+void* CDC_instance() {
+  return CDC::self();
+}
 
 /*
 void CDC_destroy(void* thisCDC)
@@ -10,12 +12,14 @@ void CDC_destroy(void* thisCDC)
 }
 */
 
-void CDC_receive(void* thisCDC, uint8_t* buf, const uint16_t len)
-{
-    static_cast<CDC*>(thisCDC)->receive(buf, len);
+void CDC_receive(void* thisCDC, uint8_t* buf, const uint16_t len) {
+  static_cast<CDC*>(thisCDC)->receive(buf, len);
 }
 
-void CDC_transmit(void* thisCDC, uint8_t* buf, const uint16_t len)
-{
-    static_cast<CDC*>(thisCDC)->transmit(buf, len);
+void CDC_transmit(void* thisCDC, uint8_t* buf, const uint16_t len) {
+  static_cast<CDC*>(thisCDC)->transmit(buf, len);
+}
+
+void CDC_setUSBDevice(void* thisCDC, USBD_HandleTypeDef* usbDevice) {
+  static_cast<CDC*>(thisCDC)->setUSBDevice(usbDevice);
 }

@@ -7,12 +7,15 @@
 #include <stdint.h>
 #endif
 
+#include "usbd_def.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 void* CDC_instance();
 // void CDC_destroy(void* thisCDC);
+void CDC_setUSBDevice(void* thisCDC, USBD_HandleTypeDef* usbDevice);
 void CDC_receive(void* thisCDC, uint8_t* buf, const uint16_t len);
 void CDC_transmit(void* thisCDC, uint8_t* buf, const uint16_t len);
 
@@ -20,4 +23,4 @@ void CDC_transmit(void* thisCDC, uint8_t* buf, const uint16_t len);
 }
 #endif
 
-#endif // EMBEDDED_CDC_WRAPPER_H
+#endif  // EMBEDDED_CDC_WRAPPER_H
