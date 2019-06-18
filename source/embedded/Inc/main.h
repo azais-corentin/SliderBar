@@ -54,10 +54,30 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-void SystemClock_Config(void);
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define B1_Pin GPIO_PIN_0
+#define B1_GPIO_Port GPIOA
+#define EXT_RESET_Pin GPIO_PIN_5
+#define EXT_RESET_GPIO_Port GPIOC
+#define LD3_Pin GPIO_PIN_6
+#define LD3_GPIO_Port GPIOC
+#define LD6_Pin GPIO_PIN_7
+#define LD6_GPIO_Port GPIOC
+#define LD4_Pin GPIO_PIN_8
+#define LD4_GPIO_Port GPIOC
+#define LD5_Pin GPIO_PIN_9
+#define LD5_GPIO_Port GPIOC
+#define USBF4_DM_Pin GPIO_PIN_11
+#define USBF4_DM_GPIO_Port GPIOA
+#define USBF4_DP_Pin GPIO_PIN_12
+#define USBF4_DP_GPIO_Port GPIOA
+#define SWDIO_Pin GPIO_PIN_13
+#define SWDIO_GPIO_Port GPIOA
+#define SWCLK_Pin GPIO_PIN_14
+#define SWCLK_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

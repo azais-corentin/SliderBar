@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-void main_loop();
+void main_loop(void);
 
 #ifdef __cplusplus
 }
