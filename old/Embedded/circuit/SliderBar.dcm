@@ -1,9 +1,0 @@
-EESchema-DOCLIB  Version 2.0
-#
-$CMP HT7333
-D The HT7333 is a three-terminal, low power, 3.3V voltage regulator.
-K voltage regulator 3v3
-F http://www.angeladvance.com/HT73xx.pdf
-$ENDCMP
-#
-#End Doc Library
