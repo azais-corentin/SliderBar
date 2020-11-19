@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name SliderBar-rescue)(type Legacy)(uri ${KIPRJMOD}/SliderBar-rescue.lib)(options "")(descr ""))
+)

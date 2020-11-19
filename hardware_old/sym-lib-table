@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name SliderBar-rescue)(type Legacy)(uri ${KIPRJMOD}/SliderBar-rescue.lib)(options "")(descr ""))
+  (lib (name SliderBar-eagle-import)(type Legacy)(uri ${KIPRJMOD}/SliderBar-eagle-import.lib)(options "")(descr ""))
+)
